@@ -1,0 +1,17 @@
+Building: MiningUnit
+	Name: #BLD_MININGUNIT
+	Description: #BLD_MININGUNIT_DESC
+	Sprite: Factory
+
+	Category: Production
+
+	Size: 1x1
+	Base Cost: 150
+	Tile Cost: 25
+	Base Maintenance: 50
+	Tile Maintenance: 10
+	Build Time: 90
+
+	RequireNotTrait(Ancient)
+
+	AddResource(Money, 2)

@@ -540,24 +540,18 @@ class GlobalBar : BaseGuiElement {
 		@container = BaseGuiElement(this, Alignment_Fill());
 		container.StrictBounds = true;
 
+		// Our design only surfaces Minerals and Energy. "Minerals" is SR2's Money/
+		// Budget resource relabeled via locale override (it's the shared, empire-
+		// wide pool that already funds Construction/Orbitals/Buildings/Ships,
+		// unlike Labor which is tracked per-planet). FTL/Influence/Research/Defense
+		// are hidden (their underlying systems still exist, just not shown). FTL is
+		// slated to be redesigned as a dynamic of our own energy system later.
 		@budget = BudgetResource(container, Alignment());
 		sections.insertLast(budget);
-
-		@influence = InfluenceResource(container, Alignment());
-		sections.insertLast(influence);
 
 		@energy = EnergyResource(container, Alignment());
 		sections.insertLast(energy);
 
-		@ftl = FTLResource(container, Alignment());
-		sections.insertLast(ftl);
-
-		@research = ResearchResource(container, Alignment());
-		sections.insertLast(research);
-
-		@defense = DefenseResource(container, Alignment());
-		sections.insertLast(defense);
-		
 		updateSections();
 	}
 

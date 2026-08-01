@@ -356,10 +356,14 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 			obj.addResource(res.id);
 		changeSurfaceOwner(obj, null);
 
-		obj.canBuildShips = false;
-		obj.canBuildAsteroids = false;
-		obj.canBuildOrbitals = false;
-		obj.canTerraform = false;
+		//Stars/asteroids/stations have a surface but no Construction component
+		//(no ship/orbital/terraform building queue).
+		if(obj.hasConstruction) {
+			obj.canBuildShips = false;
+			obj.canBuildAsteroids = false;
+			obj.canBuildOrbitals = false;
+			obj.canTerraform = false;
+		}
 
 		++SurfaceModId;
 		originalSurfaceSize = grid.size;
@@ -749,6 +753,13 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 			return;
 		if(type.civilian || !type.canBuildOn(obj))
 			return;
+
+		//Suns only take the Star Harvester, and it only goes on suns: they're
+		//a single-slot body dedicated to a much bigger energy payoff.
+		bool isStarHarvester = type.ident == "StarHarvester";
+		if(obj.isStar != isStarHarvester)
+			return;
+
 		if(pos.x < 0 || pos.y < 0)
 			return;
 		if(pos.x >= int(grid.size.x) || pos.y >= int(grid.size.y))
@@ -1190,7 +1201,9 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 		double baseLoyalty = max(double(BaseLoyalty + obj.owner.GlobalLoyalty.value), 1.0);
 		double loyTimer = config::SIEGE_LOYALTY_TIME * ceil(baseLoyalty / 10.0);
 		double loyMod = time * baseLoyalty / loyTimer / obj.owner.CaptureTimeDifficulty;
-		double orbRadiusSQ = sqr(cast<Planet>(obj).OrbitSize);
+		//Stars/asteroids/stations don't have a Planet's OrbitSize; fall back
+		//to the object's own radius for the siege/loyalty search range.
+		double orbRadiusSQ = obj.isPlanet ? sqr(cast<Planet>(obj).OrbitSize) : sqr(obj.radius + 100.0);
 		siegeMask = 0;
 
 		uint prevOrbits = orbitsMask;
@@ -1511,11 +1524,15 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 			prevBaseLoyalty = BaseLoyalty;
 			DecayLevel = Level;
 			DecayTimer = -1.0;
-			obj.modSupplyCapacity(+newLevel.baseSupport);
+			//Stars/asteroids/stations have a surface but no LeaderAI (fleet
+			//command capacity doesn't apply to them).
+			if(obj.hasLeaderAI)
+				obj.modSupplyCapacity(+newLevel.baseSupport);
 		}
 		else {
 			NeighbourLoyalty = newLevel.neighbourLoyalty - prevLevel.neighbourLoyalty;
-			obj.modSupplyCapacity(newLevel.baseSupport - prevLevel.baseSupport);
+			if(obj.hasLeaderAI)
+				obj.modSupplyCapacity(newLevel.baseSupport - prevLevel.baseSupport);
 		}
 
 		if(obj.owner !is null && obj.owner.valid) {
@@ -2061,7 +2078,10 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 
 		//Take over the planet
 		@obj.owner = newOwner;
-		obj.takeoverFleet(newOwner, supportRatio);
+		//Stars/asteroids/stations have a surface but no LeaderAI-commanded
+		//defense fleet to hand over.
+		if(obj.hasLeaderAI)
+			obj.takeoverFleet(newOwner, supportRatio);
 		newOwner.recordEvent(stat::Planets, 1, obj.name);
 	}
 
@@ -2451,10 +2471,13 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 			}
 		}
 
-		//Update object loyalty
+		//Update object loyalty. The siege/loyalty system is planet-specific
+		//(fleet defense, labor-funded builds); stars/asteroids/stations just
+		//flip ownership directly via takeoverPlanet() instead of being sieged.
 		occTimer += time;
 		if(occTimer > 1.f) {
-			updateLoyalty(obj, occTimer);
+			if(obj.isPlanet)
+				updateLoyalty(obj, occTimer);
 			occTimer = 0.f;
 		}
 		Region@ reg = obj.region;
@@ -2515,7 +2538,9 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 		}
 
 		double newDefense = max(grid.resources[TR_Defense], 0.0) * DEFENSE_LABOR_PM / 60.0 * obj.owner.DefenseGenerationFactor;
-		bool pooled = obj.canGainSupports && obj.owner.hasDefending;
+		//Stars/asteroids/stations have a surface but no LeaderAI-commanded
+		//support fleet to pool defense into.
+		bool pooled = obj.hasLeaderAI && obj.canGainSupports && obj.owner.hasDefending;
 		if(!pooled) {
 			if(prevDefense < -0.01) {
 				prevDefense = -prevDefense;
@@ -2542,17 +2567,21 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 			}
 		}
 
-		double prevLabor = obj.distributedLabor;
-		double laborRes = max(grid.resources[TR_Labor], 0.0);
-		double labor = laborRes * TILE_LABOR_RATE * obj.owner.LaborGenerationFactor;
+		//Stars/asteroids/stations have a surface but no Construction component
+		//(no labor-funded ship/orbital build queue to distribute labor into).
+		if(obj.hasConstruction) {
+			double prevLabor = obj.distributedLabor;
+			double laborRes = max(grid.resources[TR_Labor], 0.0);
+			double labor = laborRes * TILE_LABOR_RATE * obj.owner.LaborGenerationFactor;
 
-		if(prevLabor != labor) {
-			bool hasLabor = laborRes > 0.0001 || obj.laborIncome > 0.0001 || obj.currentLaborStored > 0.001;
-			obj.canBuildShips = hasLabor;
-			obj.canBuildAsteroids = hasLabor;
-			obj.canBuildOrbitals = hasLabor;
-			obj.canTerraform = hasLabor;
-			obj.setDistributedLabor(labor);
+			if(prevLabor != labor) {
+				bool hasLabor = laborRes > 0.0001 || obj.laborIncome > 0.0001 || obj.currentLaborStored > 0.001;
+				obj.canBuildShips = hasLabor;
+				obj.canBuildAsteroids = hasLabor;
+				obj.canBuildOrbitals = hasLabor;
+				obj.canTerraform = hasLabor;
+				obj.setDistributedLabor(labor);
+			}
 		}
 
 		//Apply colonization steps

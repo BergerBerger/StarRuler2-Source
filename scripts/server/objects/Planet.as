@@ -33,6 +33,14 @@ tidy class PlanetScript {
 			planet.owner.TotalPlanets += 1;
 			planet.owner.registerPlanet(planet);
 		}
+
+		//Moons are created natively (addMoon()) rather than through MakePlanet,
+		//so they don't get our fixed 5-slot grid. Detect them by their smaller
+		//radius (main planets range 6-14, moons are noticeably smaller) and
+		//force them down to 3 slots instead. This only ever runs once, right
+		//after creation, before anything could have been built.
+		if(planet.radius < 6.0)
+			planet.regenSurface(3, 1, 1);
 	}
 
 	void save(Planet& planet, SaveFile& file) {

@@ -93,6 +93,7 @@ tidy class OrbitalScript {
 		}
 
 		file << cast<Savable>(obj.Mover);
+		file << cast<Savable>(obj.SurfaceComponent);
 	}
 
 	void load(Orbital& obj, SaveFile& file) {
@@ -162,6 +163,8 @@ tidy class OrbitalScript {
 			file >> cast<Savable>(obj.Mover);
 		else
 			obj.maxAcceleration = 0;
+
+		file >> cast<Savable>(obj.SurfaceComponent);
 	}
 
 	void makeFree(Orbital& obj) {
@@ -180,6 +183,9 @@ tidy class OrbitalScript {
 		obj.hasVectorMovement = true;
 		obj.activateLeaderAI();
 		obj.leaderInit();
+
+		//Stations get 3 slots for our buildable structures.
+		obj.initSurface(3, 1, 0, 0, 0, uint(-1));
 	}
 
 	Orbital@ getMaster() {
@@ -253,6 +259,7 @@ tidy class OrbitalScript {
 		obj.resourcesPostLoad();
 		if(obj.hasLeaderAI)
 			obj.leaderPostLoad();
+		obj.surfacePostLoad();
 	}
 
 	double get_dps() {
@@ -785,6 +792,7 @@ tidy class OrbitalScript {
 	}
 
 	void destroy(Orbital& obj) {
+		obj.destroySurface();
 		if(obj.inCombat && !game_ending)
 			playParticleSystem("ShipExplosion", obj.position, obj.rotation, obj.radius, obj.visibleMask);
 	
@@ -842,6 +850,7 @@ tidy class OrbitalScript {
 			prevOwner.unregisterOrbital(obj);
 		if(obj.owner !is null && obj.owner.valid)
 			obj.owner.registerOrbital(obj);
+		obj.changeSurfaceOwner(prevOwner);
 		return false;
 	}
 
@@ -1056,6 +1065,10 @@ tidy class OrbitalScript {
 
 		//Tick resources
 		obj.resourceTick(time);
+
+		//Tick our buildable slots
+		if(obj.owner !is null && obj.owner.valid)
+			obj.surfaceTick(time);
 
 		//Tick orbit
 		obj.moverTick(time);

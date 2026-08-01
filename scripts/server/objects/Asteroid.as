@@ -55,6 +55,8 @@ tidy class AsteroidScript {
 		if(file >= SV_0125)
 			file >> cast<Savable>(obj.Resources);
 
+		file >> cast<Savable>(obj.SurfaceComponent);
+
 		if(file < SV_0122 || file >= SV_0125) {
 			Object@ origin;
 			@origin = file.readObject();
@@ -82,6 +84,7 @@ tidy class AsteroidScript {
 
 	void postLoad(Asteroid& obj) {
 		makeMesh(obj);
+		obj.surfacePostLoad();
 	}
 
 	void save(Asteroid& obj, SaveFile& file) {
@@ -89,6 +92,7 @@ tidy class AsteroidScript {
 		file << cast<Savable>(obj.Orbit);
 		file << cast<Savable>(obj.Cargo);
 		file << cast<Savable>(obj.Resources);
+		file << cast<Savable>(obj.SurfaceComponent);
 		file << obj.origin;
 		
 		uint cnt = available.length;
@@ -111,9 +115,13 @@ tidy class AsteroidScript {
 		obj.sightRange = 0;
 
 		obj.modCargoStorage(+INFINITY);
+
+		//Asteroids get 2 slots for our buildable structures.
+		obj.initSurface(2, 1, 0, 0, 0, uint(-1));
 	}
 
 	void destroy(Asteroid& obj) {
+		obj.destroySurface();
 		obj.destroyObjResources();
 		if(obj.region !is null)
 			obj.region.removeStrategicIcon(-1, icon);
@@ -138,6 +146,7 @@ tidy class AsteroidScript {
 		if(obj.owner !is null && obj.owner.valid)
 			obj.owner.registerAsteroid(obj);
 		obj.changeResourceOwner(prevOwner);
+		obj.changeSurfaceOwner(prevOwner);
 
 		bool hasBase = obj.owner !is null && obj.owner.valid;
 		obj.HasBase = hasBase ? 1.f : 0.f;
@@ -241,6 +250,8 @@ tidy class AsteroidScript {
 
 		obj.orbitTick(time);
 		obj.resourceTick(time);
+		if(obj.owner !is null && obj.owner.valid)
+			obj.surfaceTick(time);
 
 		//Tick occasional stuff
 		timer -= float(time);
@@ -259,8 +270,10 @@ tidy class AsteroidScript {
 			}
 		}
 
-		//Asteroids are destroyed when they run out of cargo or resources
-		if(obj.cargoTypes == 0 && obj.nativeResourceCount == 0)
+		//Asteroids are destroyed when they run out of cargo or resources,
+		//unless they've been claimed and built on via our slot system.
+		if(obj.cargoTypes == 0 && obj.nativeResourceCount == 0
+				&& (obj.owner is null || !obj.owner.valid))
 			obj.destroy();
 
 		return 0.2;

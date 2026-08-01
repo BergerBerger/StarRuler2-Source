@@ -21,6 +21,7 @@ uint majorEmpireCount = 0;
 array<ScriptThread@> threads;
 DesignSet creepDesigns;
 DesignSet pirateDesigns;
+DesignSet ourPresetDesigns;
 
 uint getMajorEmpireCount() {
 	return majorEmpireCount;
@@ -29,8 +30,10 @@ uint getMajorEmpireCount() {
 void init(Empire& emp) {
 	emp.initResearch();
 	emp.initAttributes();
-	emp.modFTLCapacity(+250);
-	emp.modFTLIncome(+1);
+	//FTL is hidden from the player for now and shouldn't gate movement;
+	//it'll come back later as a dynamic of our own energy system.
+	emp.modFTLCapacity(+999999);
+	emp.modFTLIncome(+9999);
 	emp.modTotalBudget(+550, MoT_Planet_Income);
 
 	//Handle handicap
@@ -113,6 +116,12 @@ void initEmpireDesigns() {
 	pirateDesigns.readDirectory("data/designs/pirates");
 	pirateDesigns.log = true;
 
+	//Our fixed ship presets (Small/Medium/Large/Capital Warship). Mining is a
+	//building (Mining Unit), not a ship. Given straight to the human player so
+	//there's no need for the design editor.
+	ourPresetDesigns.readDirectory("data/designs/our_presets");
+	ourPresetDesigns.log = true;
+
 	for(uint i = 0, cnt = getEmpireCount(); i < cnt; ++i) {
 		Empire@ emp = getEmpire(i);
 
@@ -123,6 +132,10 @@ void initEmpireDesigns() {
 		else if(emp is Pirates) {
 			//Give the pirates their blueprints
 			pirateDesigns.createFor(emp);
+		}
+		else if(emp is playerEmpire) {
+			//Give the human player our fixed presets
+			ourPresetDesigns.createFor(emp);
 		}
 	}
 }
