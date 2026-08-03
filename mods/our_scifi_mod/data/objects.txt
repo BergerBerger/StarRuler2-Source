@@ -38,7 +38,7 @@ visible:
 	int lastHit = 0
 
 	local safe bool get_isStation();
-	
+
 remote restricted:
 	void scuttle();
 
@@ -76,13 +76,13 @@ server:
 	void startRetrofit(Object@ from, const Design@ to);
 	void stopRetrofit(Object@ from);
 	void completeRetrofit(Object@ from);
-	
+
 	void suppress(double amount);
 	void mangle(double amount);
 	void startFire();
 
 	void triggerLeaderChange(Object@ prevLeader, Object@ newLeader);
-	
+
 	safe Empire@ getKillCredit();
 }
 
@@ -119,7 +119,7 @@ visible:
 	double MaxHealth = 1000000000
 
 	local safe uint get_moonCount() const;
-	
+
 server:
 	void giveHistoricMemory(Empire@ emp);
 	void dealPlanetDamage(double amount);

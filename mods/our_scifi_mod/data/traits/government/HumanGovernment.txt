@@ -10,6 +10,10 @@ Trait: HumanGovernment
 	Default: True
 	Unique: Government
 
+	//Fixed RTS ship roster: common warships plus Human-only ships.
+	LoadDesigns(our_presets, False, False)
+	LoadDesigns(our_human_presets, False, False)
+
 	SpawnShip(Scout)
 
 	//Flat starting Energy stockpile (Minerals' equivalent flat start is set

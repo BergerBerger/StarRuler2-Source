@@ -10,6 +10,8 @@ Trait: RebelCapitol
 	Color: #c73434
 
 	UnlockSubsystem(MothershipHull)
+	//Load the Rebel-only Capitol after the hull is unlocked during pre-init.
+	LoadDesigns(our_rebel_presets, False, False)
 
 	//Design doc: Rebels start with a Capitol ship and two small ships,
 	//instead of a homeworld planet (Humans start with one Scout + their

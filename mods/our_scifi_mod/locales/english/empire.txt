@@ -555,7 +555,7 @@ ORB_MAINFRAME_DESC: <<
 	Maintains the link of individual fleets to the collective network.
 
 	Fleets near mainframes fight with increased strength.
-	
+
 	Fleets far away from mainframes fight with significantly weakened strength.
 
 	The mainframe's weapons will only fire when it is currently in allied territory.
@@ -619,7 +619,7 @@ ORB_TEMPLE_DESC: <<
 STATUS_EVANGELIZED: Evangelized
 STATUS_EVANGELIZED_DESC: <<
 	This planet has been Evangelized by a nearby Star Temple. It provides 1 Influence Stake to its owner.
-	
+
 	If the Star Temple was owned by a different empire, that empire also gains 1 Influence Stake, as well as gaining bonus money equal to 10% of the income generated on this planet.
 
 	Evangelized planets cannot be captured through siege by any empire except the owner of the Star Temple.
@@ -771,7 +771,7 @@ Checked Astrology, though, and I [b]do[/b] know that the Milky Way isn't anywher
 Ship's reactor is good for another three thousand years, give or take, if we can locate some more fuel.
 
 [font=Medium]Captain's Log, August 05 - 31330(?)[/font]
-[hr/]Mercy told me I should find someone else to lead the colony in case I kick the bucket. Redundancy. 
+[hr/]Mercy told me I should find someone else to lead the colony in case I kick the bucket. Redundancy.
 Just like a machine to worry about redundancy when people are staring at the corpses of their dead loved ones.
 I told her to do it herself.
 
@@ -788,7 +788,7 @@ She told me everyone was suffering - that it was my fault. I shut her down - I d
 
 I hear my 'replacement' is near finished with the training in the sim-pod. I've checked his data - I'm not impressed.
 We're deep in the unknown now. Back on Terra Firma, I looked up at the sky and saw just endless possibilities.
-Here on New Hope I look up and all I can feel is this creeping terror. Something is up there - and we're not prepared to meet 'em. 
+Here on New Hope I look up and all I can feel is this creeping terror. Something is up there - and we're not prepared to meet 'em.
 
 I hope to God that 'newbie's luck' applies to whatever it is we're heading for - something tells me the kid's going to need it.
 >>
@@ -830,7 +830,7 @@ The Great Wind will spread the Oko to the farthest lights and like spores in sum
 RACE_MONO: Mono
 RACE_MONO_TAGLINE: The will of the Creators.
 RACE_MONO_LORE: <<
-Memory Index 00: Tumbling through the Void on a stream of highly energized particles of unknown composition. 
+Memory Index 00: Tumbling through the Void on a stream of highly energized particles of unknown composition.
 Impact on planet surface at 3,012 kilometers per second. Catastrophic systems damage. 86% of stored information lost.
 Prime Directive: Survive.
 

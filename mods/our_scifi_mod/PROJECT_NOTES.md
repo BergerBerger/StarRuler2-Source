@@ -60,7 +60,8 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
 - Humans start on a homeworld planet with one Scout. Rebels start with no
   homeworld — a mobile Capitol ship (`RebelCapitol` trait) plus two Small
   Warships instead.
-- Fixed ship designs only (`data/designs/our_presets/`); the
+- Fixed ship designs only (`data/designs/our_presets/` for shared warships,
+  `our_human_presets/` and `our_rebel_presets/` for faction ships); the
   interactive blueprint editor UI is hidden/replaced with a portrait+name
   everywhere it used to show (`ShipInfoBar.as`, `ShipPopup.as`).
 - Per-body-type base income (table above), wired through
@@ -117,6 +118,13 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
    the player to realistically have.
 
 ## Testing protocol (important — read before touching tick/loop code)
+
+- Run the fast data tests first:
+  `python -m unittest discover -s mods/our_scifi_mod/tests -v`.
+- After a Windows x64 build, run
+  `mods/our_scifi_mod/tests/run_engine_smoke.ps1`. It uses an isolated
+  temporary profile, compiles every AngelScript context, rejects log errors,
+  and cleans up after itself.
 
 - Launch with `--quickstart` for fast iteration
   (`Star Ruler 2.exe --quickstart`, run from the repo root so relative

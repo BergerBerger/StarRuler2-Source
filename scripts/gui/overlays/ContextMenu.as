@@ -30,7 +30,7 @@ bool playedSound = false;
 void playOptionSound(const SoundSource@ sound) {
 	if(sound is null || playedSound)
 		return;
-	
+
 	playedSound = true;
 	sound.play(priority=true);
 }
@@ -322,7 +322,7 @@ class ScuttleOrbital : Option, QuestionDialogCallback {
 		if(answer == QA_Yes)
 			cast<Orbital>(clicked).scuttle();
 	}
-	
+
 	void call() {
 		question(
 			locale::SCUTTLE,
@@ -337,7 +337,7 @@ class ScuttleFlagship : Option, QuestionDialogCallback {
 		if(answer == QA_Yes)
 			cast<Ship>(clicked).scuttle();
 	}
-	
+
 	void call() {
 		question(
 			locale::SCUTTLE,
@@ -545,7 +545,7 @@ class ExportResource : Option {
 };
 
 class ExportAnyResource : SelectionOption {
-	void call(Object@ selected) {	
+	void call(Object@ selected) {
 		if(selected.isPlanet) {
 			if(selected !is clicked) {
 				selected.exportResource(0, clicked);
@@ -830,7 +830,7 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 	//sub.addOption("A");
 	//sub.addOption("B");
 	//sub.addOption("C");
-	
+
 	if(selected !is null && selOwner is playerEmpire && selected.hasLeaderAI && selected.isShip) {
 		if(clicked.isAnomaly && cast<Anomaly>(clicked).progress < 1.f)
 			addOption(menu, selected, clicked, locale::SCAN_ANOMALY, ScanAnomaly(), icons::Anomaly);
@@ -843,7 +843,7 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 	if(selected !is null && selected.hasResources && clicked.hasResources) {
 		if(selectedObjects.length > 1)
 			addOption(menu, selected, clicked, format(locale::EXPORT_RESOURCES, clicked.name), ExportAnyResource());
-		
+
 		//Exports
 		uint cnt = selected.nativeResourceCount;
 		if(clicked is selected) {
@@ -857,9 +857,9 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 						continue;
 					if(selected.nativeResourceLocked[i])
 						continue;
-					
+
 					string text;
-					
+
 					if(selected.nativeResourceUsable[i] && dest.owner is playerEmpire)
 						text = format(locale::STOP_EXPORT_RESOURCE, type.name, dest.name);
 					else
@@ -945,7 +945,7 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 	if(clicked.isPlanet && playerEmpire.NoAutoColonize == 0) {
 		bool quarantined = clicked.quarantined;
 		bool addedColonyOptions = false;
-		
+
 		if(selected !is null && selected.owner is playerEmpire && selected.isPlanet
 				&& selected !is clicked && selected.maxPopulation > 1) {
 			//Colonization from selected planet
@@ -953,7 +953,7 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 				if(clickedOwner is null || !clickedOwner.valid) {
 					if(!quarantined) {
 						addedColonyOptions = true;
-						
+
 						//TODO: Take slipstream & gate into account
 						double eta = 1.0;
 						eta += newtonArrivalTime(selected.colonyShipAccel, clicked.position - selected.position, vec3d()) / 60.0;
@@ -961,14 +961,14 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 							eta += double(selected.colonyOrderCount);
 						if(selected.owner.HasFlux != 0)
 							eta = 0;
-						
+
 						if(playerEmpire.ForbidColonization == 0) {
 							if(eta <= 0)
 								addOption(menu, selected, clicked, format(locale::COLONIZE_WITH_BASIC, selected.name), Colonize(), COLONIZE_ICON);
 							else
 								addOption(menu, selected, clicked, format(locale::COLONIZE_WITH, selected.name, toString(eta, 1)), Colonize(), COLONIZE_ICON);
 						}
-						
+
 						if(clicked.isBeingColonized)
 							addOption(menu, selected, clicked, locale::CANCEL_AUTO_COLONIZE, CancelAutoColonize());
 					}
@@ -985,8 +985,8 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 				addedColonyOptions = true;
 			}
 		}
-		
-		if(!addedColonyOptions) {		
+
+		if(!addedColonyOptions) {
 			//Auto-colonization
 			if(clicked.isBeingColonized) {
 				addOption(menu, selected, clicked, locale::CANCEL_AUTO_COLONIZE, CancelAutoColonize());
@@ -1074,7 +1074,7 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 			&& constructObj.canBuildAsteroids && clicked.isAsteroid &&
 			cast<Asteroid>(clicked).canDevelop(playerEmpire)
 			&& clicked.region !is null && constructObj.region !is null) {
-	
+
 			Object@ pathFrom = constructObj;
 			if(constructSlave !is null && constructSlave.region !is null)
 				@pathFrom = constructSlave;
@@ -1084,13 +1084,13 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 
 			if(pathCheck.isUsablePath) {
 				double costFactor = 1.0 + config::ASTEROID_COST_STEP * double(pathCheck.pathSize - 1);
-	
+
 				Asteroid@ asteroid = cast<Asteroid>(clicked);
 				for(uint i = 0, cnt = asteroid.getAvailableCount(); i < cnt; ++i) {
 					uint resId = asteroid.getAvailable(i);
 					double cost = asteroid.getAvailableCost(i);
 					const ResourceType@ type = getResource(resId);
-	
+
 					if(type !is null && cost > 0.0)
 						addOption(menu, selected, clicked,
 								format(locale::BUILD_ASTEROID_OPTION,
@@ -1115,7 +1115,7 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 		//designs (players don't build custom designs to retrofit into),
 		//intentionally suppressed.
 	}
-	
+
 	//System colonization
 	if(clicked.isStar && playerEmpire.NoAutoColonize == 0) {
 		Region@ region = clicked.region;
@@ -1169,7 +1169,7 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 					SetDefending(obj, true), icons::Defense);
 		}
 	}
-	
+
 	//Finance options
 	if(clicked is selected && clicked.owner is playerEmpire) {
 		Orbital@ orb = cast<Orbital>(clicked);
@@ -1188,7 +1188,7 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 		&& selected.laborIncome > 0) {
 		addOption(menu, selected, clicked, format(locale::EXPORT_LABOR, clicked.name), ExportLabor(), icons::Labor);
 	}
-	
+
 	//Rallying
 	if(selected !is null && selected.owner is playerEmpire && selected.hasConstruction)
 		if(selected.isRallying && (selected is clicked || selected.rallyObject is clicked))

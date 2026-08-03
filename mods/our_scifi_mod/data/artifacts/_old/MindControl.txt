@@ -1,0 +1,4 @@
+//Deliberately empty override.
+//
+//The base artifact grants the Enslave ability. Both mechanics are outside the
+//two-faction RTS design and Enslave depends on the removed SlaveLabor resource.

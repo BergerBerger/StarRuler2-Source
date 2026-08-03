@@ -475,7 +475,7 @@ MARENIUM_DESC: <<|
 ASTEROID_FTL: FTL Shards
 ASTEROID_FTL_DESC: <<|
 	Generates 0.5 FTL per second.
-	
+
 	Does not need to be exported.
 >>
 

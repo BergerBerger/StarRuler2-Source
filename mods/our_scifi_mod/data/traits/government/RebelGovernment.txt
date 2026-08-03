@@ -9,6 +9,9 @@ Trait: RebelGovernment
 
 	Unique: Government
 
+	//Both factions share the fixed Small/Medium/Large warship roster.
+	LoadDesigns(our_presets, False, False)
+
 	//Flat starting Energy stockpile (Minerals' equivalent flat start is set
 	//once for all empires in empire.as's init(), via modTotalBudget).
 	AddEnergy(50, Modified = False)

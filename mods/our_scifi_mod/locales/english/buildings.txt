@@ -75,7 +75,7 @@ BLD_FACTORY_DESC: <<
 BLD_FTLSTORE: FTL Storage
 BLD_FTLSTORE_DESC: <<
 	A large storage chamber built inside a subspace isolation field to store FTL crystals.
-	
+
 	Stores 250 FTL Energy.
 	Storage doubled when placed on a planet with native FTL crystals.
 >>
@@ -226,7 +226,7 @@ STATUS_HAS_DEFENSES_DESC: This planet has defensive weapons constructed on its s
 BLD_DEFENSE_GRID: Planetary Defense Grid
 BLD_DEFENSE_GRID_DESC: <<|
 	A massive field of missile silos located on the surface of the planet, capable of firing at nearby enemy fleets.
-	
+
 	The grid is composed of 10 missile launchers totaling 250 DPS with 450 range.
 
 	[i]If there are enemy fleets in orbit and you do not have any remaining support ships to protect the satellite guidance system, the missile silos are disabled.[/i]
@@ -234,7 +234,7 @@ BLD_DEFENSE_GRID_DESC: <<|
 BLD_PLANET_CANNON: Planetary Artillery Cannon
 BLD_PLANET_CANNON_DESC: <<|
 	An enormous railgun on the planet's surface propels large projectiles towards enemy fleets in the system, inflicting devastating damage.
-	
+
 	The cannon deals 200 Damage every 5 seconds at 1500 range.
 
 	[i]If there are enemy fleets in orbit and you do not have any remaining support ships to protect the satellite guidance system, the artillery cannon is disabled.[/i]

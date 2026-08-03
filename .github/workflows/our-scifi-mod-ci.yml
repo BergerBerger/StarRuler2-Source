@@ -1,0 +1,37 @@
+name: Our Sci-Fi Mod CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - our-scifi-mod
+
+jobs:
+  data-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - name: Run mod data unit tests
+        run: python -m unittest discover -s mods/our_scifi_mod/tests -v
+
+  windows-engine:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    needs: data-tests
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build Non-Steam x64 game
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsPath = & $vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+          $msbuild = Join-Path $vsPath "MSBuild\Current\Bin\MSBuild.exe"
+          & $msbuild ".\source\msvc\Star Ruler 2\Star Ruler 2.sln" /m /nr:false /t:Build "/p:Configuration=Non-Steam Release" "/p:Platform=x64" /v:minimal /nologo
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Compile all mod scripts headlessly
+        shell: pwsh
+        run: .\mods\our_scifi_mod\tests\run_engine_smoke.ps1

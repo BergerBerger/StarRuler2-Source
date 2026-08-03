@@ -21,7 +21,6 @@ uint majorEmpireCount = 0;
 array<ScriptThread@> threads;
 DesignSet creepDesigns;
 DesignSet pirateDesigns;
-DesignSet ourPresetDesigns;
 
 uint getMajorEmpireCount() {
 	return majorEmpireCount;
@@ -120,12 +119,6 @@ void initEmpireDesigns() {
 	pirateDesigns.readDirectory("data/designs/pirates");
 	pirateDesigns.log = true;
 
-	//Our fixed ship presets (Small/Medium/Large/Capital Warship). Mining is a
-	//building (Mining Unit), not a ship. Given straight to the human player so
-	//there's no need for the design editor.
-	ourPresetDesigns.readDirectory("data/designs/our_presets");
-	ourPresetDesigns.log = true;
-
 	for(uint i = 0, cnt = getEmpireCount(); i < cnt; ++i) {
 		Empire@ emp = getEmpire(i);
 
@@ -136,11 +129,6 @@ void initEmpireDesigns() {
 		else if(emp is Pirates) {
 			//Give the pirates their blueprints
 			pirateDesigns.createFor(emp);
-		}
-		else {
-			//Give every major empire (human or AI) our fixed presets, so
-			//SpawnShip trait effects can find them regardless of who's playing.
-			ourPresetDesigns.createFor(emp);
 		}
 	}
 }
