@@ -7,25 +7,20 @@ Ability: ConquerPlanet
 	Range: 80
 	Target: targ = Object
 
-	//Design doc: every owned heavenly body type (planet, asteroid belt,
-	//star/sun, satellite/station) can be conquered, not just planets.
+	//Every heavenly body type (planet, asteroid belt, star/sun,
+	//satellite/station) can be conquered, not just planets.
 	Either(Either(Either(TargetFilterType(targ, Planet), TargetFilterType(targ, Asteroid)), TargetFilterType(targ, Star)), TargetFilterType(targ, Orbital))
 	//No TargetFilterNotQuarantined: that's a planet-only plague mechanic,
 	//not relevant to our simplified conquest flow, and it would reject
 	//every non-planet target outright since it only recognizes planets.
-	//Enemy-owned only: neutral/unclaimed objects are Colonize's job.
-	//TargetFilterSpace (space-owned/neutral) used to also match here,
-	//which made Colonize and Conquer both show up on the same neutral
-	//planet at once.
-	TargetFilterOtherEmpire(targ)
-	//Design doc: "Conquest transfers the object and all structures on it;
-	//captured mines and harvesters immediately work for the new owner." A
-	//TargetFilterNoBuildings(targ) filter here previously required buildings
-	//to be destroyed before conquest was even possible, the opposite of what
-	//the doc wants -- removed.
+	//Conquer is now the single way to take any body, neutral or
+	//enemy-owned -- Colonize has been removed entirely, so there's no
+	//longer a conflict between the two on a neutral target.
+	Either(TargetFilterSpace(targ), TargetFilterOtherEmpire(targ))
 	TargetFilterNotInCombat(targ)
 
 	IsToggleTarget(targ, Channels = True)
 
-	//RTS adaptation: conquest channels for 60 real-time seconds.
-	AfterChannel(targ, 60, TakeControl(), Clear = False)
+	//Conquest channels for 8 real-time seconds, then the body (and any
+	//buildings on it) transfers to the conquering empire.
+	AfterChannel(targ, 8, TakeControl(), Clear = False)
