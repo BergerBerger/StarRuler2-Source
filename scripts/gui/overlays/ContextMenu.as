@@ -941,81 +941,11 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 	//not applicable to our simplified Minerals+Energy economy (no native
 	//resource levels to auto-import), so intentionally suppressed.
 
-	//Colonization
-	if(clicked.isPlanet && playerEmpire.NoAutoColonize == 0) {
-		bool quarantined = clicked.quarantined;
-		bool addedColonyOptions = false;
-
-		if(selected !is null && selected.owner is playerEmpire && selected.isPlanet
-				&& selected !is clicked && selected.maxPopulation > 1) {
-			//Colonization from selected planet
-			if(!selected.hasColonyTarget(clicked)) {
-				if(clickedOwner is null || !clickedOwner.valid) {
-					if(!quarantined) {
-						addedColonyOptions = true;
-
-						//TODO: Take slipstream & gate into account
-						double eta = 1.0;
-						eta += newtonArrivalTime(selected.colonyShipAccel, clicked.position - selected.position, vec3d()) / 60.0;
-						if(selected.isColonizing)
-							eta += double(selected.colonyOrderCount);
-						if(selected.owner.HasFlux != 0)
-							eta = 0;
-
-						if(playerEmpire.ForbidColonization == 0) {
-							if(eta <= 0)
-								addOption(menu, selected, clicked, format(locale::COLONIZE_WITH_BASIC, selected.name), Colonize(), COLONIZE_ICON);
-							else
-								addOption(menu, selected, clicked, format(locale::COLONIZE_WITH, selected.name, toString(eta, 1)), Colonize(), COLONIZE_ICON);
-						}
-
-						if(clicked.isBeingColonized)
-							addOption(menu, selected, clicked, locale::CANCEL_AUTO_COLONIZE, CancelAutoColonize());
-					}
-				}
-				else if(clicked.owner is playerEmpire && clicked.population < 1) {
-					if(playerEmpire.ForbidColonization == 0)
-						addOption(menu, selected, clicked, locale::COLONIZE_CONTINUE, Colonize(), COLONIZE_ICON);
-					addedColonyOptions = true;
-				}
-			}
-			else {
-				string text = format(locale::COLONIZE_CANCEL, clicked.name);
-				addOption(menu, selected, clicked, text, CancelColonize());
-				addedColonyOptions = true;
-			}
-		}
-
-		if(!addedColonyOptions) {
-			//Auto-colonization
-			if(clicked.isBeingColonized) {
-				addOption(menu, selected, clicked, locale::CANCEL_AUTO_COLONIZE, CancelAutoColonize());
-			}
-			else {
-				if(clickedOwner is null || !clickedOwner.valid) {
-					addOption(menu, selected, clicked, quarantined ? locale::AUTO_COLONIZE_BLOCKED : locale::AUTO_COLONIZE, AutoColonize(), COLONIZE_ICON);
-					//No AUTO_COLONIZE_LEVEL suboption: that's a vanilla
-					//native-resource-level threshold, not applicable here.
-				}
-			}
-		}
-	}
+	//Colonization: removed entirely. Conquer (data/abilities/our_abilities/
+	//ConquerPlanet.txt) is now the single way to take any body, neutral or
+	//enemy-owned -- no separate instant-claim action.
 
 	if(selected !is null && selected.owner.controlled) {
-		if(selected.isPlanet && clicked.isPlanet) {
-			//Colonization order management
-			if(selected is clicked) {
-				uint colonyOrders = selected.colonyOrderCount;
-				for(uint i = 0; i < colonyOrders; ++i) {
-					Object@ target = selected.colonyTarget[i];
-					if(target is null)
-						break;
-					string text = format(locale::COLONIZE_CANCEL, target.name);
-					addOption(menu, selected, clicked, text, CancelColonizeTarget(target));
-				}
-			}
-		}
-
 		//Transfering support ships: vanilla carrier/escort-bay mechanic that
 		//doesn't apply to our fixed Small/Medium/Large/Capitol ship classes,
 		//so this is intentionally suppressed rather than left showing
@@ -1116,40 +1046,7 @@ bool openContextMenu(Object& clicked, Object@ selected = null) {
 		//intentionally suppressed.
 	}
 
-	//System colonization
-	if(clicked.isStar && playerEmpire.NoAutoColonize == 0) {
-		Region@ region = clicked.region;
-		if(region !is null) {
-			//Check if there are any uncolonized planets
-			uint plCnt = region.planetCount;
-			bool hasUncolonized = false, hasUnderleveled = false, hasColonizing = false;
-			for(uint i = 0; i < plCnt; ++i) {
-				Planet@ pl = region.planets[i];
-				if(pl is null)
-					continue;
-				if(pl.owner is null || pl.owner.valid)
-					continue;
-				if(!pl.known)
-					continue;
-				if(pl.isBeingColonized) {
-					hasColonizing = true;
-					continue;
-				}
-				hasUncolonized = true;
-				auto@ resType = getResource(pl.primaryResourceType);
-				if(resType !is null && resType.level != 0)
-					hasUnderleveled = true;
-			}
-
-			if(hasUncolonized) {
-				addOption(menu, selected, clicked, format(locale::AUTO_COLONIZE_SYSTEM, region.name), AutoColonizeSystem(), COLONIZE_ICON);
-				if(hasUnderleveled)
-					addOption(menu, selected, clicked, format(locale::AUTO_COLONIZE_SYSTEM_LEVEL, region.name), AutoColonizeSystem(true), Sprite(spritesheet::ResourceClassIcons, 7));
-			}
-			if(hasColonizing)
-				addOption(menu, selected, clicked, format(locale::STOP_COLONIZE_SYSTEM, region.name), CancelColonizeSystem());
-		}
-	}
+	//System colonization: removed along with Colonize (see above).
 
 	//Defense projection
 	if((selected is clicked && selected.owner is playerEmpire && selected.isPlanet)

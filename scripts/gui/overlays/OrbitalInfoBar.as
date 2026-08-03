@@ -128,6 +128,9 @@ class OrbitalInfoBar : InfoBar {
 		@objView.object = obj;
 		updateTimer = 0.0;
 		updateActions();
+
+		//Selecting a station should show its building slots immediately.
+		showManage(obj);
 	}
 
 	bool displays(Object@ obj) override {

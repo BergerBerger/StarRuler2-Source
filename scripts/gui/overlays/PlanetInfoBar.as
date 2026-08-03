@@ -208,6 +208,10 @@ class PlanetInfoBar : InfoBar {
 		updateTimer = 0.0;
 		modID = 0;
 		updateActions();
+
+		//Selecting a planet should show its building slots immediately --
+		//no separate "Manage" click or double-click needed.
+		showManage(obj);
 	}
 
 	bool displays(Object@ obj) override {
