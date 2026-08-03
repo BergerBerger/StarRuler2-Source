@@ -637,7 +637,7 @@ class GalaxyTab : Tab {
 
 		//Update hover popup
 		Object@ hov = hoveredObject;
-		if(hov !is null && !hasObjectDisplay(hov)) {
+		if(hov !is null && !hasObjectDisplay(hov) && supportsPopup(hov)) {
 			if(hovPopup is null) {
 				@hovPopup = makePopup(hov);
 			}
@@ -719,6 +719,13 @@ class GalaxyTab : Tab {
 	}
 
 	bool supportsPopup(Object@ obj) {
+		//Planets/asteroids/stars/orbitals already show everything needed
+		//(name, production, build slots) the moment they're selected --
+		//the floating click-and-hold popup on top of that just repeats a
+		//3D terrain preview, population/loyalty rows, and an "Uncolonized"
+		//owner label we don't want appearing at all.
+		if(obj.isPlanet || obj.isAsteroid || obj.isStar || obj.isOrbital)
+			return false;
 		return true;
 	}
 

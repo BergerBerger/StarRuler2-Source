@@ -18,7 +18,7 @@ import icons;
 import statuses;
 from elements.GuiResources import LEVEL_REQ;
 from overlays.ContextMenu import openContextMenu;
-from overlays.PlanetOverlay import PlanetOverlay;
+from overlays.Construction import ConstructionOverlay;
 from overlays.BodyEconomy import formatBodyProduction;
 from tabs.GalaxyTab import zoomTabTo;
 
@@ -32,7 +32,7 @@ class PlanetInfoBar : InfoBar {
 	array<Status> statuses;
 
 	Planet@ pl;
-	PlanetOverlay@ overlay;
+	ConstructionOverlay@ overlay;
 	Gui3DObject@ objView;
 
 	GuiSkinElement@ nameBox;
@@ -222,7 +222,10 @@ class PlanetInfoBar : InfoBar {
 	bool showManage(Object@ obj) override {
 		if(overlay !is null)
 			overlay.remove();
-		@overlay = PlanetOverlay(findTab(), cast<Planet>(obj));
+		//Same lightweight build-list overlay Asteroid/Star/Orbital use --
+		//no 3D zoom-in, no rendered tile/terrain grid, just the buildable
+		//slot list.
+		@overlay = ConstructionOverlay(findTab(), obj);
 		visible = false;
 		return false;
 	}
