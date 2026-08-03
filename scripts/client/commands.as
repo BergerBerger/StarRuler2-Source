@@ -313,83 +313,6 @@ void doTransfer(Object@ source, bool isTemporary) {
 		targetObject(TransferSupports(source, isTemporary));
 }
 
-class ColonizePlanets : ObjectTargeting {
-	array<Object@> objs;
-
-	ColonizePlanets(array<Object@>& sources) {
-		allowMultiple = true;
-		objs.reserve(sources.length);
-		for(uint i = 0, cnt = sources.length; i < cnt; ++i) {
-			Object@ obj = sources[i];
-			if(obj.isPlanet)
-				objs.insertLast(obj);
-		}
-	}
-
-	bool valid(Object@ target) {
-		if(target !is null && target.isPlanet) {
-			auto@ owner = target.visibleOwner;
-			if(owner is null || !owner.valid || (owner is playerEmpire && cast<Planet>(target).Population < 1.0))
-				return true;
-		}
-		return false;
-	}
-
-	void call(Object@ target) {
-		bool anyColonized = false;
-		
-		if(target.hasResources) {
-			for(uint i = 0, cnt = objs.length; i < cnt; ++i) {
-				auto@ obj = objs[i];
-				if(obj.isPlanet && obj.owner is playerEmpire && obj.canSafelyColonize && obj !is target) {
-					obj.colonize(target);
-					anyColonized = true;
-				}
-			}
-		}
-		
-		if(anyColonized)
-			sound::order_goto.play(priority=true);
-		else
-			sound::error.play(priority=true);
-	}
-
-	string message(Object@ target, bool valid) {
-		if(valid)
-			return locale::COLONIZE_GENERIC;
-		else
-			return locale::ONLY_PLANETS;
-	}
-};
-
-void doColonize(bool pressed) {
-	if(pressed) {
-		auto@ objs = immediateSelection;
-		if(anySelected(ofType=OT_Planet, owned=true, list=objs)) {
-			targetObject(ColonizePlanets(objs));
-		}
-		else if(anySelected(ofType=OT_Planet, list=objs)) {
-			bool anyColonized = false;
-			
-			for(uint i = 0, cnt = objs.length; i < cnt; ++i) {
-				auto@ obj = objs[i];
-				if(obj.isPlanet && cast<Planet>(obj).Population < 1.0) {
-					playerEmpire.autoColonize(obj);
-					anyColonized = true;
-				}
-			}
-			
-			if(anyColonized)
-				sound::generic_click.play(priority=true);
-			else
-				sound::error.play(priority=true);
-		}
-		else {
-			sound::error.play(priority=true);
-		}
-	}
-}
-
 class AttackTarget : ObjectTargeting {
 	array<Object@> objs;
 
@@ -502,7 +425,6 @@ void init() {
 	keybinds::Global.addBind(KB_TRANSFER_SUPPORTS, "doTransfer");
 	keybinds::Global.addBind(KB_CANCEL_EXPORT, "doCancelExport");
 	keybinds::Global.addBind(KB_AUTO_IMPORT, "doAutoImport");
-	keybinds::Global.addBind(KB_COLONIZE, "doColonize");
 	keybinds::Global.addBind(KB_ATTACK, "doAttack");
 	keybinds::Global.addBind(KB_HOMEWORLD, "gotoHomeworld");
 	keybinds::Global.addBind(KB_STOP, "stopOrder");

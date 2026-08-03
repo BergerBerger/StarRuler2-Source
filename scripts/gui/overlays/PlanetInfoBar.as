@@ -171,15 +171,8 @@ class PlanetInfoBar : InfoBar {
 			actions.addBasic(pl);
 			actions.addFTL(pl);
 
-			if(pl.population > 1.0 && playerEmpire.ForbidColonization == 0)
-				actions.add(ColonizeAction());
-
 			actions.addAbilities(pl);
 			actions.addEmpireAbilities(playerEmpire, pl);
-		}
-		else {
-			if((pl.owner is null || !pl.owner.valid) && !pl.quarantined && playerEmpire.ForbidColonization == 0)
-				actions.add(ColonizeThisAction());
 		}
 
 		actions.init(pl);
@@ -487,52 +480,6 @@ class ManageAction : BarAction {
 	void call() override {
 		selectObject(obj);
 		openOverlay(obj);
-	}
-};
-
-class ColonizeAction : BarAction {
-	void init() override {
-		icon = icons::Colonize;
-		tooltip = locale::TT_COLONIZE;
-	}
-
-	void call() override {
-		targetObject(ColonizeTarget(obj));
-	}
-};
-
-class ColonizeTarget : ObjectTargeting {
-	Object@ obj;
-
-	ColonizeTarget(Object@ obj) {
-		@this.obj = obj;
-	}
-
-	void call(Object@ target) {
-		obj.colonize(target);
-	}
-
-	string message(Object@ obj, bool valid) {
-		return locale::COLONIZE;
-	}
-
-	bool valid(Object@ obj) {
-		if(!obj.isPlanet)
-			return false;
-		if(obj.quarantined)
-			return false;
-		return obj.owner is null || !obj.owner.valid;
-	}
-};
-
-class ColonizeThisAction : BarAction {
-	void init() override {
-		icon = icons::ColonizeThis;
-		tooltip = locale::TT_COLONIZE_THIS;
-	}
-
-	void call() override {
-		playerEmpire.autoColonize(obj);
 	}
 };
 
