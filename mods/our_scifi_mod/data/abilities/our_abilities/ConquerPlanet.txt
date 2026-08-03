@@ -16,11 +16,14 @@ Ability: ConquerPlanet
 	//Conquer is now the single way to take any body, neutral or
 	//enemy-owned -- Colonize has been removed entirely, so there's no
 	//longer a conflict between the two on a neutral target.
-	Either(TargetFilterSpace(targ), TargetFilterOtherEmpire(targ))
+	//Enemy-owned bodies can only be conquered once their buildings are
+	//gone (bombard them first with BombardPlanet); neutral bodies never
+	//have buildings, so they're unaffected by this check.
+	Either(TargetFilterSpace(targ), Both(TargetFilterOtherEmpire(targ), TargetFilterNoBuildings(targ)))
 	TargetFilterNotInCombat(targ)
 
 	IsToggleTarget(targ, Channels = True)
 
-	//Conquest channels for 8 real-time seconds, then the body (and any
-	//buildings on it) transfers to the conquering empire.
+	//Conquest channels for 8 real-time seconds, then the body transfers to
+	//the conquering empire (its buildings, if any, are already gone by now).
 	AfterChannel(targ, 8, TakeControl(), Clear = False)

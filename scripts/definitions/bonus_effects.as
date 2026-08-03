@@ -627,6 +627,27 @@ class TakeControl : BonusEffect {
 };
 
 
+class DestroyABuilding : BonusEffect {
+	Document doc("Destroys a single building on the target object -- the first one found scanning its surface grid. Used by bombardment.");
+
+#section server
+	void activate(Object@ obj, Empire@ emp) const override {
+		if(obj is null || !obj.hasSurfaceComponent)
+			return;
+		vec2i size = obj.surfaceGridSize;
+		for(int y = 0; y < size.y; ++y) {
+			for(int x = 0; x < size.x; ++x) {
+				if(obj.getBuildingAt(x, y) != -1) {
+					obj.forceDestroyBuilding(vec2i(x, y));
+					return;
+				}
+			}
+		}
+	}
+#section all
+};
+
+
 class MoveToOwnedSystem : BonusEffect {
 	Document doc("Move the target object to a system owned by the target empire.");
 

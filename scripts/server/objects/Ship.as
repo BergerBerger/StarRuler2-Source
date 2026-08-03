@@ -402,6 +402,12 @@ tidy class ShipScript {
 			if(conquerAbl !is null)
 				ship.addAbility(conquerAbl.id);
 
+			//...and can bombard an enemy body's buildings first, since
+			//Conquer now refuses to take a body that still has any standing.
+			auto@ bombardAbl = getAbilityType("BombardPlanet");
+			if(bombardAbl !is null)
+				ship.addAbility(bombardAbl.id);
+
 			//Ships built after Human Shields research picks up the bonus
 			//directly; already-existing ships got it retroactively from
 			//GrantFleetShieldBonus when the tech completed.

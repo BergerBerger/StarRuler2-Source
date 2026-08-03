@@ -1557,6 +1557,25 @@ class TargetFilterNoBuildings : TargetFilter {
 	}
 };
 
+class TargetFilterHasBuildings : TargetFilter {
+	Document doc("Target must have at least one of our slot buildings still standing on it; used to keep bombardment from being offered against bodies with nothing left to destroy.");
+	Argument object(TT_Object);
+
+	string getFailReason(Empire@ emp, uint index, const Target@ targ) const override {
+		return locale::NTRG_NO_BUILDINGS;
+	}
+
+	bool isValidTarget(Object@ obj, Empire@ emp, uint index, const Target@ targ) const override {
+		if(index != uint(object.integer))
+			return true;
+		if(targ.obj is null)
+			return false;
+		if(!targ.obj.hasSurfaceComponent || targ.obj.getBuildingCount() == 0)
+			return false;
+		return true;
+	}
+};
+
 class TargetFilterCargoStorage : TargetFilter {
 	Document doc("Only allow targets that have cargo storage.");
 	Argument objTarg(TT_Object);
