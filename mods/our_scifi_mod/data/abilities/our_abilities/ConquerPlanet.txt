@@ -27,3 +27,10 @@ Ability: ConquerPlanet
 	//Conquest channels for 8 real-time seconds, then the body transfers to
 	//the conquering empire (its buildings, if any, are already gone by now).
 	AfterChannel(targ, 8, TakeControl(), Clear = False)
+
+	//A body that was never colonized (every neutral target, since Colonize
+	//no longer exists) has no developed/usable surface tiles, so its slot
+	//grid would show nothing to build on. Force-develop a generous number
+	//of tiles -- same call the vanilla homeworld setup uses -- so slots are
+	//open immediately on takeover, matching an already-owned planet.
+	AfterChannel(targ, 8, DevelopTiles(500), Clear = False)

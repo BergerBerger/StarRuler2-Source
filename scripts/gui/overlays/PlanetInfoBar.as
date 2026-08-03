@@ -15,13 +15,12 @@ import planet_levels;
 import util.constructible_view;
 import util.formatting;
 import icons;
-import targeting.ObjectTarget;
 import statuses;
 from elements.GuiResources import LEVEL_REQ;
 from overlays.ContextMenu import openContextMenu;
 from overlays.PlanetOverlay import PlanetOverlay;
 from overlays.BodyEconomy import formatBodyProduction;
-from tabs.GalaxyTab import zoomTabTo, openOverlay, toggleSupportOverlay;
+from tabs.GalaxyTab import zoomTabTo;
 
 //Temporary to avoid allocations
 Resources available;
@@ -165,21 +164,17 @@ class PlanetInfoBar : InfoBar {
 
 	void updateActions() {
 		actions.clear();
-		
+
+		//No Manage button: selecting the planet already opens its slot grid
+		//via showManage(), so a second button that opens another instance of
+		//the same overlay is redundant (and reads as a stray menu popping up).
+		//No Colonize actions either -- Colonize was removed from the game
+		//entirely in favor of Conquer; these buttons were the last leftover.
 		if(pl.owner is playerEmpire) {
-			actions.add(ManageAction());
 			actions.addBasic(pl);
 			actions.addFTL(pl);
-
-			if(pl.population > 1.0 && playerEmpire.ForbidColonization == 0)
-				actions.add(ColonizeAction());
-
 			actions.addAbilities(pl);
 			actions.addEmpireAbilities(playerEmpire, pl);
-		}
-		else {
-			if((pl.owner is null || !pl.owner.valid) && !pl.quarantined && playerEmpire.ForbidColonization == 0)
-				actions.add(ColonizeThisAction());
 		}
 
 		actions.init(pl);
@@ -475,64 +470,6 @@ class PlanetInfoBar : InfoBar {
 				@ft = ft.bold;
 			ft.draw(pos=pos, text=cons[0].name, horizAlign=0.0, vertAlign=0.0, stroke=colors::Black);
 		}
-	}
-};
-
-class ManageAction : BarAction {
-	void init() override {
-		icon = icons::Manage;
-		tooltip = locale::TT_MANAGE_PLANET;
-	}
-
-	void call() override {
-		selectObject(obj);
-		openOverlay(obj);
-	}
-};
-
-class ColonizeAction : BarAction {
-	void init() override {
-		icon = icons::Colonize;
-		tooltip = locale::TT_COLONIZE;
-	}
-
-	void call() override {
-		targetObject(ColonizeTarget(obj));
-	}
-};
-
-class ColonizeTarget : ObjectTargeting {
-	Object@ obj;
-
-	ColonizeTarget(Object@ obj) {
-		@this.obj = obj;
-	}
-
-	void call(Object@ target) {
-		obj.colonize(target);
-	}
-
-	string message(Object@ obj, bool valid) {
-		return locale::COLONIZE;
-	}
-
-	bool valid(Object@ obj) {
-		if(!obj.isPlanet)
-			return false;
-		if(obj.quarantined)
-			return false;
-		return obj.owner is null || !obj.owner.valid;
-	}
-};
-
-class ColonizeThisAction : BarAction {
-	void init() override {
-		icon = icons::ColonizeThis;
-		tooltip = locale::TT_COLONIZE_THIS;
-	}
-
-	void call() override {
-		playerEmpire.autoColonize(obj);
 	}
 };
 
