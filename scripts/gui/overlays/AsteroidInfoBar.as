@@ -106,6 +106,9 @@ class AsteroidInfoBar : InfoBar {
 		@objView.object = obj;
 		updateTimer = 0.0;
 		updateActions();
+
+		//Selecting an asteroid should show its building slots immediately.
+		showManage(obj);
 	}
 
 	bool displays(Object@ obj) override {
@@ -130,6 +133,15 @@ class AsteroidInfoBar : InfoBar {
 
 	double updateTimer = 1.0;
 	void update(double time) override {
+		if(overlay !is null) {
+			if(overlay.parent is null) {
+				@overlay = null;
+				visible = true;
+			}
+			else
+				overlay.update(time);
+		}
+
 		updateTimer -= time;
 		if(updateTimer <= 0) {
 			updateTimer = randomd(0.1,0.9);
