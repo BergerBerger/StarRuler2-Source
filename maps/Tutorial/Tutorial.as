@@ -1105,29 +1105,17 @@ class CheckPlanetOverlay : GuiObjectiveCheck {
 
 class CheckBuildingsList : GuiObjectiveCheck {
 	bool check() {
-		auto@ gtab = cast<GalaxyTab>(tabs[0]);
-		if(gtab !is ActiveTab)
-			return false;
-		auto@ ibar = cast<PlanetInfoBar>(gtab.infoBar);
-		if(ibar is null)
-			return false;
-		if(ibar.overlay is null || !ibar.overlay.visible)
-			return false;
-		return ibar.overlay.construction.buildingsList.visible;
+		//Our mod's slot-grid overlay has no buildings/orbitals tabs to
+		//check (it's just a row of build/destroy squares), so this vanilla
+		//tutorial-only objective can never complete -- harmless, since our
+		//game doesn't use the vanilla tutorial map.
+		return false;
 	}
 };
 
 class CheckOrbitalsList : GuiObjectiveCheck {
 	bool check() {
-		auto@ gtab = cast<GalaxyTab>(tabs[0]);
-		if(gtab !is ActiveTab)
-			return false;
-		auto@ ibar = cast<PlanetInfoBar>(gtab.infoBar);
-		if(ibar is null)
-			return false;
-		if(ibar.overlay is null || !ibar.overlay.visible)
-			return false;
-		return ibar.overlay.construction.orbitalsList.visible;
+		return false;
 	}
 };
 

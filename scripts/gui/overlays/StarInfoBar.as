@@ -9,13 +9,13 @@ import elements.GuiSkinElement;
 import elements.MarkupTooltip;
 import icons;
 from obj_selection import isSelected, selectObject, clearSelection, addToSelection;
-from overlays.Construction import ConstructionOverlay;
+from overlays.SlotGrid import SlotGridPanel;
 from overlays.BodyEconomy import formatBodyProduction;
 
 class StarInfoBar : InfoBar {
 	Star@ obj;
 	Gui3DObject@ objView;
-	ConstructionOverlay@ overlay;
+	SlotGridPanel@ overlay;
 
 	GuiSkinElement@ nameBox;
 	GuiText@ name;
@@ -91,8 +91,7 @@ class StarInfoBar : InfoBar {
 	bool showManage(Object@ obj) override {
 		if(overlay !is null)
 			overlay.remove();
-		@overlay = ConstructionOverlay(findTab(), obj);
-		visible = false;
+		@overlay = SlotGridPanel(findTab(), obj);
 		return false;
 	}
 
