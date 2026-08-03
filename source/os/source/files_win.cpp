@@ -73,6 +73,12 @@ void makeDirectory(const std::string& path) {
 }
 
 std::string getProfileRoot() {
+	char overridePath[32768];
+	DWORD overrideLength = GetEnvironmentVariableA(
+		"STAR_RULER_2_PROFILE", overridePath, sizeof(overridePath));
+	if(overrideLength > 0 && overrideLength < sizeof(overridePath))
+		return overridePath;
+
 	TCHAR path[MAX_PATH], *profile_folder = "\\My Games\\Star Ruler 2\\";
 	SHGetFolderPath( NULL, CSIDL_MYDOCUMENTS, NULL, 0, path);
 	PathAppend(path, profile_folder);

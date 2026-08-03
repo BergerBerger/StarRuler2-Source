@@ -822,7 +822,11 @@ int main(int argc, char** argv) {
 		devices.network->connect(launchConnect.substr(0, portIndex), port, launchPassword, true);
 	}
 
-	devices.render->reportErrors("Pre-init");
+	//Headless script compilation has no OpenGL context. Some modern drivers
+	//return GL_INVALID_OPERATION forever from glGetError() in that state, so
+	//only drain render errors when a window/context was actually requested.
+	if(createWindow)
+		devices.render->reportErrors("Pre-init");
 
 	//Run the main loop
 	while(game_state != GS_Quit) {

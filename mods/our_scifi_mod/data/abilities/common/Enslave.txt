@@ -1,0 +1,5 @@
+//Deliberately empty override.
+//
+//The total conversion has no slavery mechanic or SlaveLabor resource. The
+//base Enslave ability references that removed resource and is instantiated
+//even when no ship is granted the ability, which caused runtime hook errors.

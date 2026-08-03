@@ -29,9 +29,15 @@ uint getMajorEmpireCount() {
 void init(Empire& emp) {
 	emp.initResearch();
 	emp.initAttributes();
-	emp.modFTLCapacity(+250);
-	emp.modFTLIncome(+1);
-	emp.modTotalBudget(+550, MoT_Planet_Income);
+	//FTL is hidden from the player for now and shouldn't gate movement;
+	//it'll come back later as a dynamic of our own energy system.
+	emp.modFTLCapacity(+999999);
+	emp.modFTLIncome(+9999);
+	//Vanilla assumed every empire starts with a population-driven planet
+	//economy worth ~550 budget; our economy is entirely building-driven, so
+	//this is just the flat starting Minerals stockpile instead (kept at 50
+	//per the design doc's simplified starting resources).
+	emp.modTotalBudget(+50, MoT_Planet_Income);
 
 	//Handle handicap
 	if(emp.handicap < 0) {

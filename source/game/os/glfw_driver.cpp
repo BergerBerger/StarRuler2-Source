@@ -58,6 +58,7 @@ class GLFWDriver : public OSDriver {
 
 	std::list<Callback> callbacks[OSC_COUNT];
 	GLFWwindow* window;
+	bool glfwInitialized;
 
 public:
 #ifndef WIN_MODE
@@ -73,15 +74,19 @@ public:
 
 	double frameTime, gameTime, gameSpeed;
 
-	GLFWDriver() : window(0), mouseOver(true), canLock(false), shouldLock(false) {
-		glfwSetErrorCallback(glfwError);
-		glfwInit();
+	GLFWDriver(bool initializeWindowSystem)
+		: window(0), glfwInitialized(false), mouseOver(true), canLock(false), shouldLock(false) {
+		if(initializeWindowSystem) {
+			glfwSetErrorCallback(glfwError);
+			glfwInitialized = glfwInit() == GL_TRUE;
+		}
 		resetTimer();
 	}
 
 	~GLFWDriver() {
 		driver = 0;
-		glfwTerminate();
+		if(glfwInitialized)
+			glfwTerminate();
 	}
 	
 	bool systemRandom(unsigned char* buffer, unsigned bytes) {
@@ -205,10 +210,10 @@ public:
 			data.height = mode->height;
 		}
 
-		window = glfwCreateWindow(data.width, data.height, "Star Ruler 2", monitor, nullptr);
+		window = glfwCreateWindow(data.width, data.height, "Sol Dominion (working title)", monitor, nullptr);
 
 		if(window == 0)
-			window = glfwCreateWindow(1024,768, "Star Ruler 2 - Error Creating Window", nullptr, nullptr);
+			window = glfwCreateWindow(1024,768, "Sol Dominion - Error Creating Window", nullptr, nullptr);
 
 		if(window == 0) {
 			error("Could not create window.");
@@ -305,6 +310,10 @@ public:
 	}
 
 	int getKeyForChar(unsigned char chr) {
+		//GLFW's lookup returns KEY_UNKNOWN before glfwInit(). Headless script
+		//compilation still binds logical A-Z keys, whose key codes are ASCII.
+		if(!glfwInitialized)
+			return chr;
 		return glfwGetKeyForChar(chr);
 	}
 
@@ -560,9 +569,9 @@ void glfwError(int code, const char* msg) {
 	error("GLFW Error %d: %s", code, msg);
 }
 
-OSDriver* getGLFWDriver() {
+OSDriver* getGLFWDriver(bool initializeWindowSystem) {
 	if(!driver)
-		driver = new GLFWDriver();
+		driver = new GLFWDriver(initializeWindowSystem);
 	return driver;
 }
 

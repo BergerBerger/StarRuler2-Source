@@ -238,6 +238,11 @@ void addThreadCleanup(std::function<void()> func) {
 }
 
 bool initGlobal(bool loadGraphics, bool createWindow) {
+	//Set these before initializing subsystems so headless script tests do not
+	//accidentally use the normal game's default graphics/window settings.
+	load_resources = loadGraphics;
+	create_window = createWindow;
+
 	//Create the sound device
 	try {
 		if(use_sound) {
@@ -264,7 +269,7 @@ bool initGlobal(bool loadGraphics, bool createWindow) {
 	asPrepareMultithread();
 
 	print("Initializing window system");
-	devices.driver = os::getGLFWDriver();
+	devices.driver = os::getGLFWDriver(createWindow);
 	devices.driver->resetTimer();
 
 	//Load engine settings
@@ -313,17 +318,12 @@ bool initGlobal(bool loadGraphics, bool createWindow) {
 		devices.scripts.client->reload(args[0]);
 	} );
 
-	if(load_resources) {
+	//Resource parsers still need the render driver's factories during script
+	//tests, but its OpenGL initialization and processing tasks stay disabled.
+	devices.render = render::createGLDriver();
+	if(loadGraphics) {
 		print("Initializing OpenGL Engine");
-		devices.render = render::createGLDriver();
 	}
-	else {
-		devices.render = nullptr;
-	}
-
-	create_window = createWindow;
-
-	load_resources = loadGraphics;
 
 	//Create network driver
 	devices.network = new NetworkManager();
@@ -1073,7 +1073,7 @@ void initMods(const std::vector<std::string>& mods) {
 
 				devices.driver->createWindow(windat);
 				devices.driver->setCursorLocked(cursorCapture);
-				devices.driver->setWindowTitle("Star Ruler 2");
+				devices.driver->setWindowTitle("Sol Dominion (working title)");
 
 				devices.render->init();
 

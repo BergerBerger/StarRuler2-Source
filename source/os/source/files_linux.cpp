@@ -104,6 +104,10 @@ void makeDirectory(const std::string& path) {
 }
 
 std::string getProfileRoot() {
+	const char* overridePath = getenv("STAR_RULER_2_PROFILE");
+	if(overridePath != nullptr && overridePath[0] != '\0')
+		return overridePath;
+
 	std::string path = getenv("HOME");
 	path = path_join(path, ".starruler2");
 	return path;
