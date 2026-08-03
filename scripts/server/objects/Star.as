@@ -3,6 +3,7 @@
 import regions.regions;
 import saving;
 import systems;
+import tile_resources;
 
 LightDesc lightDesc;
 
@@ -10,7 +11,6 @@ tidy class StarScript {
 	bool hpDelta = false;
 	StrategicIconNode@ icon;
 	double baseEnergy = -1.0;
-	double turnTimer = 0.0;
 
 	void makeIcon(Star& star) {
 		@icon = StrategicIconNode();
@@ -105,6 +105,11 @@ tidy class StarScript {
 			node.hintParentObject(star.region, false);
 		star.resourcesPostLoad();
 		star.surfacePostLoad();
+		baseEnergy = 0.0;
+		if(star.getResourceProduction(TR_Energy) <= 0.000001) {
+			double migratedEnergy = double(randomi(10, 20));
+			star.modResource(TR_Energy, migratedEnergy / ENERGY_RESOURCE_PER_CYCLE);
+		}
 		makeIcon(star);
 	}
 	
@@ -193,18 +198,13 @@ tidy class StarScript {
 		if(obj.owner !is null && obj.owner !is defaultEmpire) {
 			obj.surfaceTick(time);
 
-			//Design doc: an owned star/sun has its own flat per-turn base
+			//An owned star/sun has its own flat 60-second-cycle baseline
 			//income (0 Minerals, random 10-20 Energy -- energy specialized).
-			//Not routed through modResource(TR_Energy, ...): see the
-			//matching comment in Planet.as for why that path accrues
-			//Energy roughly 30x too fast. Uses the direct
-			//modEnergyStored() + turn timer pattern instead.
-			if(baseEnergy < 0.0)
+			//Normalize it to the vanilla continuous Energy rate for smooth RTS
+			//accrual and stable ownership/save behavior.
+			if(baseEnergy < 0.0) {
 				baseEnergy = double(randomi(10, 20));
-			turnTimer += time;
-			if(turnTimer >= TURN_LENGTH) {
-				turnTimer -= TURN_LENGTH;
-				obj.owner.modEnergyStored(baseEnergy);
+				obj.modResource(TR_Energy, baseEnergy / ENERGY_RESOURCE_PER_CYCLE);
 			}
 		}
 

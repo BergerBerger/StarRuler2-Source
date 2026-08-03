@@ -5,8 +5,8 @@ Building: EnergyHarvesterUnit
 
 	Category: Production
 
-	//Design doc: Energy harvester costs 2 minerals, +2 energy per turn, no
-	//upkeep, finishes one turn (60s) after being ordered.
+	//RTS economy: costs 2 minerals, produces +2 Energy per 60-second
+	//economy cycle, has no upkeep, and takes 60 seconds to construct.
 	Size: 1x1
 	Base Cost: 2
 	Tile Cost: 0
@@ -16,4 +16,6 @@ Building: EnergyHarvesterUnit
 
 	RequireNotTrait(Ancient)
 
-	AddResource(Energy, 2)
+	//One Energy tile-resource is 0.5 Energy/second, so divide the desired
+	//per-cycle output by 30 to avoid the old 30x overproduction bug.
+	AddResource(Energy, 0.0666666667)

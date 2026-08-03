@@ -6,6 +6,7 @@ import object_creation;
 import orbitals;
 import saving;
 import util.target_search;
+import tile_resources;
 
 const int STRATEGIC_RING = -1;
 const double RECOVERY_TIME = 3.0 * 60.0;
@@ -25,7 +26,6 @@ tidy class OrbitalScript {
 
 	bool delta = false;
 	bool deltaHP = false;
-	double turnTimer = 0.0;
 	bool deltaOrbit = false;
 	bool disabled = false;
 
@@ -189,6 +189,7 @@ tidy class OrbitalScript {
 
 		//Stations get 3 slots for our buildable structures.
 		obj.initSurface(3, 1, 0, 0, 0, uint(-1));
+		obj.modResource(TR_Energy, 2.0 / ENERGY_RESOURCE_PER_CYCLE);
 	}
 
 	Orbital@ getMaster() {
@@ -263,6 +264,8 @@ tidy class OrbitalScript {
 		if(obj.hasLeaderAI)
 			obj.leaderPostLoad();
 		obj.surfacePostLoad();
+		if(obj.getResourceProduction(TR_Energy) <= 0.000001)
+			obj.modResource(TR_Energy, 2.0 / ENERGY_RESOURCE_PER_CYCLE);
 	}
 
 	double get_dps() {
@@ -1073,17 +1076,8 @@ tidy class OrbitalScript {
 		if(obj.owner !is null && obj.owner.valid) {
 			obj.surfaceTick(time);
 
-			//Design doc: satellites/stations have a fixed 2 Energy per-turn
-			//base income (0 Minerals). Not routed through
-			//modResource(TR_Energy, ...): see the matching comment in
-			//Planet.as for why that path accrues Energy roughly 30x too
-			//fast. Uses the direct modEnergyStored() + turn timer pattern
-			//instead.
-			turnTimer += time;
-			if(turnTimer >= TURN_LENGTH) {
-				turnTimer -= TURN_LENGTH;
-				obj.owner.modEnergyStored(2.0);
-			}
+			//The fixed +2 Energy baseline is part of the surface grid and
+			//accrues continuously at its normalized RTS rate.
 		}
 
 		//Tick orbit

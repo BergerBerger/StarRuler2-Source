@@ -87,6 +87,8 @@ tidy class AsteroidScript {
 	void postLoad(Asteroid& obj) {
 		makeMesh(obj);
 		obj.surfacePostLoad();
+		//The serialized surface already contains the rolled baseline.
+		baseMinerals = 0.0;
 	}
 
 	void save(Asteroid& obj, SaveFile& file) {

@@ -23,7 +23,6 @@ tidy class PlanetScript {
 	array<MoonData@>@ moons;
 	double baseMinerals = -1.0;
 	double baseEnergy = -1.0;
-	double energyTurnTimer = 0.0;
 
 	void init(Planet& planet) {
 		timer = -float(uint8(planet.id)) / 255.0;
@@ -175,6 +174,18 @@ tidy class PlanetScript {
 		planet.resourcesPostLoad();
 		planet.surfacePostLoad();
 		planet.leaderPostLoad();
+
+		//Surface production is serialized. Mark the baseline initialized so a
+		//loaded body never rolls and adds its Minerals a second time. Older
+		//development saves did not store baseline Energy in the grid; migrate
+		//those once when no Energy production exists yet.
+		baseMinerals = 0.0;
+		baseEnergy = 0.0;
+		if(planet.getResourceProduction(TR_Energy) <= 0.000001) {
+			double migratedEnergy = planet.owner !is null && planet is planet.owner.Homeworld
+				? 2.0 : double(randomi(2, 5));
+			planet.modResource(TR_Energy, migratedEnergy / ENERGY_RESOURCE_PER_CYCLE);
+		}
 		
 		Node@ node = planet.getNode();
 		if(node !is null)
@@ -380,7 +391,7 @@ tidy class PlanetScript {
 
 		Empire@ owner = planet.owner;
 		if(owner !is null && owner.valid) {
-			//Design doc: every owned planet has its own flat per-turn base
+			//Every owned planet has a flat 60-second-cycle baseline
 			//income (Eden/the homeworld: fixed 2 Minerals + 2 Energy; any
 			//other owned planet: random 2-5 of each).
 			//
@@ -392,13 +403,9 @@ tidy class PlanetScript {
 			//owns the planet next -- exactly like "captured mines
 			//immediately work for the new owner".
 			//
-			//Energy: NOT routed through modResource(TR_Energy, ...) -- that
-			//feeds Empire::modEnergyIncome(), which (unlike the Money path)
-			//applies its argument as a continuous per-second rate rather
-			//than a one-off registration, so it would accrue Energy roughly
-			//30x too fast. Kept on the direct modEnergyStored() + turn
-			//timer pattern instead, which is confirmed correct but (unlike
-			//Minerals) won't drive the map icon by itself.
+			//Energy tile resources are continuous rates, so normalize the
+			//per-cycle value by ENERGY_RESOURCE_PER_CYCLE. This keeps the RTS
+			//income smooth without the old 30x overproduction.
 			if(baseMinerals < 0.0) {
 				if(planet is owner.Homeworld) {
 					baseMinerals = 2.0;
@@ -409,12 +416,7 @@ tidy class PlanetScript {
 					baseEnergy = double(randomi(2, 5));
 				}
 				planet.modResource(TR_Money, baseMinerals);
-			}
-			energyTurnTimer += time;
-			if(energyTurnTimer >= TURN_LENGTH) {
-				energyTurnTimer -= TURN_LENGTH;
-				if(baseEnergy > 0.0)
-					owner.modEnergyStored(baseEnergy);
+				planet.modResource(TR_Energy, baseEnergy / ENERGY_RESOURCE_PER_CYCLE);
 			}
 
 			planet.constructionTick(time);

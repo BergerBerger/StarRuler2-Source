@@ -7,6 +7,7 @@ import saving;
 import attributes;
 import abilities;
 import unlock_tags;
+import tile_resources;
 from generic_effects import RegionChangeable, LeaderChangeable;
 from influence_global import giveRandomReward, DiplomacyEdictType;
 from designs import getDesignMesh;
@@ -64,7 +65,6 @@ tidy class ShipScript {
 	const Design@ retrofitTo;
 	const Design@ queuedRetrofit;
 	float timer = 0.f, bpTimer = 0.f;
-	double turnTimer = 0.0;
 	float supplyBonus = 0.f;
 	int disableRegionVision = 0;
 	int holdFire = 0;
@@ -346,6 +346,13 @@ tidy class ShipScript {
 
 		ship.surfacePostLoad();
 		ship.resourcesPostLoad();
+		const Design@ loadedDesign = ship.blueprint.design;
+		if(loadedDesign !is null && loadedDesign.name == "Capitol") {
+			if(ship.getResourceProduction(TR_Money) <= 0.000001)
+				ship.modResource(TR_Money, 1.0);
+			if(ship.getResourceProduction(TR_Energy) <= 0.000001)
+				ship.modResource(TR_Energy, 3.0 / ENERGY_RESOURCE_PER_CYCLE);
+		}
 
 		cacheStats(ship);
 		updateStats(ship);
@@ -445,8 +452,11 @@ tidy class ShipScript {
 		//one), but only the Capitol actually gets initSurface() called, so
 		//every other ship's grid stays at its inert default size of 0x0.
 		const Design@ dsg = ship.blueprint.design;
-		if(dsg !is null && dsg.name == "Capitol")
+		if(dsg !is null && dsg.name == "Capitol") {
 			ship.initSurface(3, 1, 0, 0, 0, uint(-1));
+			ship.modResource(TR_Money, 1.0);
+			ship.modResource(TR_Energy, 3.0 / ENERGY_RESOURCE_PER_CYCLE);
+		}
 
 		ship.startEffects();
 	}
@@ -1258,14 +1268,8 @@ tidy class ShipScript {
 				ship.resourceTick(time);
 				ship.surfaceTick(time);
 
-				//Capitol's flat per-turn baseline income (see Planet.as for
-				//the equivalent on the Human homeworld).
-				turnTimer += time;
-				if(turnTimer >= TURN_LENGTH) {
-					turnTimer -= TURN_LENGTH;
-					ship.owner.addBonusBudget(1);
-					ship.owner.modEnergyStored(3.0);
-				}
+				//The Capitol's +1 Minerals/+3 Energy baseline lives in its
+				//surface grid and accrues continuously like other RTS bodies.
 			}
 		}
 

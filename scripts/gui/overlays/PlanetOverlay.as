@@ -32,6 +32,7 @@ import overlays.Construction;
 from elements.GuiResources import LEVEL_REQ;
 from tabs.PlanetsTab import PlanetTree;
 from gui import animate_time;
+from overlays.BodyEconomy import getBodyMineralsPerCycle, getBodyEnergyPerCycle, formatBodyProduction;
 
 const double ANIM1_TIME = 0.15;
 const double ANIM2_TIME = 0.001;
@@ -88,9 +89,7 @@ class PlanetOverlay : GuiOverlay, ConstructionParent {
 		@construction = ConstructionDisplay(this, origin, Alignment(Right-offset-WIDTH,
 					Top+BORDER, Right-offset, Bottom-BORDER));
 		@surface = SurfaceDisplay(this, origin, Alignment(Left+offset,
-					Top+BORDER, Right-offset-BORDER-WIDTH, Top+0.6f-BORDER/2));
-		@resources = ResourceDisplay(this, origin, Alignment(Left+offset,
-					Top+0.6f+BORDER/2, Right-offset-BORDER-WIDTH, Bottom-BORDER));
+					Top+BORDER, Right-offset-BORDER-WIDTH, Bottom-BORDER));
 	}
 
 	IGuiElement@ elementFromPosition(const vec2i& pos) override {
@@ -114,7 +113,6 @@ class PlanetOverlay : GuiOverlay, ConstructionParent {
 
 					//Start showing all the data
 					surface.animate();
-					resources.animate();
 					construction.animate();
 
 					return true;
@@ -131,7 +129,7 @@ class PlanetOverlay : GuiOverlay, ConstructionParent {
 					surface.stopBuild();
 					return true;
 				}
-				else if(resources.tree.isDragging || resources.tree.dragging !is null) {
+				else if(resources !is null && (resources.tree.isDragging || resources.tree.dragging !is null)) {
 					resources.tree.stopDragging();
 					return true;
 				}
@@ -148,7 +146,8 @@ class PlanetOverlay : GuiOverlay, ConstructionParent {
 		@objView.alignment = null;
 
 		surface.visible = false;
-		resources.visible = false;
+		if(resources !is null)
+			resources.visible = false;
 		construction.visible = false;
 
 		vec2i parSize = parent.size;
@@ -174,7 +173,8 @@ class PlanetOverlay : GuiOverlay, ConstructionParent {
 
 	void update(double time) {
 		surface.update(time);
-		resources.update(time);
+		if(resources !is null)
+			resources.update(time);
 		construction.update(time);
 	}
 
@@ -392,87 +392,21 @@ class SurfaceDisplay : DisplayBox {
 		resetVars();
 
 		if(pl.visible) {
-			if(pl.owner.valid && pl.owner.HasPopulation != 0) {
-				Color popColor = colors::White;
-				if(!pl.primaryResourceUsable) {
-					if(pl.population < getPlanetLevelRequiredPop(pl, pl.resourceLevel) && !pl.inCombat) {
-						popColor = colors::Orange;
-					}
-				}
-				string popText = standardize(pl.population, true) + " / " + standardize(pl.maxPopulation, true);
-				addVariable(icons::Population, popText, locale::PLANET_POPULATION_TIP, popColor);
-			}
-		}
-		if(pl.owner is playerEmpire) {
-			auto@ scTrait = getTrait("StarChildren");
-			auto@ anTrait = getTrait("Ancient");
-			if((scTrait is null || !pl.owner.hasTrait(scTrait.id)) && (anTrait is null || !pl.owner.hasTrait(anTrait.id))) {
-				Color color = colors::White;
-				if(int(surface.totalPressure) > int(surface.pressureCap))
-					color = colors::Red;
-				string value = standardize(surface.totalPressure, true) + " / " + standardize(surface.pressureCap, true);
-				string ttip = format(locale::PLANET_PRESSURE_TIP, standardize(surface.totalPressure, true), standardize(surface.totalSaturate, true), standardize(surface.pressureCap, true));
-				addVariable(icons::Pressure, value, ttip, color);
-			}
-			{
-				Color color = colors::Money;
-				int income = pl.income;
-				if(income < 0)
-					color = colors::Red;
-				string value = formatMoney(income);
-				string ttip = format(locale::PLANET_INCOME_TIP, standardize(surface.pressures[TR_Money], true), standardize(surface.resources[TR_Money], true));
-				addVariable(icons::Money, value, ttip, color);
-			}
+			string economyTip = formatBodyProduction(pl, true);
+			addVariable(getTileResourceSprite(TR_Money),
+				"+"+standardize(getBodyMineralsPerCycle(pl), true)+" / 60s",
+				economyTip, colors::Money);
+			addVariable(getTileResourceSprite(TR_Energy),
+				"+"+standardize(getBodyEnergyPerCycle(pl), true)+" / 60s",
+				economyTip, colors::Energy);
 
-		}
-		if(pl.owner.valid) {
-			string loyText = toString(pl.currentLoyalty, 0);
-			addVariable(icons::Loyalty, loyText, locale::PLANET_LOYALTY_TIP, colors::White);
-		}
-		if(pl.owner is playerEmpire) {
-			if(surface.resources[TR_Energy] > 0 || surface.pressures[TR_Energy] > 0) {
-				Color color = colors::Energy;
-				string value = "+"+formatRate(surface.resources[TR_Energy] * TILE_ENERGY_RATE * pl.owner.EnergyEfficiency);
-				string ttip = format(locale::PLANET_ENERGY_TIP, standardize(surface.pressures[TR_Energy], true), standardize(surface.saturates[TR_Energy], true));
-				addVariable(icons::Energy, value, ttip, color);
-			}
-
-			if(surface.resources[TR_Defense] > 0 || surface.pressures[TR_Defense] > 0) {
-				Color color = colors::Defense;
-				string value = standardize(surface.resources[TR_Defense], true);
-				string ttip = format(locale::PLANET_DEFENSE_TIP, standardize(surface.pressures[TR_Defense], true), standardize(surface.saturates[TR_Defense], true));
-				addVariable(icons::Defense, value, ttip, color);
-			}
-
-			if(surface.resources[TR_Influence] > 0 || surface.pressures[TR_Influence] > 0) {
-				Color color = colors::Influence;
-				string value = standardize(surface.resources[TR_Influence], true);
-				string ttip = format(locale::PLANET_INFLUENCE_TIP, standardize(surface.pressures[TR_Influence], true), standardize(surface.saturates[TR_Influence], true));
-				addVariable(icons::Influence, value, ttip, color);
-			}
-
-			if(surface.resources[TR_Research] > 0 || surface.pressures[TR_Research] > 0) {
-				Color color = colors::Research;
-				string value = "+"+formatRate(surface.resources[TR_Research] * TILE_RESEARCH_RATE * pl.owner.ResearchEfficiency);
-				string ttip = format(locale::PLANET_RESEARCH_TIP, standardize(surface.pressures[TR_Research], true), standardize(surface.saturates[TR_Research], true));
-				addVariable(icons::Research, value, ttip, color);
-			}
-
-			if(pl.laborIncome > 0) {
-				Color color = colors::Labor;
-				string value = formatMinuteRate(pl.laborIncome);
-				string ttip = format(locale::PLANET_LABOR_TIP, standardize(surface.pressures[TR_Labor], true), standardize(surface.saturates[TR_Labor], true));
-				addVariable(icons::Labor, value, ttip, color);
-			}
-
-			uint cargoCnt = pl.cargoTypes;
-			for(uint i = 0; i < cargoCnt; ++i) {
-				auto@ type = getCargoType(pl.cargoType[i]);
-				if(type is null)
-					continue;
-				string value = standardize(pl.getCargoStored(type.id), true);
-				string ttip = format("[font=Medium]$1[/font]\n$2", type.name, type.description);
-				addVariable(type.icon, value, ttip, type.color);
+			if(pl.owner is playerEmpire && surface.resources[TR_Research] > 0) {
+				double researchPerCycle = surface.resources[TR_Research]
+					* TILE_RESEARCH_RATE * ECONOMY_CYCLE_SECONDS
+					* pl.owner.ResearchEfficiency;
+				addVariable(icons::Research,
+					"+"+standardize(researchPerCycle, true)+" / 60s",
+					locale::PLANET_RESEARCH_TIP, colors::Research);
 			}
 		}
 

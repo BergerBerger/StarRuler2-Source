@@ -142,6 +142,8 @@ RESOURCE_BUDGET: Minerals
 RESOURCE_MONEY: Minerals
 RESOURCE_INFLUENCE: Influence
 RESOURCE_ENERGY: Energy
+BODY_PRODUCTION_CYCLE: Production / 60s
+BODY_PRODUCTION_CYCLE_TIP: Income accrues continuously in real time. These values show this body's total output over 60 seconds.
 RESOURCE_FTL: FTL
 RESOURCE_RESEARCH: Research
 RESOURCE_DEFENSE: Defense

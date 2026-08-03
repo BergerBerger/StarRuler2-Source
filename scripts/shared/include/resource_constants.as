@@ -15,8 +15,11 @@ const double LABOR_ACHIEVE_THRESH = 200.0 * TILE_LABOR_RATE;
 //Labor's worth of support ships to build per minute with defense
 const double DEFENSE_LABOR_PM = 2.0;
 
-//Length of one "turn" in real-time seconds. The design notes describe a
-//turn-based economy (e.g. "2 minerals + 2 energy per turn"), but the engine
-//itself runs continuously, so home bodies grant their flat per-turn income
-//as a lump sum once every TURN_LENGTH seconds instead.
-const double TURN_LENGTH = 60.0;
+//The RTS economy reports production in a readable 60-second cycle while the
+//engine accrues it continuously. Values inherited from the old turn-based
+//prototype are converted to rates using this duration.
+const double ECONOMY_CYCLE_SECONDS = 60.0;
+const double ENERGY_RESOURCE_PER_CYCLE = TILE_ENERGY_RATE * ECONOMY_CYCLE_SECONDS;
+
+//Compatibility alias for older scripts/data comments.
+const double TURN_LENGTH = ECONOMY_CYCLE_SECONDS;

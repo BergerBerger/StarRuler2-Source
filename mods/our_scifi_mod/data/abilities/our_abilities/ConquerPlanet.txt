@@ -27,5 +27,5 @@ Ability: ConquerPlanet
 
 	IsToggleTarget(targ, Channels = True)
 
-	//Design doc: conquest takes one turn (60s = our TURN_LENGTH).
+	//RTS adaptation: conquest channels for 60 real-time seconds.
 	AfterChannel(targ, 60, TakeControl(), Clear = False)

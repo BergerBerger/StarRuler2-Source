@@ -1,7 +1,7 @@
 # Our Sci-Fi Mod — Project Notes / Handoff
 
 This is a total-conversion mod of Star Ruler 2 into a simplified "Humans vs
-Rebels" 4X game. It's built on top of SR2's engine/UI (real-time strategic
+Rebels" real-time strategy/4X game. It's built on top of SR2's engine/UI (real-time strategic
 map, tactical combat, AngelScript modding layer) rather than written from
 scratch, so a lot of the design is "take vanilla SR2's systems and strip or
 repurpose them" rather than new systems built from zero.
@@ -17,8 +17,8 @@ Two factions, Humans and Rebels, fighting over a galaxy with:
   asteroid belts, stars/suns, and stations/satellites. Each has build
   slots and its own base income once owned (see table below).
 - **Conquest, not diplomacy**: pick a ship, right-click a neutral body to
-  colonize it (instant), or an enemy body to conquer it (channel over one
-  turn, transfers the body and its buildings intact).
+  colonize it (instant), or an enemy body to conquer it (channel for 60
+  real-time seconds, then transfer the body and its buildings intact).
 - **Fixed ship classes** (Small/Medium/Large + faction flagship), not a
   build-your-own hex-editor design system like vanilla SR2. Players never
   see the blueprint editor.
@@ -36,7 +36,7 @@ so treat it as a rules/balance reference, not a literal spec — a lot of it
 (hex tile map, admirals, lobby/matchmaking, turn-based combat) doesn't
 apply to SR2's architecture and was intentionally not ported.
 
-## Base per-turn income by body type (once owned)
+## Base income per 60 real-time seconds (once owned)
 
 | Body | Minerals | Energy | Notes |
 | --- | ---: | ---: | --- |
@@ -64,16 +64,20 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
   `our_human_presets/` and `our_rebel_presets/` for faction ships); the
   interactive blueprint editor UI is hidden/replaced with a portrait+name
   everywhere it used to show (`ShipInfoBar.as`, `ShipPopup.as`).
-- Per-body-type base income (table above), wired through
-  `Object.modResource()` for Minerals and a direct
-  `modEnergyStored()`+turn-timer for Energy — **do not swap Energy to
-  `modResource(TR_Energy, ...)`**, that path is a continuous per-second
-  rate under the hood and will make Energy accrue ~30x too fast. See the
-  comments in `scripts/server/objects/Planet.as` for the long version.
+- Per-body-type base income (table above), wired through normalized surface
+  resources so both Minerals and Energy accrue continuously. Vanilla Energy
+  tile resources produce `0.5/second`, so values from the old per-turn brief
+  must be divided by `ENERGY_RESOURCE_PER_CYCLE (30)` before calling
+  `modResource(TR_Energy, ...)`; using the unscaled value is a 30x bug.
 - Map icon shows Minerals (preferred) or Energy on any body producing
   either, whether from a building or the base income above
   (`SurfaceComponent.as::updateIcon()`, both `server/` and `shadow/`
   copies — keep them in sync, they're independent implementations).
+- Planet, asteroid, star, and station info bars show exact Minerals/Energy
+  output per 60 real-time seconds, including passive body income and buildings.
+- The planet management overlay is reduced to the buildable surface,
+  construction catalog, and Minerals/Energy/Research rates. Vanilla population,
+  pressure, loyalty, auto-import, and native-resource level panels are hidden.
 - Conquer ability (`data/abilities/our_abilities/ConquerPlanet.txt`) works
   on planets, asteroids, stars, and stations. Colonize (vanilla ability,
   untouched) handles neutral bodies instantly.
@@ -90,30 +94,16 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
 
 ## Known gaps / next up
 
-1. **Hover tooltip showing exact Minerals/Energy production per body.**
-   The info bar panels (`PlanetInfoBar.as` etc.) still show vanilla's
-   native-resource description text, which is blank for us now. Needs the
-   GUI layer wired to whatever it can read for tile income — the GUI
-   scripts run in a separate context from server scripts, so this needs
-   some digging into what's actually exposed to the client. Not started.
-2. **`PlanetOverlay.as` (the full "click a planet" management panel,
-   ~1400 lines) is still 100% vanilla.** It has the buildable-tile grid we
-   want, but bundled with population-tier rows and auto-import resource
-   tree UI we don't want. This is the "click my planet and it's a wall of
-   options I don't need" complaint — the actual building-slot
-   functionality underneath is real and works, it's just buried. Trimming
-   this down without breaking the working construction UI needs care —
-   don't rush it.
-3. **Unreproduced bug report**: at one point the player saw "500 Minerals"
+1. **Unreproduced bug report**: at one point the player saw "500 Minerals"
    displayed instead of the expected 50 starting amount. Every automated
    test (including a 4-minute session well past the ~3-minute budget
    cycle) has shown a clean 50 with no unexplained jump. If this recurs, a
    screenshot showing exactly where the number appears would help — it
    might be a display element other than the main resource bar.
-4. Research is a simplified two-node tree per faction (root + one
+2. Research is a simplified two-node tree per faction (root + one
    upgrade). If more faction tech gets added, note the "one Research Lab
-   should finish a project in about one turn" pacing constraint — Point
-   Cost should stay near `TILE_RESEARCH_RATE (0.75/sec) * TURN_LENGTH
+   should finish a project in about one 60-second cycle" pacing constraint — Point
+   Cost should stay near `TILE_RESEARCH_RATE (0.75/sec) * ECONOMY_CYCLE_SECONDS
    (60s) = 45` per project, times however many Research Labs you expect
    the player to realistically have.
 
