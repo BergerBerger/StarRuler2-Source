@@ -17,6 +17,7 @@ import icons;
 from overlays.Construction import ConstructionOverlay;
 from obj_selection import isSelected, selectObject, clearSelection, addToSelection;
 from tabs.GalaxyTab import zoomTabTo, openOverlay, toggleSupportOverlay;
+from overlays.BodyEconomy import formatBodyProduction;
 
 class ShipInfoBar : InfoBar {
 	Ship@ ship;
@@ -446,6 +447,10 @@ class ShipInfoBar : InfoBar {
 		name.text = formatShipName(ship);
 		if(owner !is null)
 			name.color = owner.color;
+		if(ship.surfaceGridSize.x > 0)
+			setMarkupTooltip(shipPanel, formatBodyProduction(ship, true), width=350);
+		else
+			setMarkupTooltip(shipPanel, "");
 		vec2i dim = name.getTextDimension();
 		int w = clamp(dim.x+26, 160, 1000);
 		if(dim.x > name.size.width) {

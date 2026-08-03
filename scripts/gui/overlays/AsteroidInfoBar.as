@@ -8,6 +8,7 @@ import elements.GuiButton;
 import elements.GuiSprite;
 import elements.GuiProgressbar;
 import elements.GuiGroupDisplay;
+import elements.MarkupTooltip;
 import elements.GuiBlueprint;
 import elements.GuiSkinElement;
 import elements.GuiResources;
@@ -19,6 +20,7 @@ import icons;
 from obj_selection import isSelected, selectObject, clearSelection, addToSelection;
 import void openOverlay(Object@ obj) from "tabs.GalaxyTab";
 from overlays.Construction import ConstructionOverlay;
+from overlays.BodyEconomy import formatBodyProduction, formatBodyProductionCompact;
 
 class AsteroidInfoBar : InfoBar {
 	Asteroid@ obj;
@@ -33,6 +35,7 @@ class AsteroidInfoBar : InfoBar {
 	GuiText@ cargoName;
 	GuiText@ cargoValue;
 	GuiResourceGrid@ resources;
+	GuiMarkupText@ productionText;
 	
 	GuiSkinElement@ stateBox;
 	GuiMarkupText@ state;
@@ -67,6 +70,8 @@ class AsteroidInfoBar : InfoBar {
 		cargoName.font = FT_Bold;
 		@cargoValue = GuiText(resourceBox, Alignment(Left+38, Top+4, Right-12, Bottom-4));
 		cargoValue.horizAlign = 1.0;
+		@productionText = GuiMarkupText(resourceBox, Alignment(Left+8, Top+3, Right-8, Bottom-3));
+		productionText.visible = false;
 
 		y += 40;
 		@stateBox = GuiSkinElement(this, Alignment(Left+12, Top+y, Left+236, Bottom-4), SS_PlainOverlay);
@@ -149,29 +154,26 @@ class AsteroidInfoBar : InfoBar {
 				cargoName.visible = true;
 				cargoValue.visible = true;
 				resources.visible = false;
+				productionText.visible = false;
 
 				state.text = locale::ASTEROID_MINING;
 			}
-			else if(obj.nativeResourceCount != 0) {
-				//Update resource display
-				resources.resources.syncFrom(obj.getAllResources());
-				resources.resources.sortDesc();
-				resources.setSingleMode(align=0.0);
-
-				resourceBox.visible = resources.length != 0;
-
+			else {
+				//Native deposits are disabled in this mod. Show the body's exact
+				//Minerals/Energy output instead.
+				resourceBox.visible = obj.visible;
 				cargoIcon.visible = false;
 				cargoName.visible = false;
 				cargoValue.visible = false;
-				resources.visible = true;
+				resources.visible = false;
+				productionText.visible = obj.visible;
+				productionText.text = formatBodyProductionCompact(obj);
+				setMarkupTooltip(resourceBox, formatBodyProduction(obj, true), width=350);
 
 				if(owner.valid && obj.visible)
 					state.text = locale::ASTEROID_OWNED;
 				else
 					state.text = locale::ASTEROID_UNOWNED;
-			}
-			else {
-				resourceBox.visible = false;
 			}
 
 			//Update action bar

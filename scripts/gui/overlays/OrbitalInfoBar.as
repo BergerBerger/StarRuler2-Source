@@ -20,6 +20,7 @@ from overlays.ContextMenu import openContextMenu, FinanceDryDock;
 from overlays.Construction import ConstructionOverlay;
 from obj_selection import isSelected, selectObject, clearSelection, addToSelection, selectedObject;
 from tabs.GalaxyTab import zoomTabTo, openOverlay;
+from overlays.BodyEconomy import formatBodyProduction;
 
 class ModuleGrid : GuiIconGrid {
 	array<OrbitalSection> sections;
@@ -183,10 +184,12 @@ class OrbitalInfoBar : InfoBar {
 			//Update description
 			auto@ core = getOrbitalModule(obj.coreModule);
 			if(core !is null) {
-				moduleText.text = core.blurb;
+				moduleText.text = formatBodyProduction(obj);
 				moduleIcon.desc = core.icon;
-				setMarkupTooltip(moduleBox, format("[font=Medium]$1[/font]\n$2", core.name, core.description), width=350);
-				setMarkupTooltip(nameBox, format("[font=Medium]$1[/font]\n$2", core.name, core.description), width=350);
+				string details = format("[font=Medium]$1[/font]\n$2\n$3",
+					core.name, core.description, formatBodyProduction(obj, true));
+				setMarkupTooltip(moduleBox, details, width=350);
+				setMarkupTooltip(nameBox, details, width=350);
 			}
 
 			updateActions();

@@ -6,10 +6,12 @@ import elements.GuiText;
 import elements.GuiMarkupText;
 import elements.GuiButton;
 import elements.GuiSkinElement;
+import elements.MarkupTooltip;
 import icons;
 from obj_selection import isSelected, selectObject, clearSelection, addToSelection;
 import void openOverlay(Object@ obj) from "tabs.GalaxyTab";
 from overlays.Construction import ConstructionOverlay;
+from overlays.BodyEconomy import formatBodyProduction;
 
 class StarInfoBar : InfoBar {
 	Star@ obj;
@@ -109,9 +111,10 @@ class StarInfoBar : InfoBar {
 				name.color = owner.color;
 
 			if(owner !is null && owner.valid)
-				state.text = locale::ASTEROID_OWNED;
+				state.text = locale::ASTEROID_OWNED+"\n"+formatBodyProduction(obj);
 			else
-				state.text = locale::ASTEROID_UNOWNED;
+				state.text = locale::ASTEROID_UNOWNED+"\n"+formatBodyProduction(obj);
+			setMarkupTooltip(stateBox, formatBodyProduction(obj, true), width=350);
 
 			//Update action bar
 			updateActions();

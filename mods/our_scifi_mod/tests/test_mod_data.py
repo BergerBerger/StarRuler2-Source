@@ -168,6 +168,82 @@ class ModDataTests(unittest.TestCase):
         self.assertIn("if(!glfwInitialized)", key_lookup)
         self.assertIn("return chr;", key_lookup)
 
+    def test_energy_buildings_use_normalized_rts_rates(self) -> None:
+        energy_sources = {
+            "EnergyHarvesterUnit.txt": 2.0,
+            "StarHarvester.txt": 20.0,
+        }
+        buildings = MOD / "data/buildings/our_buildings"
+        add_energy = re.compile(r"AddResource\(Energy,\s*([0-9.]+)\)")
+
+        for filename, expected_per_cycle in energy_sources.items():
+            content = (buildings / filename).read_text(encoding="utf-8-sig")
+            match = add_energy.search(content)
+            self.assertIsNotNone(match, f"{filename} has no Energy production")
+            tile_rate = float(match.group(1))
+            self.assertAlmostEqual(
+                expected_per_cycle,
+                tile_rate * 0.5 * 60.0,
+                places=6,
+                msg=f"{filename} does not match its 60-second RTS output",
+            )
+
+    def test_body_energy_baselines_are_continuous_and_visible_to_ui(self) -> None:
+        sources = {
+            "Planet.as": ("energyTurnTimer", "modEnergyStored(baseEnergy)"),
+            "Star.as": ("turnTimer", "modEnergyStored(baseEnergy)"),
+            "Orbital.as": ("turnTimer", "modEnergyStored(2.0)"),
+            "Ship.as": ("turnTimer", "modEnergyStored(3.0)"),
+        }
+        objects = ROOT / "scripts/server/objects"
+        for filename, removed_patterns in sources.items():
+            content = (objects / filename).read_text(encoding="utf-8-sig")
+            self.assertIn("ENERGY_RESOURCE_PER_CYCLE", content)
+            for pattern in removed_patterns:
+                self.assertNotIn(pattern, content)
+
+        helper = (ROOT / "scripts/gui/overlays/BodyEconomy.as").read_text(
+            encoding="utf-8-sig"
+        )
+        self.assertIn("getResourceProduction(TR_Money)", helper)
+        self.assertIn("getResourceProduction(TR_Energy)", helper)
+        self.assertIn("ENERGY_RESOURCE_PER_CYCLE", helper)
+        for filename in (
+            "PlanetInfoBar.as",
+            "AsteroidInfoBar.as",
+            "StarInfoBar.as",
+            "OrbitalInfoBar.as",
+            "ShipInfoBar.as",
+        ):
+            content = (ROOT / "scripts/gui/overlays" / filename).read_text(
+                encoding="utf-8-sig"
+            )
+            self.assertIn("formatBodyProduction", content)
+
+    def test_planet_overlay_keeps_construction_and_hides_vanilla_management(self) -> None:
+        overlay = (ROOT / "scripts/gui/overlays/PlanetOverlay.as").read_text(
+            encoding="utf-8-sig"
+        )
+        constructor = overlay.split(
+            "PlanetOverlay(IGuiElement@ parent, Planet@ Obj)", 1
+        )[1].split("IGuiElement@ elementFromPosition", 1)[0]
+        variables = overlay.split("void updateVars()", 1)[1].split(
+            "bool onGuiEvent", 1
+        )[0]
+
+        self.assertIn("ConstructionDisplay(this", constructor)
+        self.assertIn("SurfaceDisplay(this", constructor)
+        self.assertNotIn("ResourceDisplay(this", constructor)
+        self.assertIn("getBodyMineralsPerCycle", variables)
+        self.assertIn("getBodyEnergyPerCycle", variables)
+        for vanilla_detail in (
+            "PLANET_POPULATION_TIP",
+            "PLANET_PRESSURE_TIP",
+            "PLANET_LOYALTY_TIP",
+            "PLANET_INFLUENCE_TIP",
+        ):
+            self.assertNotIn(vanilla_detail, variables)
+
 
 if __name__ == "__main__":
     unittest.main()

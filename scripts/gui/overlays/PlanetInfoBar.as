@@ -20,6 +20,7 @@ import statuses;
 from elements.GuiResources import LEVEL_REQ;
 from overlays.ContextMenu import openContextMenu;
 from overlays.PlanetOverlay import PlanetOverlay;
+from overlays.BodyEconomy import formatBodyProduction;
 from tabs.GalaxyTab import zoomTabTo, openOverlay, toggleSupportOverlay;
 
 //Temporary to avoid allocations
@@ -50,6 +51,7 @@ class PlanetInfoBar : InfoBar {
 	GuiSkinElement@ resourceBox;
 	GuiResourceGrid@ resources;
 	GuiMarkupText@ resourceDesc;
+	GuiMarkupText@ productionText;
 
 	GuiSkinElement@ popBox;
 	GuiSprite@ popIcon;
@@ -125,6 +127,7 @@ class PlanetInfoBar : InfoBar {
 		@resourceDesc = GuiMarkupText(resourceBox, Alignment(Left+8, Bottom-42, Right-8, Bottom));
 		resourceDesc.visible = false;
 		resourceDesc.defaultColor = Color(0xaaaaaaff);
+		@productionText = GuiMarkupText(resourceBox, Alignment(Left+8, Top+4, Right-8, Bottom-2));
 
 		@statusList = GuiSkinElement(this, Alignment(Left+295, Top+118, Left+295+34, Top+118+70), SS_PlainBox);
 		statusList.noClip = true;
@@ -311,36 +314,13 @@ class PlanetInfoBar : InfoBar {
 			uint lv = pl.level;
 			level.text = locale::LEVEL+" "+lv;
 
-			//Update resource display
-			resources.resources.syncFrom(pl.getAllResources());
-			if(!colonized)
-				resources.resources.length = min(resources.resources.length, 1);
-			else
-				resources.resources.sortDesc();
-			resources.setSingleMode(align=0.0);
-
-			auto@ primary = getResource(pl.primaryResourceType);
-			if(resources.resources.length == 1 || (primary !is null && primary.limitlessLevel)) {
-				resources.alignment.bottom.pixels = 40;
-
-				auto@ type = resources.resources[0].type;
-				string desc = format(type.blurb, toString(pl.level, 0));
-				if(desc.length == 0)
-					desc = format(type.description, toString(pl.level, 0));
-				if(desc.length == 0) {
-					if(type.level > 0) {
-						desc = format(locale::RESOURCE_TIER_DESC,
-							toString(type.level),
-							type.level < LEVEL_REQ.length ? getSpriteDesc(LEVEL_REQ[type.level]) : "ResourceClassIcons::5");
-					}
-				}
-				resourceDesc.text = desc;
-				resourceDesc.visible = true;
-			}
-			else {
-				resources.alignment.bottom.pixels = 2;
-				resourceDesc.visible = false;
-			}
+			//Show the actual two-resource RTS economy instead of the removed
+			//vanilla native-resource description.
+			resources.visible = false;
+			resourceDesc.visible = false;
+			productionText.text = formatBodyProduction(pl);
+			productionText.visible = pl.visible;
+			setMarkupTooltip(resourceBox, formatBodyProduction(pl, true), width=350);
 
 			//Update statuses
 			if(pl.statusEffectCount > 0)
@@ -376,14 +356,14 @@ class PlanetInfoBar : InfoBar {
 				resourceBox.alignment = Alignment(Left+5, Top+118, Left+295, Top+118+70);
 				resourceBox.updateAbsolutePosition();
 				statusBox.visible = false;
-				resourceBox.visible = resources.length != 0;
+				resourceBox.visible = pl.visible;
 			}
 			else {
 				resourceBox.alignment = Alignment(Left+5, Top+80, Left+295, Top+80+70);
 				resourceBox.updateAbsolutePosition();
 				statusList.visible = false;
 				statusBox.visible = true;
-				resourceBox.visible = resources.length != 0;
+				resourceBox.visible = pl.visible;
 
 				auto@ status = statuses[0].type;
 				for(uint i = 0, cnt = statuses.length; i < cnt; ++i) {
