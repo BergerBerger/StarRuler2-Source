@@ -7,11 +7,13 @@ Building: ResearchComplex
 	Build Affinity: Crystallic
 	Maintenance Affinity: Crystallic
 
+	//Design doc: Research lab cost/effect is "defined by balance data"; set to
+	//5 minerals to match Spaceport's tier, no upkeep.
 	Size: 1x1
-	Base Cost: 200
-	Tile Cost: 25
-	Base Maintenance: 100
-	Tile Maintenance: 15
+	Base Cost: 5
+	Tile Cost: 0
+	Base Maintenance: 0
+	Tile Maintenance: 0
 
 	RequireNotTrait(Ancient)
 

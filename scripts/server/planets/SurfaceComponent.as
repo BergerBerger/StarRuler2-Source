@@ -17,6 +17,25 @@ from components.ObjectManager import getDefenseDesign;
 import bool getCheatsEverOn() from "cheats";
 const string TAG_SUPPORT("Support");
 
+//Purely-cosmetic resource types (Distribution: 0, never natively spawned)
+//used to show a map icon for our own building-driven Minerals/Energy
+//production, since that's tracked in grid.resources[] and is completely
+//separate from the vanilla native-resource system nativeResourceType drives.
+const ResourceType@ ourMineralsIconType;
+const ResourceType@ ourEnergyIconType;
+
+const ResourceType@ getOurMineralsIconType() {
+	if(ourMineralsIconType is null)
+		@ourMineralsIconType = getResource("OurMinerals");
+	return ourMineralsIconType;
+}
+
+const ResourceType@ getOurEnergyIconType() {
+	if(ourEnergyIconType is null)
+		@ourEnergyIconType = getResource("OurEnergy");
+	return ourEnergyIconType;
+}
+
 bool INSTANT_COLONIZE = false;
 void setInstantColonize(bool value) {
 	INSTANT_COLONIZE = value;
@@ -2202,8 +2221,31 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 							DecayTimer > 0.0);
 				}
 				else {
-					icon.setResource(uint(-1));
-					icon.setState(false, false, true, false);
+					//No native resource deposit: show our own building
+					//production instead, if this world (owned by us) has any.
+					double minerals = grid.resources.length > TR_Money ? grid.resources[TR_Money] : 0.0;
+					double energy = grid.resources.length > TR_Energy ? grid.resources[TR_Energy] : 0.0;
+					if(minerals > 0.0 || energy > 0.0) {
+						//Prefer showing Minerals whenever a body produces any
+						//(our primary resource, more actionable for expansion
+						//planning at a glance); Energy only when Minerals is
+						//exactly zero. A body producing both used to show
+						//Energy on ties/higher values, which could make
+						//Minerals-producing worlds never show their icon.
+						const ResourceType@ ourType = minerals > 0.0 ? getOurMineralsIconType() : getOurEnergyIconType();
+						if(ourType !is null) {
+							icon.setResource(ourType.id);
+							icon.setState(false, false, true, false);
+						}
+						else {
+							icon.setResource(uint(-1));
+							icon.setState(false, false, true, false);
+						}
+					}
+					else {
+						icon.setResource(uint(-1));
+						icon.setState(false, false, true, false);
+					}
 				}
 			}
 			else if(obj.isKnownTo(playerEmpire) && playerEmpire.valid) {
@@ -2329,7 +2371,12 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 			prevBaseLoyalty = newLoy;
 		}
 
-		popIncome = income;
+		//Our economy is entirely building-driven (Mineral Mine/Energy
+		//Harvester), not population-driven -- population/city-tier mechanics
+		//are hidden from the UI but still simulated underneath, so without
+		//this the vanilla per-level civilian income (pop * 30/level tier)
+		//would silently keep compounding into the player's Minerals total.
+		popIncome = 0;
 		if(needsPopulationForLevel)
 			obj.resourceEfficiency = nativeLevelPct;
 		else
@@ -2386,6 +2433,12 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 			icon.visible = obj.isVisibleTo(playerEmpire);
 			icon.hintParentObject(obj.region, false);
 			updateIconVision(obj);
+			//Keep the map icon in sync with our own building production
+			//(grid.resources[] changes whenever a Mineral Mine/Energy
+			//Harvester finishes or is lost, unlike native resource deposits
+			//which are static once placed).
+			if(obj.nativeResourceCount == 0)
+				updateIcon(obj);
 
 			if(wasMoving != obj.isMoving) {
 				if(wasMoving) {
@@ -2496,7 +2549,12 @@ tidy class SurfaceComponent : Component_SurfaceComponent, Savable {
 			++SurfaceModId;
 
 		//Update resources from grid
-		int newIncome = ceil(grid.resources[TR_Money] * TILE_MONEY_RATE * obj.owner.MoneyGenerationFactor) + popIncome + bonusIncome;
+		//TILE_MONEY_RATE (75x) is a vanilla constant calibrated for SR2's
+		//original population-driven tile-money scale; our buildings grant a
+		//flat, already-final amount (e.g. Mineral Mine = +2), so applying
+		//that multiplier here would inflate one mine's income 75-fold. Use
+		//the flat amount directly instead.
+		int newIncome = ceil(grid.resources[TR_Money] * obj.owner.MoneyGenerationFactor) + popIncome + bonusIncome;
 		if(prevIncome != newIncome) {
 			if(prevIncome < 0) {
 				if(newIncome < 0) {

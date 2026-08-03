@@ -1,3 +1,5 @@
+#include "include/resource_constants.as"
+
 import regions.regions;
 from resources import MoneyType;
 import object_creation;
@@ -23,6 +25,7 @@ tidy class OrbitalScript {
 
 	bool delta = false;
 	bool deltaHP = false;
+	double turnTimer = 0.0;
 	bool deltaOrbit = false;
 	bool disabled = false;
 
@@ -1067,8 +1070,21 @@ tidy class OrbitalScript {
 		obj.resourceTick(time);
 
 		//Tick our buildable slots
-		if(obj.owner !is null && obj.owner.valid)
+		if(obj.owner !is null && obj.owner.valid) {
 			obj.surfaceTick(time);
+
+			//Design doc: satellites/stations have a fixed 2 Energy per-turn
+			//base income (0 Minerals). Not routed through
+			//modResource(TR_Energy, ...): see the matching comment in
+			//Planet.as for why that path accrues Energy roughly 30x too
+			//fast. Uses the direct modEnergyStored() + turn timer pattern
+			//instead.
+			turnTimer += time;
+			if(turnTimer >= TURN_LENGTH) {
+				turnTimer -= TURN_LENGTH;
+				obj.owner.modEnergyStored(2.0);
+			}
+		}
 
 		//Tick orbit
 		obj.moverTick(time);

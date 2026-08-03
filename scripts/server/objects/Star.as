@@ -1,3 +1,5 @@
+#include "include/resource_constants.as"
+
 import regions.regions;
 import saving;
 import systems;
@@ -7,6 +9,8 @@ LightDesc lightDesc;
 tidy class StarScript {
 	bool hpDelta = false;
 	StrategicIconNode@ icon;
+	double baseEnergy = -1.0;
+	double turnTimer = 0.0;
 
 	void makeIcon(Star& star) {
 		@icon = StrategicIconNode();
@@ -186,8 +190,23 @@ tidy class StarScript {
 		obj.donatedVision = mask;
 
 		obj.resourceTick(time);
-		if(obj.owner !is null && obj.owner !is defaultEmpire)
+		if(obj.owner !is null && obj.owner !is defaultEmpire) {
 			obj.surfaceTick(time);
+
+			//Design doc: an owned star/sun has its own flat per-turn base
+			//income (0 Minerals, random 10-20 Energy -- energy specialized).
+			//Not routed through modResource(TR_Energy, ...): see the
+			//matching comment in Planet.as for why that path accrues
+			//Energy roughly 30x too fast. Uses the direct
+			//modEnergyStored() + turn timer pattern instead.
+			if(baseEnergy < 0.0)
+				baseEnergy = double(randomi(10, 20));
+			turnTimer += time;
+			if(turnTimer >= TURN_LENGTH) {
+				turnTimer -= TURN_LENGTH;
+				obj.owner.modEnergyStored(baseEnergy);
+			}
+		}
 
 		return 1.0;
 	}

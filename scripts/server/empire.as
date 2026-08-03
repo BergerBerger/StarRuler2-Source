@@ -34,7 +34,11 @@ void init(Empire& emp) {
 	//it'll come back later as a dynamic of our own energy system.
 	emp.modFTLCapacity(+999999);
 	emp.modFTLIncome(+9999);
-	emp.modTotalBudget(+550, MoT_Planet_Income);
+	//Vanilla assumed every empire starts with a population-driven planet
+	//economy worth ~550 budget; our economy is entirely building-driven, so
+	//this is just the flat starting Minerals stockpile instead (kept at 50
+	//per the design doc's simplified starting resources).
+	emp.modTotalBudget(+50, MoT_Planet_Income);
 
 	//Handle handicap
 	if(emp.handicap < 0) {
@@ -133,8 +137,9 @@ void initEmpireDesigns() {
 			//Give the pirates their blueprints
 			pirateDesigns.createFor(emp);
 		}
-		else if(emp is playerEmpire) {
-			//Give the human player our fixed presets
+		else {
+			//Give every major empire (human or AI) our fixed presets, so
+			//SpawnShip trait effects can find them regardless of who's playing.
 			ourPresetDesigns.createFor(emp);
 		}
 	}

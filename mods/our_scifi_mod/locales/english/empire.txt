@@ -124,6 +124,24 @@ TRAIT_ANARCHY_DESC: <<|
 	A total lack of structural government. Start without any influence cards.
 >>
 
+TRAIT_HUMANGOVERNMENT: Government: Humans
+TRAIT_HUMANGOVERNMENT_DESC: <<
+	[vspace=6/][b][color=#0f0]Bonus:[/color][/b] [offset=140][color=#a06911]Extra nearby Asteroids[/color][/offset].
+	[vspace=6/][b][color=#f00]Starting Fleet:[/color][/b] [offset=140]1x Small Warship.[/offset]
+	[vspace=6/][b][color=#0087c7]Starting Cards:[/color][/b] [offset=140]5x Negotiate, 1x Name Flagship, 1x Name Planet.[/offset]
+>>
+
+TRAIT_REBELGOVERNMENT: Government: Rebels
+TRAIT_REBELGOVERNMENT_DESC: <<
+	[vspace=6/][b][color=#0f0]Bonus:[/color][/b] [offset=140][color=#a06911]Extra nearby Asteroids[/color][/offset].
+	[vspace=6/][b][color=#0087c7]Starting Cards:[/color][/b] [offset=140]5x Negotiate, 1x Name Flagship, 1x Name Planet.[/offset]
+>>
+
+TRAIT_REBELCAPITOL: Life: Rebel Capitol
+TRAIT_REBELCAPITOL_DESC: <<|
+	You have no fixed homeworld. Instead, your empire is anchored by the mobile Capitol ship, which can build and produce resources wherever it travels, escorted by 2 Small Warships.
+>>
+
 TRAIT_HYPERDRIVE: Hyperdrive
 TRAIT_HYPERDRIVE_DESC: <<|
 	Outfit your ships with hyperdrive engines to FTL long distances through hyperspace.
@@ -475,6 +493,11 @@ ABL_MOTHERSHIP_COLONIZE_DESC: <<
 
 	Will automatically construct an amount of habitats to match the population needed by the planet for its native resource level. Can be manually triggered on owned planets of higher level to fill up to their maximum population.
 >>
+
+ABL_CONQUER_PLANET: Conquer Planet
+ABL_CONQUER_PLANET_DESC: <<|
+	Claim an empty planet, or an enemy planet that has had all its buildings destroyed. Stay near the target for 10 seconds to take ownership of it.
+>>
 R_IMP_MOTHERSHIP_LABOR: Metallurgy
 R_IMP_MOTHERSHIP_LABOR2: Metallurgy 2
 R_IMP_MOTHERSHIP_LABOR_BLURB: Mothership Labor +$1
@@ -769,6 +792,27 @@ Here on New Hope I look up and all I can feel is this creeping terror. Something
 
 I hope to God that 'newbie's luck' applies to whatever it is we're heading for - something tells me the kid's going to need it.
 >>
+
+RACE_HUMANS: Humans
+RACE_HUMANS_TAGLINE: The last free colony of Earth.
+RACE_HUMANS_LORE: <<|
+Eden was supposed to be a waypoint, not a home. But when the drives failed and the survey ships stopped answering, the colonists made do with what they had: fertile soil, clear skies, and each other.
+
+Generations later, Eden is a world in its own right - and the rebels who fled it years ago have not forgotten where they came from.
+
+We do not seek their war. But we will not be undone by it either.
+>>
+
+RACE_REBELS: Rebels
+RACE_REBELS_TAGLINE: No world to lose, no reason to stop.
+RACE_REBELS_LORE: <<|
+They called us criminals for asking questions. So we took the Capitol - the great mobile shipyard built to seed new colonies - and left Eden behind for good.
+
+We have no homeworld anymore. We don't need one. Wherever the Capitol drifts, that is our nation, our factory, our home.
+
+Eden will not have the last word on who we are.
+>>
+
 RACE_OKO: Oko
 RACE_OKO_TAGLINE: The mother stalk wishes us to grow.
 RACE_OKO_LORE: <<

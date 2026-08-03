@@ -3,6 +3,7 @@ import regions.regions;
 import saving;
 import cargo;
 import attributes;
+import tile_resources;
 from systems import hasTradeAdjacent;
 
 Asteroid@ createAsteroid(const vec3d& position, Region@ region = null, bool delay = false) {
@@ -40,6 +41,7 @@ tidy class AsteroidScript {
 	uint resourceLimit = 1;
 	uint currentResources = 0;
 	uint limitMod = 0;
+	double baseMinerals = -1.0;
 
 	void load(Asteroid& obj, SaveFile& file) {
 		loadObjectStates(obj, file);
@@ -229,6 +231,7 @@ tidy class AsteroidScript {
 	}
 
 	double tick(Asteroid& obj, double time) {
+
 		Region@ prevRegion = obj.region;
 		if(updateRegion(obj)) {
 			Region@ newRegion = obj.region;
@@ -250,8 +253,19 @@ tidy class AsteroidScript {
 
 		obj.orbitTick(time);
 		obj.resourceTick(time);
-		if(obj.owner !is null && obj.owner.valid)
+		if(obj.owner !is null && obj.owner.valid) {
 			obj.surfaceTick(time);
+
+			//Design doc: an owned asteroid belt has its own flat per-turn
+			//base income (random 5-10 Minerals, 0 Energy -- mineral
+			//specialized), rolled/applied once ever via the same
+			//modResource() mechanism buildings use for persistent income
+			//(see the matching comment in Planet.as for why).
+			if(baseMinerals < 0.0) {
+				baseMinerals = double(randomi(5, 10));
+				obj.modResource(TR_Money, baseMinerals);
+			}
+		}
 
 		//Tick occasional stuff
 		timer -= float(time);

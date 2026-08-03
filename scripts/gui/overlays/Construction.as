@@ -411,7 +411,7 @@ class ConstructionDisplay : DisplayBox {
 			modulesList.clearSections();
 			if(obj is null || obj.owner !is playerEmpire)
 				return;
-			if(obj.hasSurfaceComponent && (!obj.hasConstruction || obj.owner.ImperialBldConstructionRate > 0.001)) {
+			if(obj.hasSurfaceComponent && obj.surfaceGridSize.x > 0 && (!obj.hasConstruction || obj.owner.ImperialBldConstructionRate > 0.001)) {
 				array<GuiListbox@> cats;
 				array<string> catNames;
 
@@ -837,7 +837,7 @@ class ConstructionDisplay : DisplayBox {
 				if(obj.owner is playerEmpire) {
 					if(hasShips != obj.hasConstruction && obj.canBuildShips
 							|| hasOrbitals != obj.hasConstruction && obj.canBuildOrbitals
-							|| hasBuildings != obj.hasConstruction && obj.hasSurfaceComponent && obj.owner.ImperialBldConstructionRate > 0.01)
+							|| hasBuildings != obj.hasConstruction && obj.hasSurfaceComponent && obj.surfaceGridSize.x > 0 && obj.owner.ImperialBldConstructionRate > 0.01)
 						updateBuildList(true);
 					else
 						updateBuildList(false);
@@ -853,7 +853,7 @@ class ConstructionDisplay : DisplayBox {
 				buttonBox.alignment.top.pixels = Q_HEIGHT+8;
 				buttonBox.alignment.bottom.pixels = Q_HEIGHT+44;
 
-				if(obj.hasSurfaceComponent) {
+				if(obj.hasSurfaceComponent && obj.surfaceGridSize.x > 0) {
 					buildingsButton.visible = true;
 					btnCount += 1;
 				}

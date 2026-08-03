@@ -15,6 +15,8 @@ Ship : objects.Ship::ShipScript {
 	Statuses@ statuses = null
 	Construction@ construction = null
 	Cargo@ cargo = null
+	SurfaceComponent surface
+	Resources resources
 visible:
 	float MaxEnergy = 0
 	float Energy = 0
