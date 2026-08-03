@@ -627,7 +627,10 @@ class AddResourceEmpireAttribute : GenericEffect {
 	void disable(Object& obj, any@ data) const override {
 		double value = 0;
 		data.retrieve(value);
-		if(obj.isPlanet)
+		//Slot buildings also run on stars, asteroids, and stations in this RTS
+		//mod. Removing one must retract its attribute-driven production there
+		//just as AddResource does above, or the income leaks permanently.
+		if(obj.hasSurfaceComponent)
 			obj.modResource(arguments[0].integer, -value);
 	}
 

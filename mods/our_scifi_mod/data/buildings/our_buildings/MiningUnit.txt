@@ -17,3 +17,6 @@ Building: MiningUnit
 	RequireNotTrait(Ancient)
 
 	AddResource(Money, 2)
+	//Canonical Human Advanced Extraction adds +1 per mine. The generic
+	//attribute hook updates already-built mines when research completes.
+	AddResourceEmpireAttribute(Money, AdvancedExtraction, 1.0)

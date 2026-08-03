@@ -7,24 +7,95 @@ Technology: RebelRoot
 
 	Default Unlock: True
 
+//Canonical seven-project Rebel branch, translated from the prototype into
+//immediately functional SR2 RTS effects at one 60-second research cycle each.
+Technology: RebelWarpDrive
+	Name: #R_REBEL_WARP_DRIVE
+	Description: #R_REBEL_WARP_DRIVE_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #b85cff
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(RebelWarpDriveResearched)
+	AddModifier(ThrustFactor(1.25))
+	AddModifier(TurnThrustFactor(1.25))
+	AddModifier(Hyperdrive::SpeedFactor(1.25))
+
+Technology: RebelHull
+	Name: #R_REBEL_HULL
+	Description: #R_REBEL_HULL_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #b87d62
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(RebelHullResearched)
+	AddModifier(HpFactor(1.25))
+
+Technology: RebelWeapons
+	Name: #R_REBEL_WEAPONS
+	Description: #R_REBEL_WEAPONS_DESC
+	Class: Unlock
+	Icon: techImpact * #ff4040
+	Color: #ff6040
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(RebelWeaponsResearched)
+	AddModifier(tag/BeamBase::DamageFactor(1.25))
+
+Technology: RebelPhaseJump
+	Name: #R_REBEL_PHASE_JUMP
+	Description: #R_REBEL_PHASE_JUMP_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #b24cff
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(RebelPhaseJumpResearched)
+	GrantFleetAbility(RebelPhaseJump)
+
+Technology: RebelDroneSwarm
+	Name: #R_REBEL_DRONE_SWARM
+	Description: #R_REBEL_DRONE_SWARM_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #ef6c61
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(RebelDroneSwarmResearched)
+	AddModifier(SupportCapacityFactor(1.25))
+
 Technology: RebelLasers
 	Name: #R_REBEL_LASERS
 	Description: #R_REBEL_LASERS_DESC
 	Class: Unlock
-
 	Icon: techImpact * #ff4040
 	Color: #ff4040
-
-	//Design doc: "every research project completes in one turn". A single
-	//Research Lab produces Research at TILE_RESEARCH_RATE (0.75/sec), so a
-	//Point Cost of 45 finishes in exactly one 60s turn.
 	Point Cost: 45
 	Time Cost: 60
-
 	UnlockTag(RebelLasersResearched)
-	AddModifier( tag/Weapon::DamageFactor(1.3) )
+	AddModifier(tag/BeamBase::DamageFactor(1.2))
 	GrantFleetAbility(RebelWeaponOvercharge)
+
+Technology: RebelCapitalConstruction
+	Name: #R_REBEL_CAPITAL_CONSTRUCTION
+	Description: #R_REBEL_CAPITAL_CONSTRUCTION_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #d44747
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(RebelCapitalConstructionResearched)
+	AddModifier(tag/Mothership::BuildCostFactor(0.5))
+	AddModifier(tag/Mothership::LaborCostFactor(0.5))
 
 Grid: RebelGrid
 	RebelRoot: 0,0
-	RebelLasers: 1,0
+	RebelWarpDrive: 1,0
+	RebelHull: 1,-1
+	RebelWeapons: 0,-1
+	RebelPhaseJump: -1,0
+	RebelDroneSwarm: -1,1
+	RebelLasers: 0,-2
+	RebelCapitalConstruction: 2,0

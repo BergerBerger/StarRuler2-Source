@@ -28,13 +28,37 @@ R_SCIENCE_DESC: [i]The root of all knowledge. Unlocked by default as a starting 
 
 R_HUMAN_ROOT: Basic Research
 R_HUMAN_ROOT_DESC: [i]Unlocked by default as a starting point.[/i]
+R_HUMAN_EXTRACTION: Advanced Extraction
+R_HUMAN_EXTRACTION_DESC: Improves every Mineral Mine and Energy Harvester by +1 production per 60-second economy cycle.
+R_HUMAN_HULL: Reinforced Plating
+R_HUMAN_HULL_DESC: Reinforces every Human ship with 25% additional hull durability.
+R_HUMAN_BATTLE_AI: Battle AI
+R_HUMAN_BATTLE_AI_DESC: Improves weapon tracking and precision across the Human fleet by 25%.
+R_HUMAN_RAILGUNS: Advanced Railguns
+R_HUMAN_RAILGUNS_DESC: Increases railgun damage across the Human fleet by 25%.
 R_HUMAN_SHIELDS: Shield Technology
 R_HUMAN_SHIELDS_DESC: Reinforces every Human ship with an additional shield layer that absorbs damage before it reaches the hull.
+R_HUMAN_ARTILLERY: Artillery Systems
+R_HUMAN_ARTILLERY_DESC: Refits Human railguns for long-range artillery fire, increasing their range by 50% and damage by 10%.
+R_HUMAN_SHIELD_MATRIX: Shield Matrix
+R_HUMAN_SHIELD_MATRIX_DESC: Adds a second permanent personal shield layer to every Human ship.
 
 R_REBEL_ROOT: Basic Research
 R_REBEL_ROOT_DESC: [i]Unlocked by default as a starting point.[/i]
+R_REBEL_WARP_DRIVE: Warp Drive
+R_REBEL_WARP_DRIVE_DESC: Improves Rebel thrust, turning, and strategic hyperdrive speed by 25%.
+R_REBEL_HULL: Composite Armor
+R_REBEL_HULL_DESC: Reinforces every Rebel ship with 25% additional hull durability.
+R_REBEL_WEAPONS: Enhanced Lasers
+R_REBEL_WEAPONS_DESC: Increases laser damage across the Rebel fleet by 25%.
+R_REBEL_PHASE_JUMP: Phase Jump
+R_REBEL_PHASE_JUMP_DESC: Grants every Rebel flagship a short tactical jump with a 60-second cooldown.
+R_REBEL_DRONE_SWARM: Drone Swarm
+R_REBEL_DRONE_SWARM_DESC: Expands Rebel support capacity by 25%, fielding a larger swarm around each flagship.
 R_REBEL_LASERS: Penetrating Laser Technology
-R_REBEL_LASERS_DESC: Upgrades every Rebel ship's weapons with penetrating laser technology, hitting harder and more accurately.
+R_REBEL_LASERS_DESC: Further improves Rebel beam damage and unlocks a temporary Weapon Overcharge on every flagship.
+R_REBEL_CAPITAL_CONSTRUCTION: Capital Construction
+R_REBEL_CAPITAL_CONSTRUCTION_DESC: Halves the Mineral and construction-time cost of additional Rebel Capitol ships.
 
 R_DEV_ENERGY: Energy Science
 R_DEV_ENERGY_DESC: <<
@@ -1046,4 +1070,9 @@ ABL_REBEL_WEAPON_OVERCHARGE_DESC: <<
 STATUS_REBEL_WEAPON_OVERCHARGE: Weapon Overcharge
 STATUS_REBEL_WEAPON_OVERCHARGE_DESC: <<
 	Weapons are overcharged, dealing significantly more damage than normal.
+>>
+
+ABL_REBEL_PHASE_JUMP: Phase Jump
+ABL_REBEL_PHASE_JUMP_DESC: <<
+	Instantly reposition this Rebel flagship at the target point. Costs 10 Energy and has a 60-second cooldown.
 >>

@@ -57,6 +57,12 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
   Government trait granting starting ship(s)/energy and a
   faction-specific research tree (`data/research/HumanTech.txt`,
   `RebelTech.txt`).
+- Both factions now have the canonical seven-project research branches from
+  the prototype, translated to effects that work immediately in SR2's RTS
+  engine. Every project costs 45 Research and targets one 60-second cycle with
+  one Research Lab. Prototype-only ship unlocks are represented by functional
+  fleet effects until dedicated Shroud/Artillery/Jumper/Drone hull assets are
+  authored for this engine.
 - Humans start on a homeworld planet with one Scout. Rebels start with no
   homeworld — a mobile Capitol ship (`RebelCapitol` trait) plus two Small
   Warships instead.
@@ -99,13 +105,12 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
    test (including a 4-minute session well past the ~3-minute budget
    cycle) has shown a clean 50 with no unexplained jump. If this recurs, a
    screenshot showing exactly where the number appears would help — it
-   might be a display element other than the main resource bar.
-2. Research is a simplified two-node tree per faction (root + one
-   upgrade). If more faction tech gets added, note the "one Research Lab
-   should finish a project in about one 60-second cycle" pacing constraint — Point
-   Cost should stay near `TILE_RESEARCH_RATE (0.75/sec) * ECONOMY_CYCLE_SECONDS
-   (60s) = 45` per project, times however many Research Labs you expect
-   the player to realistically have.
+   might be a display element other than the main resource bar. The opening
+   value is now centralized as `STARTING_MINERALS = 50`, and a regression test
+   rejects both duplicate initialization and a literal 500-Mineral start.
+2. Dedicated SR2 designs and art are still needed for the prototype's Shroud,
+   Artillery, Jumper, and Drone Ship unlocks. Their research nodes currently
+   grant equivalent live fleet mechanics instead of dead/unusable designs.
 
 ## Testing protocol (important — read before touching tick/loop code)
 
