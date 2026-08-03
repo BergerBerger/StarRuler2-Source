@@ -279,19 +279,46 @@ class ModDataTests(unittest.TestCase):
         for body_type in ("Planet", "Asteroid", "Star", "Orbital"):
             self.assertIn(f"TargetFilterType(targ, {body_type})", conquer)
 
-    def test_context_menu_has_no_colonize_actions(self) -> None:
-        context_menu = (ROOT / "scripts/gui/overlays/ContextMenu.as").read_text(
+    def test_player_ui_has_no_colonize_bypass(self) -> None:
+        overlays = ROOT / "scripts/gui/overlays"
+        context_menu = (overlays / "ContextMenu.as").read_text(
             encoding="utf-8-sig"
         )
         menu_builder = context_menu.split(
             "bool openContextMenu(Object& clicked, Object@ selected = null)", 1
         )[1]
-
-        self.assertNotIn("playerEmpire.autoColonize", menu_builder)
         self.assertNotRegex(
             menu_builder,
             r"addOption\([^;]*(?:AutoColonize|Colonize|CancelColonize)",
         )
+
+        player_surfaces = {
+            "ContextMenu.as": context_menu,
+            "PlanetInfoBar.as": (overlays / "PlanetInfoBar.as").read_text(
+                encoding="utf-8-sig"
+            ),
+            "Quickbar.as": (overlays / "Quickbar.as").read_text(
+                encoding="utf-8-sig"
+            ),
+            "commands.as": (ROOT / "scripts/client/commands.as").read_text(
+                encoding="utf-8-sig"
+            ),
+        }
+        for filename, content in player_surfaces.items():
+            self.assertNotIn("playerEmpire.autoColonize", content, filename)
+            self.assertNotRegex(content, r"\.colonize\(", filename)
+
+        planet_info = player_surfaces["PlanetInfoBar.as"]
+        self.assertNotIn("ColonizeAction", planet_info)
+        self.assertNotIn("ColonizeThisAction", planet_info)
+
+        quickbar = player_surfaces["Quickbar.as"]
+        self.assertNotIn("ColonizingPlanets", quickbar)
+        self.assertNotIn("ColonizeSafePlanets", quickbar)
+
+        commands = player_surfaces["commands.as"]
+        self.assertNotIn("doColonize", commands)
+        self.assertNotIn("KB_COLONIZE", commands)
 
     def test_selecting_buildable_bodies_opens_their_slots(self) -> None:
         overlays = ROOT / "scripts/gui/overlays"
