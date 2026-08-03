@@ -18,16 +18,39 @@ try {
     New-Item -ItemType Directory -Path $profileRoot | Out-Null
     $env:STAR_RULER_2_PROFILE = $profileRoot
 
-    $game = Start-Process `
-        -FilePath $GameExecutable `
-        -ArgumentList @("--mod", "our_scifi_mod", "--test-scripts", "--no-window", "--no-sound", "--no-steam", "--verbose") `
-        -WorkingDirectory $repoRoot `
-        -WindowStyle Hidden `
-        -PassThru
+    # Avoid ShellExecute here: hosted Windows runners have no interactive
+    # desktop, and launching this legacy GUI-subsystem binary through the shell
+    # can wait indefinitely before main() starts.
+    $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $startInfo.FileName = $GameExecutable
+    $startInfo.Arguments = "--mod our_scifi_mod --test-scripts --no-window --no-sound --no-steam --nodump --verbose"
+    $startInfo.WorkingDirectory = $repoRoot
+    $startInfo.UseShellExecute = $false
+    $startInfo.CreateNoWindow = $true
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.RedirectStandardError = $true
+
+    $game = New-Object System.Diagnostics.Process
+    $game.StartInfo = $startInfo
+    if (-not $game.Start()) {
+        throw "The headless script compiler process could not be started."
+    }
+    $stdoutTask = $game.StandardOutput.ReadToEndAsync()
+    $stderrTask = $game.StandardError.ReadToEndAsync()
 
     if (-not $game.WaitForExit($TimeoutSeconds * 1000)) {
         Stop-Process -Id $game.Id -Force
         $game.WaitForExit()
+        $stdout = $stdoutTask.GetAwaiter().GetResult()
+        $stderr = $stderrTask.GetAwaiter().GetResult()
+        if (-not [string]::IsNullOrWhiteSpace($stdout)) {
+            Write-Output "--- Engine stdout after timeout ---"
+            $stdout -split "`r?`n" | Select-Object -Last 200
+        }
+        if (-not [string]::IsNullOrWhiteSpace($stderr)) {
+            Write-Output "--- Engine stderr after timeout ---"
+            $stderr -split "`r?`n" | Select-Object -Last 200
+        }
         $timeoutLog = Join-Path $profileRoot "log.txt"
         if (Test-Path -LiteralPath $timeoutLog) {
             Write-Output "--- Engine log tail after timeout ---"
@@ -36,7 +59,16 @@ try {
         }
         throw "Headless script compilation exceeded $TimeoutSeconds seconds."
     }
+
+    $stdout = $stdoutTask.GetAwaiter().GetResult()
+    $stderr = $stderrTask.GetAwaiter().GetResult()
     if ($game.ExitCode -ne 0) {
+        if (-not [string]::IsNullOrWhiteSpace($stdout)) {
+            Write-Output $stdout
+        }
+        if (-not [string]::IsNullOrWhiteSpace($stderr)) {
+            Write-Output $stderr
+        }
         throw "Headless script compilation exited with code $($game.ExitCode)."
     }
 
