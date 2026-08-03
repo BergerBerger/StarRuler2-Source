@@ -144,6 +144,30 @@ class ModDataTests(unittest.TestCase):
         ):
             self.assertIn(required, defaults)
 
+    def test_headless_script_mode_does_not_initialize_graphics(self) -> None:
+        initialization = (ROOT / "source/game/main/initialization.cpp").read_text(
+            encoding="utf-8-sig"
+        )
+        function = initialization.split(
+            "bool initGlobal(bool loadGraphics, bool createWindow)", 1
+        )[1].split("void cleanupGlobal()", 1)[0]
+
+        self.assertLess(
+            function.index("load_resources = loadGraphics;"),
+            function.index("if(loadGraphics)"),
+        )
+        self.assertIn("getGLFWDriver(createWindow)", function)
+        self.assertNotIn("getGLFWDriver()", function)
+
+        glfw_driver = (ROOT / "source/game/os/glfw_driver.cpp").read_text(
+            encoding="utf-8-sig"
+        )
+        key_lookup = glfw_driver.split(
+            "int getKeyForChar(unsigned char chr)", 1
+        )[1].split("unsigned getDoubleClickTime()", 1)[0]
+        self.assertIn("if(!glfwInitialized)", key_lookup)
+        self.assertIn("return chr;", key_lookup)
+
 
 if __name__ == "__main__":
     unittest.main()

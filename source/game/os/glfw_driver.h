@@ -2,5 +2,5 @@
 #include "os/driver.h"
 
 namespace os {
-OSDriver* getGLFWDriver();
+OSDriver* getGLFWDriver(bool initializeWindowSystem = true);
 };
