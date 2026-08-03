@@ -1,6 +1,6 @@
 param(
     [string]$GameExecutable = "",
-    [int]$TimeoutSeconds = 45
+    [int]$TimeoutSeconds = 180
 )
 
 $ErrorActionPreference = "Stop"
@@ -27,6 +27,13 @@ try {
 
     if (-not $game.WaitForExit($TimeoutSeconds * 1000)) {
         Stop-Process -Id $game.Id -Force
+        $game.WaitForExit()
+        $timeoutLog = Join-Path $profileRoot "log.txt"
+        if (Test-Path -LiteralPath $timeoutLog) {
+            Write-Output "--- Engine log tail after timeout ---"
+            Get-Content -LiteralPath $timeoutLog -Tail 200
+            Write-Output "--- End engine log tail ---"
+        }
         throw "Headless script compilation exceeded $TimeoutSeconds seconds."
     }
     if ($game.ExitCode -ne 0) {
