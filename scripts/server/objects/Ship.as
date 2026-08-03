@@ -421,6 +421,14 @@ tidy class ShipScript {
 					ship.addAbility(overchargeAbl.id);
 			}
 
+			//Grant the canonical Rebel Phase Jump to ships constructed after
+			//the research trigger has already upgraded the existing fleet.
+			if(ship.owner.isTagUnlocked(getUnlockTag("RebelPhaseJumpResearched"))) {
+				auto@ phaseJumpAbl = getAbilityType("RebelPhaseJump");
+				if(phaseJumpAbl !is null)
+					ship.addAbility(phaseJumpAbl.id);
+			}
+
 			if(ship.owner.valid)
 				ship.owner.recordStatDelta(statType(ship), 1);
 			auto@ node = ship.getNode();

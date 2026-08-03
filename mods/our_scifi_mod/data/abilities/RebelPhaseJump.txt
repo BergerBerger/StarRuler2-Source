@@ -1,0 +1,17 @@
+//RTS translation of the prototype's Jumper unlock. Dedicated Jumper hull art
+//does not exist in SR2 yet, so research grants the tactical jump to every
+//current and future Rebel flagship instead of exposing a dead ship unlock.
+Ability: RebelPhaseJump
+	Name: #ABL_REBEL_PHASE_JUMP
+	Description: #ABL_REBEL_PHASE_JUMP_DESC
+	Icon: GuiOrbitalIcons::2 * #b24cff
+
+	Target: dest = Point
+	TargetFilterMovableTo(dest)
+
+	Energy Cost: 10
+	Cooldown: 60
+
+	PlayParticles(SkipDriveEvent, Scale = 3.0, Object Tied = False)
+	TeleportTo(dest)
+	PlayParticlesAt(dest, SkipDriveEvent, Scale = 3.0)

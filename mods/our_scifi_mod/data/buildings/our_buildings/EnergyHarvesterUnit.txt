@@ -19,3 +19,5 @@ Building: EnergyHarvesterUnit
 	//One Energy tile-resource is 0.5 Energy/second, so divide the desired
 	//per-cycle output by 30 to avoid the old 30x overproduction bug.
 	AddResource(Energy, 0.0666666667)
+	//Advanced Extraction adds +1 Energy per 60-second cycle per harvester.
+	AddResourceEmpireAttribute(Energy, AdvancedExtraction, 0.0333333333)
