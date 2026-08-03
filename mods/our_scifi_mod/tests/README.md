@@ -13,6 +13,10 @@ After building `Non-Steam Release|x64`, run the engine-backed test:
 ./mods/our_scifi_mod/tests/run_engine_smoke.ps1
 ```
 
+The repository's bundled `libogg`, `libvorbis`, and `libpng` binaries depend
+on the x64 Visual C++ 2010 runtime. Install that redistributable on clean
+Windows machines before running the executable; CI installs it explicitly.
+
 The smoke test compiles all menu, client, server, and shadow AngelScript in a
 temporary isolated profile. It rejects engine log errors and cleans up only
 the uniquely named profile directory it created.

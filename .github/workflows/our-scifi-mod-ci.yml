@@ -24,6 +24,9 @@ jobs:
     needs: data-tests
     steps:
       - uses: actions/checkout@v7
+      - name: Install legacy VC++ runtime for bundled libraries
+        shell: pwsh
+        run: choco install vcredist2010 --yes --no-progress
       - name: Build Non-Steam x64 game
         shell: pwsh
         run: |
