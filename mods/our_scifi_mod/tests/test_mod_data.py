@@ -262,6 +262,65 @@ class ModDataTests(unittest.TestCase):
         )
         self.assertNotRegex(init, r"modTotalBudget\(\+?500\b")
 
+    def test_conquer_is_the_fast_universal_body_capture_action(self) -> None:
+        conquer = (
+            MOD / "data/abilities/our_abilities/ConquerPlanet.txt"
+        ).read_text(encoding="utf-8-sig")
+
+        self.assertIn(
+            "Either(TargetFilterSpace(targ), TargetFilterOtherEmpire(targ))",
+            conquer,
+        )
+        self.assertRegex(
+            conquer,
+            r"AfterChannel\(targ,\s*8,\s*TakeControl\(\),\s*Clear\s*=\s*False\)",
+        )
+        self.assertNotRegex(conquer, r"AfterChannel\(targ,\s*60\b")
+        for body_type in ("Planet", "Asteroid", "Star", "Orbital"):
+            self.assertIn(f"TargetFilterType(targ, {body_type})", conquer)
+
+    def test_context_menu_has_no_colonize_actions(self) -> None:
+        context_menu = (ROOT / "scripts/gui/overlays/ContextMenu.as").read_text(
+            encoding="utf-8-sig"
+        )
+        menu_builder = context_menu.split(
+            "bool openContextMenu(Object& clicked, Object@ selected = null)", 1
+        )[1]
+
+        self.assertNotIn("playerEmpire.autoColonize", menu_builder)
+        self.assertNotRegex(
+            menu_builder,
+            r"addOption\([^;]*(?:AutoColonize|Colonize|CancelColonize)",
+        )
+
+    def test_selecting_buildable_bodies_opens_their_slots(self) -> None:
+        overlays = ROOT / "scripts/gui/overlays"
+        for filename in (
+            "PlanetInfoBar.as",
+            "AsteroidInfoBar.as",
+            "StarInfoBar.as",
+            "OrbitalInfoBar.as",
+        ):
+            content = (overlays / filename).read_text(encoding="utf-8-sig")
+            setter = content.split("void set(Object@ obj) override", 1)[1].split(
+                "bool displays(Object@ obj) override", 1
+            )[0]
+            self.assertIn("showManage(obj);", setter, filename)
+
+    def test_star_and_asteroid_slots_restore_the_compact_info_bar(self) -> None:
+        overlays = ROOT / "scripts/gui/overlays"
+        for filename in ("AsteroidInfoBar.as", "StarInfoBar.as"):
+            content = (overlays / filename).read_text(encoding="utf-8-sig")
+            update = content.split("void update(double time) override", 1)[1]
+            for lifecycle_step in (
+                "if(overlay !is null)",
+                "if(overlay.parent is null)",
+                "@overlay = null;",
+                "visible = true;",
+                "overlay.update(time);",
+            ):
+                self.assertIn(lifecycle_step, update, filename)
+
     def test_canonical_faction_research_has_seven_one_cycle_projects(self) -> None:
         expected = {
             "HumanTech.txt": {
