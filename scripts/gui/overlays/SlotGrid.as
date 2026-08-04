@@ -10,17 +10,21 @@ export SlotGridPanel;
 const int SLOT_SIZE = 42;
 const int SLOT_GAP = 6;
 
+//Only our own building types -- the base game ships with dozens of other
+//building types (vanilla economy, defense, ancient ruins, etc.) that were
+//never removed from the registry, just left mostly un-buildable. Iterating
+//the whole registry let a few of those leak into the build menu; whitelist
+//ours explicitly instead.
+const array<string> OUR_BUILDING_IDENTS = {"MiningUnit", "EnergyHarvesterUnit", "SpaceportUnit", "ResearchComplex", "StarHarvester"};
+
 //A plain (non-modal) row of square buttons, one per buildable slot on the
 //object -- no dimmed background, no exclusive focus, no separate menu.
 //Click an empty square to pick what to build there; click a built one to
 //destroy it. Positioned beside the InfoBar so it reads as part of the same
 //selection panel instead of a popup.
 //
-//Per-slot building lookups (what's built at a given position) aren't part
-//of the GUI-side object interface, only totals are (getBuildingCount(),
-//surfaceGridSize) -- so filled squares show a generic built icon rather
-//than each building's own icon, and slots fill/empty in the same fixed
-//order buildBuilding()/destroyBuilding() already use elsewhere.
+//Slots fill/empty in the same fixed sequential order buildBuilding()/
+//destroyBuilding() already use elsewhere (no real click-a-tile positioning).
 class SlotGridPanel : BaseGuiElement {
 	Object@ obj;
 	array<GuiButton@> squares;
@@ -48,10 +52,17 @@ class SlotGridPanel : BaseGuiElement {
 		int built = int(obj.getBuildingCount());
 		for(int i = 0; i < total; ++i) {
 			bool filled = i < built;
-			GuiButton@ btn = GuiButton(this, recti_area(i*(SLOT_SIZE+SLOT_GAP), 0, SLOT_SIZE, SLOT_SIZE),
-					filled ? icons::Building : icons::Plus);
+			Sprite spr = icons::Plus;
+			string tt = locale::TT_BUILD_SLOT;
+			if(filled) {
+				uint typeId = obj.buildingType[uint(i)];
+				const BuildingType@ type = getBuildingType(typeId);
+				spr = type !is null ? type.sprite : icons::Building;
+				tt = type !is null ? type.name : locale::TT_DESTROY_SLOT;
+			}
+			GuiButton@ btn = GuiButton(this, recti_area(i*(SLOT_SIZE+SLOT_GAP), 0, SLOT_SIZE, SLOT_SIZE), spr);
 			btn.style = SS_IconButton;
-			setMarkupTooltip(btn, filled ? locale::TT_DESTROY_SLOT : locale::TT_BUILD_SLOT, width=300);
+			setMarkupTooltip(btn, tt, width=300);
 			squares.insertLast(btn);
 		}
 	}
@@ -85,7 +96,7 @@ class SlotGridPanel : BaseGuiElement {
 		GuiContextMenu menu(mousePos);
 		for(uint i = 0, cnt = getBuildingTypeCount(); i < cnt; ++i) {
 			const BuildingType@ type = getBuildingType(i);
-			if(type.civilian)
+			if(OUR_BUILDING_IDENTS.find(type.ident) == -1)
 				continue;
 			if(!type.canBuildOn(obj, ignoreState=true))
 				continue;
