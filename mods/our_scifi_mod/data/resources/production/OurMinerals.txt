@@ -6,8 +6,10 @@ Resource: OurMinerals
 	Name: #OURMINERALS
 	Description: #OURMINERALS_DESC
 
-	Icon: ResourceIcons::12
-	Small Icon: ResourceIconsSmall::11
+	//Same gem/ore icon as the resource-bar and tooltip display (see
+	//tile_resources.as::MineralsIcon) instead of the old cash-themed icon.
+	Icon: ResourceIconsSmall::51
+	Small Icon: ResourceIconsSmall::51
 
 	Distribution: 0
 	Exportable: False

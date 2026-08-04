@@ -57,11 +57,13 @@ string getTileResourceSpriteSpec(uint r) {
 	return getSpriteDesc(getTileResourceSprite(r));
 }
 
+const Sprite MineralsIcon(spritesheet::ResourceIconsSmall, 51);
+
 const Sprite& getTileResourceSprite(uint r) {
 	switch(r) {
 		//Money is displayed to the player as "Minerals" (see empire.txt locale);
-		//use the industrial Labor icon instead of a cash/coin symbol for it.
-		case TR_Money: return icons::Labor;
+		//use a gem/ore icon instead of a cash symbol or the Labor hammer.
+		case TR_Money: return MineralsIcon;
 		case TR_Influence: return icons::Influence;
 		case TR_Energy: return icons::Energy;
 		case TR_Defense: return icons::Defense;

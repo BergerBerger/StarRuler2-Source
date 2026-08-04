@@ -82,7 +82,6 @@ string formatMoney(int money, bool colored = false, bool roundUp = true) {
 		text += "-";
 	}
 
-	text += "§";
 	int am = abs(money);
 	if(am == 0)
 		text += "0";
@@ -115,7 +114,6 @@ string formatMoneyChange(int money, bool colored = false) {
 		text += "+";
 	}
 
-	text += "§";
 	int am = abs(money);
 	if(am == 0)
 		text += "0";
