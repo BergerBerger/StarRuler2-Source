@@ -17,3 +17,4 @@ Building: SpaceportUnit
 	RequireNotTrait(Ancient)
 
 	ModSupportBuildSpeed(+0.3)
+	AllowConstruction(Ships = True)

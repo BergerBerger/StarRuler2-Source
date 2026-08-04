@@ -28,10 +28,11 @@ const array<string> OUR_BUILDING_IDENTS = {"MiningUnit", "EnergyHarvesterUnit", 
 class SlotGridPanel : BaseGuiElement {
 	Object@ obj;
 	array<GuiButton@> squares;
+	GuiButton@ shipButton;
 
 	SlotGridPanel(IGuiElement@ parent, Object@ Obj) {
 		@obj = Obj;
-		super(parent, Alignment(Left+470, Bottom-228, Left+470+520, Bottom-228+SLOT_SIZE));
+		super(parent, Alignment(Left+470, Bottom-228, Left+470+560, Bottom-228+SLOT_SIZE));
 		rebuild();
 		updateAbsolutePosition();
 	}
@@ -44,6 +45,10 @@ class SlotGridPanel : BaseGuiElement {
 		for(uint i = 0, cnt = squares.length; i < cnt; ++i)
 			squares[i].remove();
 		squares.length = 0;
+		if(shipButton !is null) {
+			shipButton.remove();
+			@shipButton = null;
+		}
 
 		if(obj is null || !obj.hasSurfaceComponent)
 			return;
@@ -65,6 +70,16 @@ class SlotGridPanel : BaseGuiElement {
 			setMarkupTooltip(btn, tt, width=300);
 			squares.insertLast(btn);
 		}
+
+		//A built Spaceport unlocks ship construction on this body; show a
+		//separate button for it (ships don't occupy a slot square -- they
+		//go into their own construction queue, same as vanilla).
+		if(obj.hasConstruction && obj.canBuildShips) {
+			int x = total*(SLOT_SIZE+SLOT_GAP) + SLOT_GAP;
+			@shipButton = GuiButton(this, recti_area(x, 0, SLOT_SIZE, SLOT_SIZE), icons::Ship);
+			shipButton.style = SS_IconButton;
+			setMarkupTooltip(shipButton, locale::TT_BUILD_SHIP, width=300);
+		}
 	}
 
 	double updateTimer = 0.0;
@@ -78,6 +93,10 @@ class SlotGridPanel : BaseGuiElement {
 
 	bool onGuiEvent(const GuiEvent& evt) override {
 		if(evt.type == GUI_Clicked) {
+			if(evt.caller is shipButton) {
+				openShipMenu();
+				return true;
+			}
 			int idx = squares.find(cast<GuiButton>(evt.caller));
 			if(idx != -1) {
 				if(idx < int(obj.getBuildingCount()))
@@ -88,6 +107,26 @@ class SlotGridPanel : BaseGuiElement {
 			}
 		}
 		return BaseGuiElement::onGuiEvent(evt);
+	}
+
+	void openShipMenu() {
+		if(obj.owner !is playerEmpire || !obj.hasConstruction || !obj.canBuildShips)
+			return;
+		GuiContextMenu menu(mousePos);
+		ReadLock lock(playerEmpire.designMutex);
+		uint clsCount = playerEmpire.designClassCount;
+		for(uint i = 0; i < clsCount; ++i) {
+			const DesignClass@ cls = playerEmpire.getDesignClass(i);
+			for(uint j = 0, jcnt = cls.designCount; j < jcnt; ++j) {
+				const Design@ dsg = cls.designs[j];
+				if(dsg.obsolete)
+					continue;
+				if(dsg.hasTag(ST_Station) || dsg.hasTag(ST_Satellite) || dsg.hasTag(ST_Support))
+					continue;
+				menu.addOption(BuildShipOption(obj, dsg));
+			}
+		}
+		menu.finalize();
 	}
 
 	void openBuildMenu() {
@@ -134,6 +173,22 @@ class BuildSlotOption : GuiContextOption {
 		//Always append after whatever's already built, same slot the
 		//existing ConstructionOverlay build flow uses.
 		obj.buildBuilding(type.id, vec2i(obj.getBuildingCount(), 0));
+	}
+};
+
+class BuildShipOption : GuiContextOption {
+	Object@ obj;
+	const Design@ dsg;
+
+	BuildShipOption(Object@ o, const Design@ d) {
+		@obj = o;
+		@dsg = d;
+		text = dsg.name;
+		icon = dsg.icon;
+	}
+
+	void call(GuiContextMenu@ menu) override {
+		obj.buildFlagship(dsg);
 	}
 };
 
