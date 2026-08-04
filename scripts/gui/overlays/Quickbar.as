@@ -97,8 +97,6 @@ class Quickbar : BaseGuiElement, Savable {
 			add(OverPressurePlanets(this));
 		add(NoPopResources(this), closed=true);
 		add(DecayingPlanets(this));
-		add(ColonizingPlanets(this));
-		add(ColonizeSafePlanets(this), closed=true);
 		add(SiegePlanets(this));
 		add(LaborPlanets(this), closed=true);
 		add(DefenseTargets(this), closed=true);
@@ -874,96 +872,6 @@ class DecayingPlanets : ObjectMode {
 
 	string get_name() override {
 		return locale::DECAYING_PLANETS;
-	}
-};
-
-bool shownColonizeWarning = false;
-uint colonizeWarningDelay = 100;
-
-class ColonizingPlanets : ObjectMode {
-	ColonizingPlanets(IGuiElement@ parent) {
-		super(parent);
-		color = Color(0x8060ffff);
-	}
-
-	bool filter(ObjectData@ dat) {
-		if(dat.obj.population < 1.0 || dat.obj.isBeingColonized)
-			return true;
-		return false;
-	}
-
-	Sprite get_icon() override {
-		return Sprite(spritesheet::QuickbarIcons, 5);
-	}
-
-	string get_name() override {
-		return locale::COLONIZING_PLANETS;
-	}
-
-	void longUpdate() override {
-		uint index = 0;
-		for(uint i = 0, cnt = empirePlanets.length; i < cnt; ++i) {
-			if(!filter(empirePlanets[i]))
-				continue;
-			grid.set(index, empirePlanets[i]);
-			++index;
-		}
-		
-		if(!shownColonizeWarning) {
-			int colonyCost = -playerEmpire.getMoneyFromType(0);
-			int budget = playerEmpire.TotalBudget;
-			int netBudget = budget - playerEmpire.MaintenanceBudget;
-			
-			if(netBudget < 0 && colonyCost > 200 && colonyCost > budget/6) {
-				if(--colonizeWarningDelay == 0) {
-					auto@ msg = message(locale::HINT_COLONIZE);
-					msg.addTitle(locale::HINT_COLONIZE_TITLE);
-					shownColonizeWarning = true;
-				}
-			}
-			else {
-				colonizeWarningDelay = 100;
-			}
-		}
-		
-		set_int listed;
-		array<Planet@> list;
-		DataList@ objs = playerEmpire.getQueuedColonizations();
-		Object@ obj;
-		while(receive(objs, obj)) {
-			Planet@ pl = cast<Planet>(obj);
-			if(pl !is null && !listed.contains(pl.id)) {
-				listed.insert(pl.id);
-				list.insertLast(pl);
-			}
-		}
-
-		for(uint i = 0, cnt = list.length; i < cnt; ++i) {
-			auto@ dat = cache(list[i]);
-			if(!filter(dat))
-				continue;
-			grid.set(index, dat);
-			++index;
-		}
-		grid.truncate(index, sort=false);
-	}
-};
-
-class ColonizeSafePlanets : ObjectMode {
-	ColonizeSafePlanets(IGuiElement@ parent) {
-		super(parent);
-	}
-
-	bool filter(ObjectData@ dat) {
-		return dat.obj.canSafelyColonize;
-	}
-
-	Sprite get_icon() override {
-		return Sprite(spritesheet::QuickbarIcons, 5, Color(0x00ff00ff));
-	}
-
-	string get_name() override {
-		return locale::COLONIZE_SAFE_PLANETS;
 	}
 };
 

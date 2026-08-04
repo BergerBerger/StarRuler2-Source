@@ -21,5 +21,9 @@ const double DEFENSE_LABOR_PM = 2.0;
 const double ECONOMY_CYCLE_SECONDS = 60.0;
 const double ENERGY_RESOURCE_PER_CYCLE = TILE_ENERGY_RATE * ECONOMY_CYCLE_SECONDS;
 
+//Single source of truth for the opening RTS stockpile. Keeping this named and
+//covered by a data-contract test prevents the old 50-versus-500 regression.
+const int STARTING_MINERALS = 50;
+
 //Compatibility alias for older scripts/data comments.
 const double TURN_LENGTH = ECONOMY_CYCLE_SECONDS;

@@ -1,3 +1,5 @@
+#include "include/resource_constants.as"
+
 import resources;
 import util.design_export;
 import influence;
@@ -37,7 +39,7 @@ void init(Empire& emp) {
 	//economy worth ~550 budget; our economy is entirely building-driven, so
 	//this is just the flat starting Minerals stockpile instead (kept at 50
 	//per the design doc's simplified starting resources).
-	emp.modTotalBudget(+50, MoT_Planet_Income);
+	emp.modTotalBudget(+STARTING_MINERALS, MoT_Planet_Income);
 
 	//Handle handicap
 	if(emp.handicap < 0) {

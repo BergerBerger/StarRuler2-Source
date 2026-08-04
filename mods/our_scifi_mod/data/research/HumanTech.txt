@@ -7,24 +7,95 @@ Technology: HumanRoot
 
 	Default Unlock: True
 
+//The canonical prototype has seven projects. In this RTS port one Research
+//Lab generates 45 points per 60-second economy cycle, so every project uses
+//the same 45-point/60-second pacing requested in Olay's handoff.
+Technology: HumanExtraction
+	Name: #R_HUMAN_EXTRACTION
+	Description: #R_HUMAN_EXTRACTION_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #47c9a2
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(HumanExtractionResearched)
+	ModAttribute(AdvancedExtraction, Add, 1)
+
+Technology: HumanHull
+	Name: #R_HUMAN_HULL
+	Description: #R_HUMAN_HULL_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #8fa9c9
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(HumanHullResearched)
+	AddModifier(HpFactor(1.25))
+
+Technology: HumanBattleAI
+	Name: #R_HUMAN_BATTLE_AI
+	Description: #R_HUMAN_BATTLE_AI_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #a66cff
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(HumanBattleAIResearched)
+	AddModifier(tag/Weapon::TrackingFactor(1.25))
+	AddModifier(tag/Weapon::SpreadFactor(0.8))
+
+Technology: HumanRailguns
+	Name: #R_HUMAN_RAILGUNS
+	Description: #R_HUMAN_RAILGUNS_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #d6b85c
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(HumanRailgunsResearched)
+	AddModifier(tag/IsRailgun::DamageFactor(1.25))
+
 Technology: HumanShields
 	Name: #R_HUMAN_SHIELDS
 	Description: #R_HUMAN_SHIELDS_DESC
 	Class: Unlock
-
 	Icon: FissionReactor
 	Color: #429cff
-
-	//Design doc: "every research project completes in one turn". A single
-	//Research Lab produces Research at TILE_RESEARCH_RATE (0.75/sec), so a
-	//Point Cost of 45 finishes in exactly one 60s turn.
 	Point Cost: 45
 	Time Cost: 60
-
 	UnlockTag(HumanShieldsResearched)
 	GrantFleetShieldBonus(50)
 	GrantFleetAbility(HumanEmergencyShields)
 
+Technology: HumanArtillery
+	Name: #R_HUMAN_ARTILLERY
+	Description: #R_HUMAN_ARTILLERY_DESC
+	Class: Unlock
+	Icon: TechScience
+	Color: #e58c43
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(HumanArtilleryResearched)
+	AddModifier(tag/IsRailgun::RangeFactor(1.5))
+	AddModifier(tag/IsRailgun::DamageFactor(1.1))
+
+Technology: HumanShieldMatrix
+	Name: #R_HUMAN_SHIELD_MATRIX
+	Description: #R_HUMAN_SHIELD_MATRIX_DESC
+	Class: Unlock
+	Icon: FissionReactor
+	Color: #72c8ff
+	Point Cost: 45
+	Time Cost: 60
+	UnlockTag(HumanShieldMatrixResearched)
+	GrantFleetShieldBonus(50)
+
 Grid: HumanGrid
 	HumanRoot: 0,0
-	HumanShields: 1,0
+	HumanExtraction: 1,0
+	HumanHull: 1,-1
+	HumanBattleAI: 0,-1
+	HumanRailguns: -1,0
+	HumanShields: 0,1
+	HumanArtillery: -1,1
+	HumanShieldMatrix: 0,2

@@ -16,9 +16,10 @@ Two factions, Humans and Rebels, fighting over a galaxy with:
 - **Every heavenly body type can be owned and built on**: planets,
   asteroid belts, stars/suns, and stations/satellites. Each has build
   slots and its own base income once owned (see table below).
-- **Conquest, not diplomacy**: pick a ship, right-click a neutral body to
-  colonize it (instant), or an enemy body to conquer it (channel for 60
-  real-time seconds, then transfer the body and its buildings intact).
+- **Conquest, not diplomacy**: every flagship has one Conquer action for
+  neutral and enemy-owned planets, asteroid belts, stars, and stations. It
+  channels for 8 real-time seconds, then transfers the body and its buildings
+  intact. Player-facing vanilla Colonize and AutoColonize flows are removed.
 - **Fixed ship classes** (Small/Medium/Large + faction flagship), not a
   build-your-own hex-editor design system like vanilla SR2. Players never
   see the blueprint editor.
@@ -57,6 +58,12 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
   Government trait granting starting ship(s)/energy and a
   faction-specific research tree (`data/research/HumanTech.txt`,
   `RebelTech.txt`).
+- Both factions now have the canonical seven-project research branches from
+  the prototype, translated to effects that work immediately in SR2's RTS
+  engine. Every project costs 45 Research and targets one 60-second cycle with
+  one Research Lab. Prototype-only ship unlocks are represented by functional
+  fleet effects until dedicated Shroud/Artillery/Jumper/Drone hull assets are
+  authored for this engine.
 - Humans start on a homeworld planet with one Scout. Rebels start with no
   homeworld — a mobile Capitol ship (`RebelCapitol` trait) plus two Small
   Warships instead.
@@ -78,9 +85,11 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
 - The planet management overlay is reduced to the buildable surface,
   construction catalog, and Minerals/Energy/Research rates. Vanilla population,
   pressure, loyalty, auto-import, and native-resource level panels are hidden.
-- Conquer ability (`data/abilities/our_abilities/ConquerPlanet.txt`) works
-  on planets, asteroids, stars, and stations. Colonize (vanilla ability,
-  untouched) handles neutral bodies instantly.
+- Conquer ability (`data/abilities/our_abilities/ConquerPlanet.txt`) is the
+  player's single capture action for neutral and enemy-owned planets,
+  asteroids, stars, and stations. It channels for 8 seconds. Context menus,
+  the planet info bar, quickbar, and global keyboard commands no longer expose
+  the legacy Colonize or AutoColonize paths.
 - Native resources fully stripped from galaxy generation. This took
   several tries — see "Gotchas" below if resources start reappearing.
 - Win condition patched to "destroy all of the enemy's units" instead of
@@ -99,13 +108,33 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
    test (including a 4-minute session well past the ~3-minute budget
    cycle) has shown a clean 50 with no unexplained jump. If this recurs, a
    screenshot showing exactly where the number appears would help — it
-   might be a display element other than the main resource bar.
-2. Research is a simplified two-node tree per faction (root + one
-   upgrade). If more faction tech gets added, note the "one Research Lab
-   should finish a project in about one 60-second cycle" pacing constraint — Point
-   Cost should stay near `TILE_RESEARCH_RATE (0.75/sec) * ECONOMY_CYCLE_SECONDS
-   (60s) = 45` per project, times however many Research Labs you expect
-   the player to realistically have.
+   might be a display element other than the main resource bar. The opening
+   value is now centralized as `STARTING_MINERALS = 50`, and a regression test
+   rejects both duplicate initialization and a literal 500-Mineral start.
+2. Dedicated SR2 designs and art are still needed for the prototype's Shroud,
+   Artillery, Jumper, and Drone Ship unlocks. Their research nodes currently
+   grant equivalent live fleet mechanics instead of dead/unusable designs.
+3. The computer-player expansion logic still uses SR2's internal colonization
+   machinery. Do not disable that server path until the Weasel AI can select a
+   conquest-capable flagship, move it into range, channel Conquer, and recover
+   from interrupted captures. Player-facing colonization is already removed;
+   migrating the AI is the next gameplay-system slice.
+
+## RTS delivery roadmap
+
+1. **Rules foundation (done):** Humans versus Rebels, Minerals plus Energy,
+   fixed ship rosters, per-body income, faction research, unit-elimination
+   victory, and build slots on every body type.
+2. **Conquest enforcement (player complete):** one 8-second Conquer flow and no
+   player-facing Colonize shortcuts. AI conquest migration remains.
+3. **Faction combat identity:** ship dedicated Shroud, Artillery, Jumper, and
+   Drone designs instead of research-effect stand-ins, then balance their
+   real-time roles and cooldowns.
+4. **Playable-match vertical slice:** teach the AI the two-resource economy and
+   Conquer flow, verify a complete Humans-versus-Rebels match, and add bounded
+   gameplay smoke coverage for expansion, production, combat, and victory.
+5. **Presentation pass:** replace remaining SR2 terminology and screens with
+   the game's own HUD, faction feedback, models, icons, audio, and onboarding.
 
 ## Testing protocol (important — read before touching tick/loop code)
 

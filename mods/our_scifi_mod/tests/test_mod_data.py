@@ -244,6 +244,190 @@ class ModDataTests(unittest.TestCase):
         ):
             self.assertNotIn(vanilla_detail, variables)
 
+    def test_starting_minerals_are_locked_to_fifty(self) -> None:
+        constants = (ROOT / "scripts/shared/include/resource_constants.as").read_text(
+            encoding="utf-8-sig"
+        )
+        empire = (ROOT / "scripts/server/empire.as").read_text(
+            encoding="utf-8-sig"
+        )
+
+        self.assertRegex(constants, r"const int STARTING_MINERALS\s*=\s*50\s*;")
+        init = empire.split("void init(Empire& emp)", 1)[1].split(
+            "uint getMajorEmpireCount", 1
+        )[0]
+        self.assertEqual(
+            1,
+            init.count("modTotalBudget(+STARTING_MINERALS, MoT_Planet_Income)"),
+        )
+        self.assertNotRegex(init, r"modTotalBudget\(\+?500\b")
+
+    def test_conquer_is_the_fast_universal_body_capture_action(self) -> None:
+        conquer = (
+            MOD / "data/abilities/our_abilities/ConquerPlanet.txt"
+        ).read_text(encoding="utf-8-sig")
+
+        self.assertIn(
+            "Either(TargetFilterSpace(targ), TargetFilterOtherEmpire(targ))",
+            conquer,
+        )
+        self.assertRegex(
+            conquer,
+            r"AfterChannel\(targ,\s*8,\s*TakeControl\(\),\s*Clear\s*=\s*False\)",
+        )
+        self.assertNotRegex(conquer, r"AfterChannel\(targ,\s*60\b")
+        for body_type in ("Planet", "Asteroid", "Star", "Orbital"):
+            self.assertIn(f"TargetFilterType(targ, {body_type})", conquer)
+
+    def test_player_ui_has_no_colonize_bypass(self) -> None:
+        overlays = ROOT / "scripts/gui/overlays"
+        context_menu = (overlays / "ContextMenu.as").read_text(
+            encoding="utf-8-sig"
+        )
+        menu_builder = context_menu.split(
+            "bool openContextMenu(Object& clicked, Object@ selected = null)", 1
+        )[1]
+        self.assertNotRegex(
+            menu_builder,
+            r"addOption\([^;]*(?:AutoColonize|Colonize|CancelColonize)",
+        )
+
+        player_surfaces = {
+            "ContextMenu.as": context_menu,
+            "PlanetInfoBar.as": (overlays / "PlanetInfoBar.as").read_text(
+                encoding="utf-8-sig"
+            ),
+            "Quickbar.as": (overlays / "Quickbar.as").read_text(
+                encoding="utf-8-sig"
+            ),
+            "commands.as": (ROOT / "scripts/client/commands.as").read_text(
+                encoding="utf-8-sig"
+            ),
+        }
+        for filename, content in player_surfaces.items():
+            self.assertNotIn("playerEmpire.autoColonize", content, filename)
+            self.assertNotRegex(content, r"\.colonize\(", filename)
+
+        planet_info = player_surfaces["PlanetInfoBar.as"]
+        self.assertNotIn("ColonizeAction", planet_info)
+        self.assertNotIn("ColonizeThisAction", planet_info)
+
+        quickbar = player_surfaces["Quickbar.as"]
+        self.assertNotIn("ColonizingPlanets", quickbar)
+        self.assertNotIn("ColonizeSafePlanets", quickbar)
+
+        commands = player_surfaces["commands.as"]
+        self.assertNotIn("doColonize", commands)
+        self.assertNotIn("KB_COLONIZE", commands)
+
+    def test_selecting_buildable_bodies_opens_their_slots(self) -> None:
+        overlays = ROOT / "scripts/gui/overlays"
+        for filename in (
+            "PlanetInfoBar.as",
+            "AsteroidInfoBar.as",
+            "StarInfoBar.as",
+            "OrbitalInfoBar.as",
+        ):
+            content = (overlays / filename).read_text(encoding="utf-8-sig")
+            setter = content.split("void set(Object@ obj) override", 1)[1].split(
+                "bool displays(Object@ obj) override", 1
+            )[0]
+            self.assertIn("showManage(obj);", setter, filename)
+
+    def test_star_and_asteroid_slots_restore_the_compact_info_bar(self) -> None:
+        overlays = ROOT / "scripts/gui/overlays"
+        for filename in ("AsteroidInfoBar.as", "StarInfoBar.as"):
+            content = (overlays / filename).read_text(encoding="utf-8-sig")
+            update = content.split("void update(double time) override", 1)[1]
+            for lifecycle_step in (
+                "if(overlay !is null)",
+                "if(overlay.parent is null)",
+                "@overlay = null;",
+                "visible = true;",
+                "overlay.update(time);",
+            ):
+                self.assertIn(lifecycle_step, update, filename)
+
+    def test_canonical_faction_research_has_seven_one_cycle_projects(self) -> None:
+        expected = {
+            "HumanTech.txt": {
+                "HumanExtraction",
+                "HumanHull",
+                "HumanBattleAI",
+                "HumanRailguns",
+                "HumanShields",
+                "HumanArtillery",
+                "HumanShieldMatrix",
+            },
+            "RebelTech.txt": {
+                "RebelWarpDrive",
+                "RebelHull",
+                "RebelWeapons",
+                "RebelPhaseJump",
+                "RebelDroneSwarm",
+                "RebelLasers",
+                "RebelCapitalConstruction",
+            },
+        }
+        block_pattern = re.compile(
+            r"^Technology:\s*(\w+)\s*$\n(.*?)(?=^Technology:|^Grid:|\Z)",
+            re.MULTILINE | re.DOTALL,
+        )
+
+        for filename, expected_projects in expected.items():
+            content = (MOD / "data/research" / filename).read_text(
+                encoding="utf-8-sig"
+            )
+            blocks = dict(block_pattern.findall(content))
+            projects = {name for name in blocks if not name.endswith("Root")}
+            self.assertEqual(expected_projects, projects, filename)
+            for project in projects:
+                self.assertRegex(blocks[project], r"(?m)^\s*Point Cost:\s*45\s*$")
+                self.assertRegex(blocks[project], r"(?m)^\s*Time Cost:\s*60\s*$")
+
+    def test_research_abilities_and_extraction_hooks_are_live(self) -> None:
+        abilities = definitions("abilities", "Ability")
+        research = "\n".join(
+            (MOD / "data/research" / filename).read_text(encoding="utf-8-sig")
+            for filename in ("HumanTech.txt", "RebelTech.txt")
+        )
+        granted = set(re.findall(r"GrantFleetAbility\((\w+)\)", research))
+        self.assertEqual(
+            {"HumanEmergencyShields", "RebelWeaponOvercharge", "RebelPhaseJump"},
+            granted,
+        )
+        self.assertTrue(granted <= abilities)
+
+        buildings = MOD / "data/buildings/our_buildings"
+        mining = (buildings / "MiningUnit.txt").read_text(encoding="utf-8-sig")
+        energy = (buildings / "EnergyHarvesterUnit.txt").read_text(
+            encoding="utf-8-sig"
+        )
+        star = (buildings / "StarHarvester.txt").read_text(encoding="utf-8-sig")
+        self.assertIn(
+            "AddResourceEmpireAttribute(Money, AdvancedExtraction, 1.0)", mining
+        )
+        for content in (energy, star):
+            self.assertIn(
+                "AddResourceEmpireAttribute(Energy, AdvancedExtraction, 0.0333333333)",
+                content,
+            )
+
+        planet_effects = (ROOT / "scripts/definitions/planet_effects.as").read_text(
+            encoding="utf-8-sig"
+        )
+        attribute_hook = planet_effects.split(
+            "class AddResourceEmpireAttribute", 1
+        )[1].split("class AddPressureEmpireAttribute", 1)[0]
+        self.assertIn("if(obj.hasSurfaceComponent)", attribute_hook)
+        self.assertNotIn("if(obj.isPlanet)", attribute_hook)
+
+        ship = (ROOT / "scripts/server/objects/Ship.as").read_text(
+            encoding="utf-8-sig"
+        )
+        self.assertIn('getUnlockTag("RebelPhaseJumpResearched")', ship)
+        self.assertIn('getAbilityType("RebelPhaseJump")', ship)
+
 
 if __name__ == "__main__":
     unittest.main()
