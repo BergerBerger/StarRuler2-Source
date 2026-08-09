@@ -262,13 +262,16 @@ class ModDataTests(unittest.TestCase):
         )
         self.assertNotRegex(init, r"modTotalBudget\(\+?500\b")
 
-    def test_conquer_is_the_fast_universal_body_capture_action(self) -> None:
+    def test_bombard_then_conquer_is_the_universal_capture_flow(self) -> None:
         conquer = (
             MOD / "data/abilities/our_abilities/ConquerPlanet.txt"
         ).read_text(encoding="utf-8-sig")
+        bombard = (
+            MOD / "data/abilities/our_abilities/BombardPlanet.txt"
+        ).read_text(encoding="utf-8-sig")
 
         self.assertIn(
-            "Either(TargetFilterSpace(targ), TargetFilterOtherEmpire(targ))",
+            "Either(TargetFilterSpace(targ), Both(TargetFilterOtherEmpire(targ), TargetFilterNoBuildings(targ)))",
             conquer,
         )
         self.assertRegex(
@@ -278,6 +281,14 @@ class ModDataTests(unittest.TestCase):
         self.assertNotRegex(conquer, r"AfterChannel\(targ,\s*60\b")
         for body_type in ("Planet", "Asteroid", "Star", "Orbital"):
             self.assertIn(f"TargetFilterType(targ, {body_type})", conquer)
+            self.assertIn(f"TargetFilterType(targ, {body_type})", bombard)
+
+        self.assertIn("TargetFilterOtherEmpire(targ)", bombard)
+        self.assertIn("TargetFilterHasBuildings(targ)", bombard)
+        self.assertRegex(
+            bombard,
+            r"AfterChannel\(targ,\s*3,\s*DestroyABuilding\(\),\s*Clear\s*=\s*False\)",
+        )
 
     def test_player_ui_has_no_colonize_bypass(self) -> None:
         overlays = ROOT / "scripts/gui/overlays"
@@ -348,25 +359,82 @@ class ModDataTests(unittest.TestCase):
             ):
                 self.assertIn(lifecycle_step, update, filename)
 
-    def test_canonical_faction_research_has_seven_one_cycle_projects(self) -> None:
+    def test_short_match_defaults_are_bounded_and_symmetric(self) -> None:
+        settings = (ROOT / "scripts/shared/settings/game_settings.as").read_text(
+            encoding="utf-8-sig"
+        )
+        self.assertIn('galaxies[0].map_id = "Dumbbell.DumbbellMap";', settings)
+        self.assertIn("galaxies[0][0] = 10;", settings)
+        self.assertIn("galaxies[0][2] = 1;", settings)
+        self.assertIn("galaxies[0][3] = 1;", settings)
+
+        config = (MOD / "data/game_config.txt").read_text(encoding="utf-8-sig")
+        values = dict(
+            re.findall(r"(?m)^([A-Z][A-Z0-9_]+):\s*([^\s/]+)", config)
+        )
+        self.assertEqual("30", values["GAME_TIME_LIMIT"])
+        for disabled in (
+            "PLANET_CONDITION_CHANCE",
+            "ANOMALY_OCCURANCE",
+            "REMNANT_OCCURANCE",
+            "UNIQUE_SYSTEM_OCCURANCE",
+            "UNIQUE_RESOURCE_OCCURANCE",
+            "ARTIFACT_FREQUENCY",
+            "ENABLE_CIVILIAN_TRADE",
+            "ENABLE_UNIQUE_SPREADS",
+            "ENABLE_REVENANT_PARTS",
+            "ENABLE_DREAD_PIRATE",
+            "RESOURCE_SCARCITY",
+            "ENABLE_INFLUENCE_EVENTS",
+            "PLANET_MOON_CHANCE",
+            "ENABLE_TERRAFORMING",
+            "PICK_SECRET_PROJECTS",
+            "ENABLE_INFLUENCE_VICTORY",
+        ):
+            self.assertEqual("0", values[disabled], disabled)
+
+    def test_alpha_exposes_only_five_fast_building_choices(self) -> None:
+        slot_grid = (ROOT / "scripts/gui/overlays/SlotGrid.as").read_text(
+            encoding="utf-8-sig"
+        )
+        whitelist = slot_grid.split("OUR_BUILDING_IDENTS = {", 1)[1].split(
+            "};", 1
+        )[0]
+        self.assertEqual(
+            {
+                "MiningUnit",
+                "EnergyHarvesterUnit",
+                "SpaceportUnit",
+                "ResearchComplex",
+                "StarHarvester",
+            },
+            set(re.findall(r'"([A-Za-z_][A-Za-z0-9_]*)"', whitelist)),
+        )
+
+        building_files = (
+            MOD / "data/buildings/our_buildings/MiningUnit.txt",
+            MOD / "data/buildings/our_buildings/EnergyHarvesterUnit.txt",
+            MOD / "data/buildings/our_buildings/SpaceportUnit.txt",
+            MOD / "data/buildings/our_buildings/StarHarvester.txt",
+            MOD / "data/buildings/imperial/ResearchComplex.txt",
+        )
+        for path in building_files:
+            content = path.read_text(encoding="utf-8-sig")
+            self.assertRegex(content, r"(?m)^\s*Build Time:\s*30\s*$", path.name)
+
+    def test_canonical_faction_research_has_four_short_projects(self) -> None:
         expected = {
             "HumanTech.txt": {
                 "HumanExtraction",
                 "HumanHull",
-                "HumanBattleAI",
                 "HumanRailguns",
                 "HumanShields",
-                "HumanArtillery",
-                "HumanShieldMatrix",
             },
             "RebelTech.txt": {
                 "RebelWarpDrive",
                 "RebelHull",
-                "RebelWeapons",
                 "RebelPhaseJump",
-                "RebelDroneSwarm",
                 "RebelLasers",
-                "RebelCapitalConstruction",
             },
         }
         block_pattern = re.compile(
@@ -382,8 +450,8 @@ class ModDataTests(unittest.TestCase):
             projects = {name for name in blocks if not name.endswith("Root")}
             self.assertEqual(expected_projects, projects, filename)
             for project in projects:
-                self.assertRegex(blocks[project], r"(?m)^\s*Point Cost:\s*45\s*$")
-                self.assertRegex(blocks[project], r"(?m)^\s*Time Cost:\s*60\s*$")
+                self.assertRegex(blocks[project], r"(?m)^\s*Point Cost:\s*30\s*$")
+                self.assertRegex(blocks[project], r"(?m)^\s*Time Cost:\s*40\s*$")
 
     def test_research_abilities_and_extraction_hooks_are_live(self) -> None:
         abilities = definitions("abilities", "Ability")

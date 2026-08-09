@@ -1,0 +1,6 @@
+Material: NotebookPaper
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/notebook_paper.png
+	Lighting: No
+	Culling: None
+	Alpha: Yes

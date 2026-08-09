@@ -322,12 +322,14 @@ class GameSettings : SettingsContainer, Serializable {
 		/*empires[2].aiFlags = AIF_CheatPrivileged;*/
 
 		galaxies.length = 1;
-		//galaxies[0].map_id = "Invasion.InvasionMap";
-		galaxies[0].map_id = "Clusters.ClustersMap";
-		//galaxies[0].map_id = "Expanse.ExpanseMap";
-		//galaxies[0].map_id = "Rings.RingsMap";
+		//The alpha is a short, readable duel rather than a sprawling 4X match.
+		//Dumbbell keeps both starts fair and funnels the first battle toward the
+		//middle of a ten-system map.
+		galaxies[0].map_id = "Dumbbell.DumbbellMap";
 		galaxies[0].galaxyCount = 1;
-		//galaxies[0][0] = 40;
+		galaxies[0][0] = 10;
+		galaxies[0][2] = 1;
+		galaxies[0][3] = 1;
 
 		settings.length = 0;
 		namedSettings.deleteAll();

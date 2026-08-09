@@ -19,11 +19,16 @@ Anomaly: DerelictStation
 		Choice: Crew
 		Choice: Repair
 
+	//All three options salvage/repair the hulk using a bit of the player's
+	//own Minerals -- a find that costs nothing to cash in isn't really a
+	//choice, and this keeps it in line with everything else in this mod
+	//costing Minerals to act on.
 	Option: Salvage
 		Icon: ResourceIcon::4
 		Description: #ANOMALY_DERELICT_STATION_SALVAGE
 		Safe: True
 
+		AddMoney(-5)
 		AddResearchPoints(400:800, Modified = False, Penalized = False)
 
 	Option: Crew
@@ -31,6 +36,7 @@ Anomaly: DerelictStation
 		Description: #ANOMALY_DERELICT_STATION_CREW
 		Safe: True
 
+		AddMoney(-8)
 		SpawnSupports(Small Warship, 2, Creep Design = False)
 
 	Option: Repair
@@ -38,4 +44,5 @@ Anomaly: DerelictStation
 		Description: #ANOMALY_DERELICT_STATION_REPAIR
 		Safe: True
 
+		AddMoney(-15)
 		SpawnOrbital(SupplyDepot, Free = True)

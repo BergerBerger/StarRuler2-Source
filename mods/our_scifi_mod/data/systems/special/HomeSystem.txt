@@ -6,7 +6,7 @@ System: HomeSystem
 	//is entirely Minerals+Energy from our own slot buildings, not vanilla's
 	//native resource/trade system.
 	RepeatHomeworlds()
-		MakePlanet(null, Radius = 10, Grid Size = (18, 11), Conditions = False, Moons = False)
+		MakePlanet(null, Radius = 10, Conditions = False, Moons = False)
 			BonusHealth(5000000000)
 			//Kept at a minimal trickle so the homeworld still unlocks ship/orbital
 			//construction (gated on any nonzero labor income); our own economy

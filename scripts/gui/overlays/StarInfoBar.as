@@ -9,14 +9,13 @@ import elements.GuiSkinElement;
 import elements.MarkupTooltip;
 import icons;
 from obj_selection import isSelected, selectObject, clearSelection, addToSelection;
-import void openOverlay(Object@ obj) from "tabs.GalaxyTab";
-from overlays.Construction import ConstructionOverlay;
+from overlays.SlotGrid import SlotGridPanel;
 from overlays.BodyEconomy import formatBodyProduction;
 
 class StarInfoBar : InfoBar {
 	Star@ obj;
 	Gui3DObject@ objView;
-	ConstructionOverlay@ overlay;
+	SlotGridPanel@ overlay;
 
 	GuiSkinElement@ nameBox;
 	GuiText@ name;
@@ -54,8 +53,10 @@ class StarInfoBar : InfoBar {
 	void updateActions() {
 		actions.clear();
 
+		//No Manage button: selecting the star already opens its slot grid
+		//via showManage(), so a second button that opens another instance
+		//of the same overlay is redundant.
 		if(obj.owner is playerEmpire) {
-			actions.add(ManageStarAction());
 			actions.addBasic(obj);
 			actions.addEmpireAbilities(playerEmpire, obj);
 		}
@@ -90,8 +91,7 @@ class StarInfoBar : InfoBar {
 	bool showManage(Object@ obj) override {
 		if(overlay !is null)
 			overlay.remove();
-		@overlay = ConstructionOverlay(findTab(), obj);
-		visible = false;
+		@overlay = SlotGridPanel(findTab(), obj);
 		return false;
 	}
 
@@ -162,14 +162,3 @@ InfoBar@ makeStarInfoBar(IGuiElement@ parent, Object@ obj) {
 	return bar;
 }
 
-class ManageStarAction : BarAction {
-	void init() override {
-		icon = icons::Manage;
-		tooltip = locale::TT_MANAGE_PLANET;
-	}
-
-	void call() override {
-		selectObject(obj);
-		openOverlay(obj);
-	}
-};

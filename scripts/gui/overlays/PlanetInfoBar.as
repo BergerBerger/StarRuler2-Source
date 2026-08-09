@@ -15,13 +15,12 @@ import planet_levels;
 import util.constructible_view;
 import util.formatting;
 import icons;
-import targeting.ObjectTarget;
 import statuses;
 from elements.GuiResources import LEVEL_REQ;
 from overlays.ContextMenu import openContextMenu;
-from overlays.PlanetOverlay import PlanetOverlay;
+from overlays.SlotGrid import SlotGridPanel;
 from overlays.BodyEconomy import formatBodyProduction;
-from tabs.GalaxyTab import zoomTabTo, openOverlay, toggleSupportOverlay;
+from tabs.GalaxyTab import zoomTabTo;
 
 //Temporary to avoid allocations
 Resources available;
@@ -33,7 +32,7 @@ class PlanetInfoBar : InfoBar {
 	array<Status> statuses;
 
 	Planet@ pl;
-	PlanetOverlay@ overlay;
+	SlotGridPanel@ overlay;
 	Gui3DObject@ objView;
 
 	GuiSkinElement@ nameBox;
@@ -165,12 +164,15 @@ class PlanetInfoBar : InfoBar {
 
 	void updateActions() {
 		actions.clear();
-		
+
+		//No Manage button: selecting the planet already opens its slot grid
+		//via showManage(), so a second button that opens another instance of
+		//the same overlay is redundant (and reads as a stray menu popping up).
+		//No Colonize actions either -- Colonize was removed from the game
+		//entirely in favor of Conquer; these buttons were the last leftover.
 		if(pl.owner is playerEmpire) {
-			actions.add(ManageAction());
 			actions.addBasic(pl);
 			actions.addFTL(pl);
-
 			actions.addAbilities(pl);
 			actions.addEmpireAbilities(playerEmpire, pl);
 		}
@@ -220,8 +222,10 @@ class PlanetInfoBar : InfoBar {
 	bool showManage(Object@ obj) override {
 		if(overlay !is null)
 			overlay.remove();
-		@overlay = PlanetOverlay(findTab(), cast<Planet>(obj));
-		visible = false;
+		//A plain row of slot squares beside the InfoBar -- not a modal
+		//overlay, so the InfoBar stays visible and nothing dims or takes
+		//over the screen.
+		@overlay = SlotGridPanel(findTab(), obj);
 		return false;
 	}
 
@@ -468,18 +472,6 @@ class PlanetInfoBar : InfoBar {
 				@ft = ft.bold;
 			ft.draw(pos=pos, text=cons[0].name, horizAlign=0.0, vertAlign=0.0, stroke=colors::Black);
 		}
-	}
-};
-
-class ManageAction : BarAction {
-	void init() override {
-		icon = icons::Manage;
-		tooltip = locale::TT_MANAGE_PLANET;
-	}
-
-	void call() override {
-		selectObject(obj);
-		openOverlay(obj);
 	}
 };
 

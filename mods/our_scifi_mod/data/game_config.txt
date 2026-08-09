@@ -65,13 +65,13 @@ SIEGE_LOYALTY_SUPPLY_COST: 4000
 COLONIZING_GROWTH_PENALTY: 0.3
 
 //The chance a planet has of spawning with a condition
-PLANET_CONDITION_CHANCE: 0.2
+PLANET_CONDITION_CHANCE: 0
 
 //Frequency of anomalies
-ANOMALY_OCCURANCE: 0.2
+ANOMALY_OCCURANCE: 0
 
 //Frequency of remnants
-REMNANT_OCCURANCE: 0.3
+REMNANT_OCCURANCE: 0
 
 //Frequency of asteroids
 //ASTEROID_OCCURANCE also drives how many asteroids spawn per system (used as
@@ -91,28 +91,28 @@ ASTEROID_OCCURANCE: 0.45
 RESOURCE_ASTEROID_OCCURANCE: 0
 
 //Frequency of unique systems
-UNIQUE_SYSTEM_OCCURANCE: 0.3
+UNIQUE_SYSTEM_OCCURANCE: 0
 
 //Frequency of unique resources
-UNIQUE_RESOURCE_OCCURANCE: 0.3
+UNIQUE_RESOURCE_OCCURANCE: 0
 
 //Frequency of planets in systems
 PLANET_FREQUENCY: 1.0
 
 //Frequency of artifacts
-ARTIFACT_FREQUENCY: 0.25
+ARTIFACT_FREQUENCY: 0
 
 //System size modifier
 SYSTEM_SIZE: 1.0
 
 //Whether to enable civilian trade
-ENABLE_CIVILIAN_TRADE: 1.0
+ENABLE_CIVILIAN_TRADE: 0
 
 //Modifier on graphical distances
 GFX_DISTANCE_MOD: 1.0
 
 //Time limit for the game
-GAME_TIME_LIMIT: 0
+GAME_TIME_LIMIT: 30
 
 //Whether empires start with fleets
 DISABLE_STARTING_FLEETS: 0
@@ -124,8 +124,8 @@ REMNANT_AGGRESSION: 0
 ASTEROID_MASS: 3000
 
 //Whether to enable revenant parts
-ENABLE_UNIQUE_SPREADS: 1
-ENABLE_REVENANT_PARTS: 1
+ENABLE_UNIQUE_SPREADS: 0
+ENABLE_REVENANT_PARTS: 0
 
 //Whether teams should start close together
 TEAMS_START_CLOSE: 1
@@ -134,10 +134,10 @@ TEAMS_START_CLOSE: 1
 ALLOW_TEAM_SURRENDER: 0
 
 //Whether the dread pirate should be enabled
-ENABLE_DREAD_PIRATE: 1
+ENABLE_DREAD_PIRATE: 0
 
 //Whether or not to enforce resource scarcity
-RESOURCE_SCARCITY: 1
+RESOURCE_SCARCITY: 0
 
 //How long it takes for a full labor storage to dump into a project
 LABOR_STORAGE_DUMP_TIME: 60
@@ -146,7 +146,7 @@ LABOR_STORAGE_DUMP_TIME: 60
 INFLUENCE_CONTACT_BONUS: 5
 
 //Whether to enable influence events
-ENABLE_INFLUENCE_EVENTS: 1
+ENABLE_INFLUENCE_EVENTS: 0
 
 //Whether all systems should start explored
 START_EXPLORED_MAP: 1
@@ -155,7 +155,7 @@ START_EXPLORED_MAP: 1
 DRYDOCK_BUILDCOST_FACTOR: 1.25
 
 //Chance of a planet having an extra moon
-PLANET_MOON_CHANCE: 0.3
+PLANET_MOON_CHANCE: 0
 
 //Whether to hide empire relations to each other
 HIDE_EMPIRE_RELATIONS: 0
@@ -167,13 +167,13 @@ RANDOM_EVENT_OCCURRENCE: 0
 RANDOM_EVENT_MIN_INTERVAL: 180
 
 //Whether to enable terraforming
-ENABLE_TERRAFORMING: 1
+ENABLE_TERRAFORMING: 0
 
 //Multiplier to civilian trade activity
 CIVILIAN_TRADE_MULT: 1
 
 //Amount of secret projects to unlock per game
-PICK_SECRET_PROJECTS: 2
+PICK_SECRET_PROJECTS: 0
 
 //Invasion difficulty
 INVASION_DIFFICULTY: 0.5
@@ -187,7 +187,7 @@ EXPERIENCE_BASE_AMOUNT: 1
 EXPERIENCE_INCREASE_AMOUNT: 1
 
 //Influence victory
-ENABLE_INFLUENCE_VICTORY: 1
+ENABLE_INFLUENCE_VICTORY: 0
 
 //Attitude costs
 ATTITUDE_BASE_COST: 5

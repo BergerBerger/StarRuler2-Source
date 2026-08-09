@@ -496,8 +496,18 @@ ABL_MOTHERSHIP_COLONIZE_DESC: <<
 
 ABL_CONQUER_PLANET: Conquer Planet
 ABL_CONQUER_PLANET_DESC: <<|
-	Claim an empty planet, or an enemy planet that has had all its buildings destroyed. Stay near the target for 10 seconds to take ownership of it.
+	Claim an empty planet, or an enemy planet that has had all its buildings destroyed. Stay near the target for 8 seconds to take ownership of it.
 >>
+
+ABL_BOMBARD_PLANET: Bombard
+ABL_BOMBARD_PLANET_DESC: <<|
+	Attack an enemy planet, asteroid, star, or station to destroy its buildings, one every 3 seconds. Required before you can Conquer a body that still has buildings on it.
+>>
+
+TT_BUILD_SLOT: Click to build
+TT_DESTROY_SLOT: Click to destroy
+DESTROY_BUILDING_GENERIC: Destroy building
+TT_BUILD_SHIP: Build a ship
 R_IMP_MOTHERSHIP_LABOR: Metallurgy
 R_IMP_MOTHERSHIP_LABOR2: Metallurgy 2
 R_IMP_MOTHERSHIP_LABOR_BLURB: Mothership Labor +$1

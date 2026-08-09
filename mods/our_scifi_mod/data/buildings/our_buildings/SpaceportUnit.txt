@@ -5,15 +5,16 @@ Building: SpaceportUnit
 
 	Category: Infrastructure
 
-	//Design doc: Spaceport costs 5 minerals, enables ship production from the
-	//following turn, no upkeep, finishes one turn (60s) after being ordered.
+	//A Spaceport is the one ship-production unlock. It comes online quickly
+	//enough for a 15-30 minute match and has no upkeep.
 	Size: 1x1
 	Base Cost: 5
 	Tile Cost: 0
 	Base Maintenance: 0
 	Tile Maintenance: 0
-	Build Time: 60
+	Build Time: 30
 
 	RequireNotTrait(Ancient)
 
 	ModSupportBuildSpeed(+0.3)
+	AllowConstruction(Ships = True)

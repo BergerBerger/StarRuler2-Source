@@ -1,5 +1,10 @@
 # Our Sci-Fi Mod — Project Notes / Handoff
 
+> **Current product direction:** [`GAME_VISION.md`](GAME_VISION.md) is the
+> canonical alpha scope: a simple hand-drawn notebook RTS duel that lasts
+> 15-30 minutes. This handoff explains implementation history and engine
+> constraints; older prototype rules do not override that smaller vision.
+
 This is a total-conversion mod of Star Ruler 2 into a simplified "Humans vs
 Rebels" real-time strategy/4X game. It's built on top of SR2's engine/UI (real-time strategic
 map, tactical combat, AngelScript modding layer) rather than written from
@@ -23,9 +28,9 @@ Two factions, Humans and Rebels, fighting over a galaxy with:
 - **Fixed ship classes** (Small/Medium/Large + faction flagship), not a
   build-your-own hex-editor design system like vanilla SR2. Players never
   see the blueprint editor.
-- **Faction-specific research**: each faction has its own small tech list
-  (not vanilla's shared tree) that unlocks a passive stat bonus plus a
-  "press R, on cooldown" activatable ability per ship.
+- **Faction-specific research**: each faction has four clear upgrades rather
+  than vanilla's shared tree. Humans choose economy, hull, railguns, or shields;
+  Rebels choose speed, hull, phase jump, or laser overcharge.
 
 The fuller rules reference (resource amounts, ship stat tables, turn
 structure, admirals, battle modes, etc.) is at
@@ -58,12 +63,10 @@ Minerals each (rescaled down from vanilla's 100-400, which didn't match a
   Government trait granting starting ship(s)/energy and a
   faction-specific research tree (`data/research/HumanTech.txt`,
   `RebelTech.txt`).
-- Both factions now have the canonical seven-project research branches from
-  the prototype, translated to effects that work immediately in SR2's RTS
-  engine. Every project costs 45 Research and targets one 60-second cycle with
-  one Research Lab. Prototype-only ship unlocks are represented by functional
-  fleet effects until dedicated Shroud/Artillery/Jumper/Drone hull assets are
-  authored for this engine.
+- Both factions have four-project alpha research branches translated to effects
+  that work immediately in SR2's RTS engine. Every project costs 30 Research
+  and targets 40 seconds with one Research Lab. Prototype-only specialized ship
+  unlocks are postponed until the core duel is readable and fun.
 - Humans start on a homeworld planet with one Scout. Rebels start with no
   homeworld — a mobile Capitol ship (`RebelCapitol` trait) plus two Small
   Warships instead.

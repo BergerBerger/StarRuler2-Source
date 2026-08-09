@@ -313,9 +313,9 @@ class BudgetResource : ResourceDisplay {
 		super(parent, align);
 
 		//Minerals reuses the Money/Budget stat under the hood, but should look
-		//like an industrial/mining resource rather than cash.
+		//like a mined ore/gem resource rather than cash or a construction hammer.
 		color = colors::Money;
-		addIcon(icons::Labor);
+		addIcon(Sprite(spritesheet::ResourceIconsSmall, 51));
 		addTexts();
 
 		@cycleBar = GuiProgressbar(value, Alignment(Left, Bottom-0.5f+3, Left+120, Bottom-4));

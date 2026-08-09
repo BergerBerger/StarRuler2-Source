@@ -17,9 +17,9 @@ import orbitals;
 import util.formatting;
 import icons;
 from overlays.ContextMenu import openContextMenu, FinanceDryDock;
-from overlays.Construction import ConstructionOverlay;
+from overlays.SlotGrid import SlotGridPanel;
 from obj_selection import isSelected, selectObject, clearSelection, addToSelection, selectedObject;
-from tabs.GalaxyTab import zoomTabTo, openOverlay;
+from tabs.GalaxyTab import zoomTabTo;
 from overlays.BodyEconomy import formatBodyProduction;
 
 class ModuleGrid : GuiIconGrid {
@@ -47,7 +47,7 @@ class ModuleGrid : GuiIconGrid {
 class OrbitalInfoBar : InfoBar {
 	Orbital@ obj;
 	Gui3DObject@ objView;
-	ConstructionOverlay@ overlay;
+	SlotGridPanel@ overlay;
 
 	GuiSkinElement@ nameBox;
 	GuiText@ name;
@@ -83,19 +83,17 @@ class OrbitalInfoBar : InfoBar {
 
 	void updateActions() {
 		actions.clear();
-		
+
+		//No Manage button: selecting the station already opens its slot
+		//grid via showManage(), so a second button that opens another
+		//instance of the same overlay is redundant.
 		if(obj.owner is playerEmpire) {
-			auto@ core = getOrbitalModule(obj.coreModule);
-			if(!core.isStandalone)
-				actions.add(ManageAction());
 			if(obj.getDesign(OV_PackUp) !is null)
 				actions.add(PackUpAction());
 			actions.addBasic(obj);
 			actions.addFTL(obj);
 			actions.addAbilities(obj);
 			actions.addEmpireAbilities(playerEmpire, obj);
-		}
-		else {
 		}
 
 		actions.init(obj);
@@ -146,10 +144,8 @@ class OrbitalInfoBar : InfoBar {
 			FinanceDryDock(obj);
 			return false;
 		}
-		if(obj.hasConstruction) {
-			@overlay = ConstructionOverlay(findTab(), obj);
-			visible = false;
-		}
+		if(obj.hasConstruction)
+			@overlay = SlotGridPanel(findTab(), obj);
 		return false;
 	}
 
@@ -238,18 +234,6 @@ class OrbitalInfoBar : InfoBar {
 			break;
 		}
 		return InfoBar::onGuiEvent(evt);
-	}
-};
-
-class ManageAction : BarAction {
-	void init() override {
-		icon = icons::Manage;
-		tooltip = locale::TT_MANAGE_ORBITAL;
-	}
-
-	void call() override {
-		selectObject(obj);
-		openOverlay(obj);
 	}
 };
 
