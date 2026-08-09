@@ -92,10 +92,12 @@ logic. That path remains temporarily because removing it before the AI can use
 the Conquer ability would leave the opponent unable to expand. It is an
 explicit technical bridge, not a player-facing rule.
 
-The older board-game archive was found at
+The game was previously called **Torcan**. The older board-game archive was found at
 `C:\Users\Tolga\Desktop\Assets, backgrounds`. Its hand-painted cyan/orange
 background, planet, station, card, and symbol art now defines the visual
 reference language alongside the notebook-paper UI. The archive does not
 contain a separate named ship roster, so station paintings are kept semantic
 and are not misrepresented as ships. Ship-model integration remains a distinct
-follow-up when the original models are located.
+follow-up when original 3D meshes are located. The Torcan Drive archive now
+supplies the canonical 2D fleet silhouettes for design, build, queue, popup,
+and selected-ship UI.

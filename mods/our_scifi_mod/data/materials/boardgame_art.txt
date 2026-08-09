@@ -46,3 +46,63 @@ Material: BoardgameIcarusStationArt
 	Lighting: No
 	Culling: None
 	Alpha: Yes
+
+Material: TorcanSmallShip1
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/small_ship_lvl1.png
+	Lighting: No
+	Alpha: Yes
+
+Material: TorcanSmallShip2
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/small_ship_lvl2.png
+	Lighting: No
+	Alpha: Yes
+
+Material: TorcanMediumShip1
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/medium_ship_lvl1.png
+	Lighting: No
+	Alpha: Yes
+
+Material: TorcanMediumShip2
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/medium_ship_lvl2.png
+	Lighting: No
+	Alpha: Yes
+
+Material: TorcanLargeShip1
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/large_ship_lvl1.png
+	Lighting: No
+	Alpha: Yes
+
+Material: TorcanLargeShip2
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/large_ship_lvl2.png
+	Lighting: No
+	Alpha: Yes
+
+Material: TorcanDestroyerAlpha
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/destroyer_alpha.png
+	Lighting: No
+	Alpha: Yes
+
+Material: TorcanDestroyer2
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/destroyer_ship_lvl2.png
+	Lighting: No
+	Alpha: Yes
+
+Material: TorcanColonyShip
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/colony_ship.png
+	Lighting: No
+	Alpha: Yes
+
+Material: TorcanEngineeringDrone
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/ships/torcan/engineering_drone.png
+	Lighting: No
+	Alpha: Yes

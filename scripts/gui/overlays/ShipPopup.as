@@ -422,7 +422,7 @@ class ShipPopup : Popup {
 
 		if(design !is curDesign) {
 			@curDesign = design;
-			shipImage.desc = design.icon.valid ? design.icon : icons::Ship;
+			shipImage.desc = icons::getShipArt(design);
 		}
 
 		groupdisp.visible = ship.visible;

@@ -13,6 +13,16 @@ namespace icons {
 	const Sprite Building(material::Warehouse);
 	const Sprite Orbital(material::BoardgameStationIcon);
 	const Sprite Ship(spritesheet::ActionBarIcons, 2);
+	const Sprite TorcanSmallShip1(material::TorcanSmallShip1);
+	const Sprite TorcanSmallShip2(material::TorcanSmallShip2);
+	const Sprite TorcanMediumShip1(material::TorcanMediumShip1);
+	const Sprite TorcanMediumShip2(material::TorcanMediumShip2);
+	const Sprite TorcanLargeShip1(material::TorcanLargeShip1);
+	const Sprite TorcanLargeShip2(material::TorcanLargeShip2);
+	const Sprite TorcanDestroyerAlpha(material::TorcanDestroyerAlpha);
+	const Sprite TorcanDestroyer2(material::TorcanDestroyer2);
+	const Sprite TorcanColonyShip(material::TorcanColonyShip);
+	const Sprite TorcanEngineeringDrone(material::TorcanEngineeringDrone);
 	const Sprite Project(spritesheet::ResourceIcon, 6);
 
 	const Sprite Money(spritesheet::ResourceIcon, 0);
@@ -24,6 +34,29 @@ namespace icons {
 	const Sprite Research(material::BoardgameResearchIcon);
 	const Sprite FTL(spritesheet::ResourceIcon, 3);
 	const Sprite Empty;
+
+	Sprite getShipArt(const Design@ dsg) {
+		if(dsg is null || dsg.hull is null || dsg.hull.baseHull is null)
+			return Ship;
+
+		string hull = dsg.hull.baseHull.ident;
+		bool human = hull.findFirst("Moirai") == 0;
+		bool rebel = hull.findFirst("Volkur") == 0;
+		if(!human && !rebel)
+			return dsg.icon.valid ? dsg.icon : Ship;
+
+		if(hull.findFirst("FlagTiny") != -1)
+			return human ? TorcanEngineeringDrone : TorcanDestroyer2;
+		if(hull.findFirst("Tiny") != -1)
+			return human ? TorcanSmallShip1 : TorcanSmallShip2;
+		if(hull.findFirst("Small") != -1)
+			return human ? TorcanMediumShip1 : TorcanMediumShip2;
+		if(hull.findFirst("Medium") != -1)
+			return human ? TorcanLargeShip1 : TorcanLargeShip2;
+		if(hull.findFirst("Large") != -1)
+			return human ? TorcanDestroyerAlpha : TorcanDestroyer2;
+		return dsg.icon.valid ? dsg.icon : Ship;
+	}
 
 	const Sprite Health(spritesheet::AttributeIcons, 6);
 	const Sprite Strength(spritesheet::AttributeIcons, 3);

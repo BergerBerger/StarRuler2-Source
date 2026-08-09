@@ -62,3 +62,35 @@ Future original scans or ship models should be copied, never moved, into a
 clearly named `source_art/` subfolder. Add original path and author here before
 creating runtime derivatives under the normal mod `images/`, `materials/`, or
 model folders.
+
+## Torcan ship archive
+
+The project's earlier name was **Torcan**. The historical fleet archive was
+found in Google Drive folder
+`17BAXBkGdEeMIvJY6ATGfu-0VRNzkyY6G`. Its `manifest.csv` traces the ship files
+to `D:\Game Projects\TCG Project\Assets\Planet Game Assets` and the detailed
+concept to `D:\Desktop Ordner\Boardgame\spaceship drawing 1.psd`.
+
+Drive's ten authenticated raw PNG downloads are preserved byte-for-byte under
+`source_art/torcan_drive_originals/`. Runtime derivatives under
+`data/images/ships/torcan/` trim transparent margins, center each silhouette on
+a padded square canvas, and preserve the source pixels. The PSD is represented
+only by an authenticated preview render.
+
+| Runtime file | Drive source | Current role |
+| --- | --- | --- |
+| `small_ship_lvl1.png` | `Objects/S-Ship lvl 1.png` | Human small warship |
+| `medium_ship_lvl1.png` | `Objects/M-Ships lvl 1.png` | Human medium warship |
+| `large_ship_lvl1.png` | `Objects/L-Ship lvl 1.png` | Human large warship |
+| `engineering_drone.png` | `Objects/Engineering drone.png` | Human scout |
+| `destroyer_alpha.png` | `Objects/DestroyerAlpha.png` | Human capital ship |
+| `small_ship_lvl2.png` | `Objects/S-Ship lvl 2.png` | Rebel small warship |
+| `medium_ship_lvl2.png` | `Objects/M-Ship lvl 2.png` | Rebel medium warship |
+| `large_ship_lvl2.png` | `L-Ship lvl 2.png` | Rebel large warship |
+| `destroyer_ship_lvl2.png` | `Destroyer ship 2.png` | Rebel capitol ship |
+| `colony_ship.png` | `Objects/Colony ship 1.png` | Preserved future utility role |
+
+`spaceship_drawing_preview.png` is a preview render of the detailed orange
+`spaceship drawing 1.psd` and remains reference-only. These files are 2D ship
+art, not 3D meshes: the alpha uses them consistently in build/queue/selection
+UI while retaining its current world-space geometry.
