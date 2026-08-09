@@ -6,13 +6,13 @@ Building: EnergyHarvesterUnit
 	Category: Production
 
 	//RTS economy: costs 2 minerals, produces +2 Energy per 60-second
-	//economy cycle, has no upkeep, and takes 60 seconds to construct.
+	//economy cycle, has no upkeep, and takes 30 seconds to construct.
 	Size: 1x1
 	Base Cost: 2
 	Tile Cost: 0
 	Base Maintenance: 0
 	Tile Maintenance: 0
-	Build Time: 60
+	Build Time: 30
 
 	RequireNotTrait(Ancient)
 

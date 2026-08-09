@@ -91,6 +91,20 @@ class SlotGridPanel : BaseGuiElement {
 		}
 	}
 
+	void draw() override {
+		//First concrete piece of the notebook presentation layer: construction
+		//choices sit on warm graph paper with a loose dark-ink outline. The ship
+		//and building icons remain readable placeholders until original drawings
+		//are found and converted to runtime sprites.
+		recti paper = AbsolutePosition.padded(-8);
+		material::NotebookPaper.draw(paper, Color(0xffffffff));
+		drawRectangle(recti_area(paper.topLeft, vec2i(paper.width, 2)), Color(0x17263dff));
+		drawRectangle(recti_area(vec2i(paper.topLeft.x, paper.botRight.y - 2), vec2i(paper.width, 2)), Color(0x17263dff));
+		drawRectangle(recti_area(paper.topLeft, vec2i(2, paper.height)), Color(0x17263dff));
+		drawRectangle(recti_area(vec2i(paper.botRight.x - 2, paper.topLeft.y), vec2i(2, paper.height)), Color(0x17263dff));
+		BaseGuiElement::draw();
+	}
+
 	bool onGuiEvent(const GuiEvent& evt) override {
 		if(evt.type == GUI_Clicked) {
 			if(evt.caller is shipButton) {

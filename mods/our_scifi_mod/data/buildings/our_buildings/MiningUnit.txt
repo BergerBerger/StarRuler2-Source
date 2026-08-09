@@ -5,14 +5,14 @@ Building: MiningUnit
 
 	Category: Production
 
-	//Design doc: Mineral mine costs 2 minerals, +2 minerals per turn, no
-	//upkeep, finishes one turn (60s) after being ordered.
+	//Alpha pacing: cheap economy buildings finish in 30 seconds so the first
+	//fleet decision happens inside the opening five minutes.
 	Size: 1x1
 	Base Cost: 2
 	Tile Cost: 0
 	Base Maintenance: 0
 	Tile Maintenance: 0
-	Build Time: 60
+	Build Time: 30
 
 	RequireNotTrait(Ancient)
 

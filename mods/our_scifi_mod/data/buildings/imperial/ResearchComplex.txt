@@ -14,6 +14,7 @@ Building: ResearchComplex
 	Tile Cost: 0
 	Base Maintenance: 0
 	Tile Maintenance: 0
+	Build Time: 30
 
 	RequireNotTrait(Ancient)
 
