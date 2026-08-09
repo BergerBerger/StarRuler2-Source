@@ -146,7 +146,7 @@ void drawFleetIcon(Ship@ leader, const recti& pos, double barCur, double barMax,
 		drawRectangle(pos.padded(0.1 * pos.width), glow);
 	}
 
-	dsg.icon.draw(pos.padded(0.2 * pos.width), color);
+	icons::getShipArt(dsg).draw(pos.padded(0.2 * pos.width), color);
 	
 	if(barMax != 0) {
 		double pct = clamp(barCur / barMax, 0.0, 1.0);

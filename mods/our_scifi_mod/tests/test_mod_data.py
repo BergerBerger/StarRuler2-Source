@@ -537,7 +537,7 @@ class ModDataTests(unittest.TestCase):
             encoding="utf-8-sig"
         )
         texture_paths = re.findall(r"(?m)^\s*Texture:\s*(.+?)\s*$", materials)
-        self.assertEqual(7, len(texture_paths))
+        self.assertEqual(17, len(texture_paths))
         for texture in texture_paths:
             self.assertTrue((ROOT / texture).is_file(), texture)
 
@@ -582,6 +582,64 @@ class ModDataTests(unittest.TestCase):
         )
         self.assertNotIn("BoardgameAlienStationArt", ship_surfaces)
         self.assertNotIn("BoardgameIcarusStationArt", ship_surfaces)
+
+    def test_torcan_drive_fleet_art_is_complete_and_role_mapped(self) -> None:
+        runtime = MOD / "data/images/ships/torcan"
+        expected = {
+            "colony_ship.png",
+            "destroyer_alpha.png",
+            "destroyer_ship_lvl2.png",
+            "engineering_drone.png",
+            "large_ship_lvl1.png",
+            "large_ship_lvl2.png",
+            "medium_ship_lvl1.png",
+            "medium_ship_lvl2.png",
+            "small_ship_lvl1.png",
+            "small_ship_lvl2.png",
+        }
+        self.assertEqual(expected, {path.name for path in runtime.glob("*.png")})
+        for path in runtime.glob("*.png"):
+            self.assertGreater(path.stat().st_size, 1000, path.name)
+
+        source = MOD / "source_art/torcan_drive_originals"
+        self.assertEqual(
+            expected | {"spaceship_drawing_preview.png"},
+            {path.name for path in source.glob("*.png")},
+        )
+
+        icons = (ROOT / "scripts/definitions/icons.as").read_text(
+            encoding="utf-8-sig"
+        )
+        for faction, roles in {
+            "human": (
+                "TorcanSmallShip1",
+                "TorcanMediumShip1",
+                "TorcanLargeShip1",
+                "TorcanEngineeringDrone",
+                "TorcanDestroyerAlpha",
+            ),
+            "rebel": (
+                "TorcanSmallShip2",
+                "TorcanMediumShip2",
+                "TorcanLargeShip2",
+                "TorcanDestroyer2",
+            ),
+        }.items():
+            for role in roles:
+                self.assertIn(role, icons, f"missing {faction} art role {role}")
+        self.assertIn("Sprite getShipArt(const Design@ dsg)", icons)
+
+        for filename in (
+            "Construction.as",
+            "ShipInfoBar.as",
+            "ShipPopup.as",
+            "SlotGrid.as",
+            "Supports.as",
+        ):
+            content = (ROOT / "scripts/gui/overlays" / filename).read_text(
+                encoding="utf-8-sig"
+            )
+            self.assertIn("icons::getShipArt", content, filename)
 
 
 if __name__ == "__main__":

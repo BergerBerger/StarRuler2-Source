@@ -1187,7 +1187,7 @@ class OrbitalTarget : PointTargeting {
 		@this.constructFrom = constructFrom;
 		@def = mod;
 		if(dsg !is null)
-			icon = dsg.icon;
+			icon = icons::getShipArt(dsg);
 		else if(def.icon.valid)
 			icon = def.icon;
 		else
@@ -1461,7 +1461,7 @@ class BuildElement : GuiListElement {
 			nameText = dsg.name+" ("+toString(dsg.size, 0)+")";
 			ttText = "";
 			getBuildCost(dsg, build, maintain, labor, -1, buildAt);
-			icon = dsg.icon;
+			icon = icons::getShipArt(dsg);
 
 			double multiply = 1.0;
 			if(dsg.hasTag(ST_Support)) {
@@ -1927,7 +1927,7 @@ class QueueItem : BaseGuiElement {
 			absPos.topLeft, vec2i(38, 29)));
 
 		if(cons.dsg !is null) {
-			cons.dsg.icon.draw(recti_area(
+			icons::getShipArt(cons.dsg).draw(recti_area(
 				absPos.topLeft + vec2i(5, 0), vec2i(29, 29)), color);
 		}
 		else {
@@ -2005,7 +2005,7 @@ class SupportItem : BaseGuiElement {
 
 		recti ipos = recti_area(absPos.topLeft+vec2i(8, 2), vec2i(16, 16));
 		spritesheet::ResourceIconsSmallMods.draw(0, ipos);
-		dat.dsg.icon.draw(ipos.padded(2), dat.dsg.color);
+		icons::getShipArt(dat.dsg).draw(ipos.padded(2), dat.dsg.color);
 
 		skin.draw(FT_Normal, absPos.topLeft+vec2i(32, 3), dat.dsg.name);
 		skin.draw(FT_Normal, absPos.topLeft+vec2i(180, 3), toString(dat.amount)+"x");
@@ -2033,10 +2033,10 @@ class FlagshipDrydock : GuiMarkupContextOption {
 				toString(dsg.color),
 				dsg.name,
 				standardize(dsg.size, true),
-				getSpriteDesc(dsg.icon),
+				getSpriteDesc(icons::getShipArt(dsg)),
 				toString(dsg.color.interpolate(colors::White, 0.5))),
 				FT_Subtitle);
-		icon = dsg.icon;
+		icon = icons::getShipArt(dsg);
 		icon.color = dsg.color;
 	}
 

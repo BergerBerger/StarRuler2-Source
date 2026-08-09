@@ -198,7 +198,7 @@ class BuildShipOption : GuiContextOption {
 		@obj = o;
 		@dsg = d;
 		text = dsg.name;
-		icon = dsg.icon;
+		icon = icons::getShipArt(dsg);
 	}
 
 	void call(GuiContextMenu@ menu) override {

@@ -694,7 +694,7 @@ class SupportClass : BaseGuiElement {
 		Color col;
 		col = dat.dsg.color;
 		col.a = 0x80;
-		dat.dsg.icon.draw(recti_area(pos.topLeft+vec2i(4,0), vec2i(pos.height, pos.height)), col);
+		icons::getShipArt(dat.dsg).draw(recti_area(pos.topLeft+vec2i(4,0), vec2i(pos.height, pos.height)), col);
 
 		const Font@ normal = skin.getFont(FT_Normal);
 		normal.draw(pos=recti_area(pos.topLeft + vec2i(pos.height+6, 6), vec2i(pos.width-pos.height-12, 22)), text=formatShipName(dat.dsg), stroke=colors::Black);
