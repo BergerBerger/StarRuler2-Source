@@ -62,15 +62,15 @@ The game should feel drawn, not rendered:
 - large handwritten labels and uncluttered panels, with gameplay values still
   typeset clearly enough to read at a glance.
 
-Do not use photorealistic key art, glossy metal panels, chrome borders, dense
-3D HUD decoration, or generated paintings as the primary style. Existing 3D
-board-game-era assets can remain as historical reference, but they do not set
-the notebook art direction.
+Do not use photorealistic key art, glossy metal panels, chrome borders, or dense
+3D HUD decoration as the primary style. The older board-game paintings set the
+cyan/orange palette and brush texture; notebook paper, imperfect ink, and clear
+flat symbols keep that style readable during a fast RTS match.
 
-Original scans should be copied, never moved, into
-`source_art/notebook_originals/`. Each imported file should be listed in an
-asset manifest with its original path and author. Runtime-ready derivatives
-belong under the normal `images/` or `materials/` mod folders.
+Original art should be copied, never moved, into a clearly named `source_art/`
+subfolder. Each imported file should be listed in the asset manifest with its
+original path and author. Runtime-ready derivatives belong under the normal
+`images/`, `materials/`, or model folders.
 
 ## Alpha definition of done
 
@@ -92,7 +92,10 @@ logic. That path remains temporarily because removing it before the AI can use
 the Conquer ability would leave the opponent unable to expand. It is an
 explicit technical bridge, not a player-facing rule.
 
-The artwork located so far on this PC consists of Unreal `.uasset` ship/planet
-assets and polished space-art PNGs. Those files are not the requested notebook
-drawings, so they have not been imported into this mod. The original drawing
-folder should be identified before a full asset conversion pass.
+The older board-game archive was found at
+`C:\Users\Tolga\Desktop\Assets, backgrounds`. Its hand-painted cyan/orange
+background, planet, station, card, and symbol art now defines the visual
+reference language alongside the notebook-paper UI. The archive does not
+contain a separate named ship roster, so station paintings are kept semantic
+and are not misrepresented as ships. Ship-model integration remains a distinct
+follow-up when the original models are located.

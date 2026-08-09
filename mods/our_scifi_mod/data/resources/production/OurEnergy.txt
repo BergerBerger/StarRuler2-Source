@@ -6,8 +6,8 @@ Resource: OurEnergy
 	Name: #OURENERGY
 	Description: #OURENERGY_DESC
 
-	Icon: ResourceIcons::43
-	Small Icon: ResourceIconsSmall::12
+	Icon: BoardgameEnergyIcon
+	Small Icon: BoardgameEnergyIcon
 
 	Distribution: 0
 	Exportable: False

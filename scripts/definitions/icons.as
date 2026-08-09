@@ -4,21 +4,24 @@ namespace icons {
 	const Sprite Pressure(spritesheet::AttributeIcons, 0);
 	const Sprite Effectiveness(spritesheet::StatusIcons, 0);
 
-	const Sprite Planet(spritesheet::PlanetType, 2);
+	//Project-owned board-game paintings and regenerated hand-painted symbols.
+	//Keep these roles semantic: station artwork is never substituted for ships.
+	const Sprite Planet(material::BoardgamePlanetArt);
 	const Sprite Artifact(spritesheet::ArtifactIcon, 0);
 	const Sprite Anomaly(spritesheet::AnomalyIcons, 0);
 	const Sprite Asteroid(material::AsteroidIcon);
 	const Sprite Building(material::Warehouse);
-	const Sprite Orbital(spritesheet::GuiOrbitalIcons, 0, Color(0x9e33ddff));
+	const Sprite Orbital(material::BoardgameStationIcon);
 	const Sprite Ship(spritesheet::ActionBarIcons, 2);
 	const Sprite Project(spritesheet::ResourceIcon, 6);
 
 	const Sprite Money(spritesheet::ResourceIcon, 0);
 	const Sprite Influence(spritesheet::ResourceIcon, 1);
-	const Sprite Energy(spritesheet::ResourceIcon, 2);
+	const Sprite Minerals(material::BoardgameMineralsIcon);
+	const Sprite Energy(material::BoardgameEnergyIcon);
 	const Sprite Labor(spritesheet::ResourceIcon, 6);
 	const Sprite Defense(spritesheet::ResourceIcon, 5);
-	const Sprite Research(spritesheet::ResourceIcon, 4);
+	const Sprite Research(material::BoardgameResearchIcon);
 	const Sprite FTL(spritesheet::ResourceIcon, 3);
 	const Sprite Empty;
 
