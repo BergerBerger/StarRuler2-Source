@@ -496,6 +496,93 @@ class ModDataTests(unittest.TestCase):
         self.assertIn('getUnlockTag("RebelPhaseJumpResearched")', ship)
         self.assertIn('getAbilityType("RebelPhaseJump")', ship)
 
+    def test_boardgame_art_manifest_preserves_originals_and_runtime_assets(self) -> None:
+        source = MOD / "source_art/boardgame_originals"
+        runtime = MOD / "data/images/boardgame"
+        preserved = {
+            "alien_station.png",
+            "icarus_station.png",
+            "sky_fleet.png",
+            "sky_background_no_ships.png",
+            "planet_eden.png",
+            "icon_minerals.png",
+            "icon_energy.png",
+            "icon_research.png",
+            "icon_station.png",
+            "reference_building_card.png",
+            "reference_action_card.png",
+            "reference_science_card.png",
+            "reference_planet_card.png",
+        }
+        self.assertEqual(preserved, {path.name for path in source.glob("*.png")})
+
+        expected_runtime = {
+            "alien_station.png",
+            "icarus_station.png",
+            "menu_background.png",
+            "planet_eden.png",
+            "icon_minerals.png",
+            "icon_energy.png",
+            "icon_research.png",
+            "icon_station.png",
+        }
+        self.assertEqual(expected_runtime, {path.name for path in runtime.glob("*.png")})
+
+        manifest = (MOD / "ART_ASSETS.md").read_text(encoding="utf-8-sig")
+        for name in preserved:
+            self.assertIn(f"`{name}`", manifest)
+
+    def test_boardgame_material_textures_exist_and_icons_have_alpha(self) -> None:
+        materials = (MOD / "data/materials/boardgame_art.txt").read_text(
+            encoding="utf-8-sig"
+        )
+        texture_paths = re.findall(r"(?m)^\s*Texture:\s*(.+?)\s*$", materials)
+        self.assertEqual(7, len(texture_paths))
+        for texture in texture_paths:
+            self.assertTrue((ROOT / texture).is_file(), texture)
+
+        # PNG IHDR color type 6 is RGBA. This protects the chroma-key cleanup.
+        for name in (
+            "icon_minerals.png",
+            "icon_energy.png",
+            "icon_research.png",
+            "icon_station.png",
+        ):
+            header = (MOD / "data/images/boardgame" / name).read_bytes()[:26]
+            self.assertEqual(b"\x89PNG\r\n\x1a\n", header[:8], name)
+            self.assertEqual(6, header[25], f"{name} is not an RGBA PNG")
+
+    def test_boardgame_style_is_wired_without_faking_ship_art(self) -> None:
+        icons = (ROOT / "scripts/definitions/icons.as").read_text(
+            encoding="utf-8-sig"
+        )
+        for material in (
+            "BoardgameMineralsIcon",
+            "BoardgameEnergyIcon",
+            "BoardgameResearchIcon",
+            "BoardgameStationIcon",
+            "BoardgamePlanetArt",
+        ):
+            self.assertIn(f"material::{material}", icons)
+
+        menu = (ROOT / "scripts/menu/menus.as").read_text(encoding="utf-8-sig")
+        self.assertIn('topMod.ident == "our_scifi_mod"', menu)
+        self.assertIn(
+            'defaultBackground.load("mods/our_scifi_mod/data/images/boardgame/menu_background.png")',
+            menu,
+        )
+        self.assertIn('defaultBackground.load("data/images/title_shot_BG.png")', menu)
+
+        ship_surfaces = "\n".join(
+            path.read_text(encoding="utf-8-sig")
+            for path in (
+                ROOT / "scripts/gui/overlays/ShipInfoBar.as",
+                *sorted((MOD / "data/designs").rglob("*.design")),
+            )
+        )
+        self.assertNotIn("BoardgameAlienStationArt", ship_surfaces)
+        self.assertNotIn("BoardgameIcarusStationArt", ship_surfaces)
+
 
 if __name__ == "__main__":
     unittest.main()

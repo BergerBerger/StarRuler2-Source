@@ -118,7 +118,10 @@ void init() {
 	}
 	else {
 		hasDefaultBackground = true;
-		defaultBackground.load("data/images/title_shot_BG.png");
+		if(topMod.ident == "our_scifi_mod")
+			defaultBackground.load("mods/our_scifi_mod/data/images/boardgame/menu_background.png");
+		else
+			defaultBackground.load("data/images/title_shot_BG.png");
 	}
 
 	if(hasDLC("Heralds"))

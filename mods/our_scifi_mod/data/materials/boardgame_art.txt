@@ -1,0 +1,48 @@
+Material: BoardgameMineralsIcon
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/boardgame/icon_minerals.png
+	Lighting: No
+	Culling: None
+	Alpha: Yes
+
+Material: BoardgameEnergyIcon
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/boardgame/icon_energy.png
+	Lighting: No
+	Culling: None
+	Alpha: Yes
+
+Material: BoardgameResearchIcon
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/boardgame/icon_research.png
+	Lighting: No
+	Culling: None
+	Alpha: Yes
+
+Material: BoardgameStationIcon
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/boardgame/icon_station.png
+	Lighting: No
+	Culling: None
+	Alpha: Yes
+
+Material: BoardgamePlanetArt
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/boardgame/planet_eden.png
+	Lighting: No
+	Culling: None
+	Alpha: Yes
+
+Material: BoardgameAlienStationArt
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/boardgame/alien_station.png
+	Lighting: No
+	Culling: None
+	Alpha: Yes
+
+Material: BoardgameIcarusStationArt
+	Inherit: Image2D
+	Texture: mods/our_scifi_mod/data/images/boardgame/icarus_station.png
+	Lighting: No
+	Culling: None
+	Alpha: Yes
