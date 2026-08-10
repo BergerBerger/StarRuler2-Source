@@ -413,21 +413,19 @@ plain Large.
 | Ship | Tier | Role |
 | --- | --- | --- |
 | **Medium** *(becomes "Jumper" once researched)* | Baseline | Fast, cheap, only light/medium hull Rebels have |
-| **Drone Ship** | Heavy specialist — Rebels' equivalent of Human Artillery | Penetrating-laser gunship that also deploys an automated drone swarm |
+| **Drone Ship** | Heavy specialist — Rebels' equivalent of Human Artillery | Deploys an automated drone swarm |
 | **Suicide Drone** | Light specialist | Small, cheap, expendable kamikaze unit |
 | **Capitol** | Flagship | Mobile home base and army carrier |
 
-> **Resolving the "penetrating laser" question**: the original design
-> reference explicitly calls out a "Rebel heavy artillery" that "uses a
-> penetrating laser" (an attack that passes through its target and keeps
-> hitting up to three ships behind it) as a mirror to Human Artillery's
-> shrapnel rounds. Later design conversation separately introduced a
-> "Drone Ship" with a Drone Swarm ability as the Rebel heavy specialist.
-> Resolution used in this document: **they're the same ship.** Drone Ship's
-> passive main gun *is* the penetrating laser from the original reference;
-> Drone Swarm is its additional activated ability on top of that. This
-> keeps the roster from needing a fourth, redundant Rebel hull — flag this
-> for confirmation if that's not the intended reading.
+> **Resolving the "penetrating laser" question**: earlier drafts of this
+> document guessed that "penetrating laser" was a trait built into a
+> specific Rebel ship (Drone Ship). The project's fuller conversation
+> history resolves this more precisely: **Penetrating Lasers is a Rebel
+> research tech, not a single ship's weapon.** Once researched, it applies
+> to *every* Rebel ship's laser fire — see Section 13's Research section
+> for the mechanic. Drone Ship's own gun is a normal laser like any other
+> Rebel ship's; it doesn't need a unique passive weapon on top of Drone
+> Swarm to justify its identity.
 
 ### Special abilities — press R, on a cooldown
 Most specialist ships get a player-activated ability, triggered with **R**,
@@ -435,11 +433,11 @@ on its own cooldown, separate from passive stats:
 
 | Ship | Ability | What it does |
 | --- | --- | --- |
-| **Shroud** (Human) | *(name TBD)* | An activated shield effect that specifically blocks/negates incoming penetrating attacks for its duration — the hard counter to the Rebel penetrating-laser threat. |
+| **Shroud** (Human) | **Shield Field** | Projects a shared shield pool (baseline: **5 shield HP**, **3-field radius**) that any friendly ship inside the radius draws from before taking hull damage. The pool doesn't regenerate on its own — once it's depleted the shield is down until reactivated (**8-second cooldown**). This is the hard counter to the Rebel Penetrating Lasers tech (Section 13): a beam stops the instant it hits a shielded ship. |
 | **Artillery** (Human) | **Rocket Barrage** *(name TBD)* | Fires homing rockets that automatically track and close on enemy targets at high speed. The rockets are their own physical projectile with HP — they can be intercepted/shot down in flight — but their speed and homing make them hard to reliably stop. |
 | **Repair Ship / Heavy Repair Frigate** (Human) | **Instant Regenerate** | Immediately restores HP to allied ships in range, on top of (not instead of) its normal continuous repair beam. |
 | **Jumper** (Rebel Medium, after research) | **Phase Jump** | Short-range teleport/blink to another point on the *battlefield* — a tactical repositioning tool inside a fight, not a strategic-map ability. Until the relevant tech is researched, this ship is a plain Medium with no R-ability. |
-| **Drone Ship** (Rebel) | **Drone Swarm** | Deploys a swarm of drones that appear near the Drone Ship and automatically attack any enemy that comes into range — no manual targeting needed once deployed. Further research increases both how many drones are produced per activation and how many can be active/released at once. |
+| **Drone Ship** (Rebel) | **Drone Swarm** | Deploys a swarm of drones (baseline: **10 drones** per activation) that appear near the Drone Ship and automatically attack any enemy that comes into range — no manual targeting needed once deployed. The drones themselves are individually very weak and fragile (fast, low HP, low per-hit damage — they win through numbers, not toughness). Further research increases both how many drones are produced per activation and how many can be active/released at once. |
 | **Suicide Drone** (Rebel) | **Kamikaze Split** *(name TBD)* | Splits into two smaller charges that automatically ram into the nearest enemy ships at high speed, dealing a large one-time impact hit and destroying the drone itself. |
 | **Capitol** (Rebel) | **Jump** *(strategic-map ability — see below)* | Not a battle ability — this operates on the turn-based campaign map. |
 
@@ -474,21 +472,28 @@ the Rebel faction's home**:
 ### Proposed baseline combat stats (starting point for balance, not final)
 The design intent is that no unit should feel strictly better or worse than
 its counterpart — Humans trade roster breadth and raw toughness for Rebel
-speed, mobility, and automation. A first-pass, internally consistent stat
-proposal:
+speed, mobility, and automation. These numbers draw on stats that were
+actually tuned and played in an earlier prototype of this game, adapted to
+the current roster (not invented from scratch):
 
-| Ship | Attack | HP | Accuracy | Speed | Notes |
-| --- | ---: | ---: | ---: | ---: | --- |
-| Human Small | 1 | 2 | 70% | 3 | Cheap skirmisher |
-| Human Medium | 2 | 4 | 75% | 2 | All-rounder |
-| Human Large | 4 | 8 | 80% | 1 | Slow tank |
-| Human Shroud | 1 | 5 | 70% | 2 | Tanky, low offense — its value is the R-ability, not its guns |
-| Human Artillery | 5 (hits up to 3 targets) | 6 | 65% | 1 | Long range; R-ability adds homing rockets on top |
-| Human Repair Ship | 0–1 (negligible) | 4 | — | 2 | Non-combatant; value is entirely its healing |
-| Rebel Medium / Jumper | 2 | 3 | 65% | 4 | Fastest hull in the game |
-| Rebel Drone Ship | 3 (penetrating laser, hits up to 3 in a line) | 7 | 60% | 1 | Plus independent drone-swarm damage once activated |
-| Rebel Suicide Drone | 1 (passive) / high one-time impact (R-ability) | 1 | — | 5 | Extremely fragile, very fast, meant to be spent, not fought with |
-| Rebel Capitol | Low–moderate (defensive) | Very high (flagship-tier) | — | 1 | Not built to brawl — its value is capacity and Jump, not combat stats |
+**Two different "speed" stats — don't confuse them.** "Battle Speed" below
+is a separate, real-time movement/agility rating used only inside a
+tactical battle. It has nothing to do with the strategic fields-per-turn
+movement from Section 3 (Small ships = 5 fields/turn on the campaign map,
+locked) — that stat governs the turn-based campaign layer only.
+
+| Ship | Attack | HP | Accuracy | Rate of Fire | Battle Speed | Notes |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Human Small | 4 | 15 | 88% | 1.0/s | 3 | Cheap skirmisher |
+| Human Medium | 8 | 30 | 85% | 0.7/s | 2 | All-rounder |
+| Human Large | 15 | 60 | 90% | 0.5/s | 1 | Slow tank |
+| Human Shroud | 2 | 12 | 70% | 0.45/s | 2 | Weak guns — its value is Shield Field, not its attack |
+| Human Artillery | 12 (Shrapnel hits up to 3 targets, reduced falloff) | 35 | 70% | 0.5–0.8/s | 1 | Long range; R-ability adds homing rockets on top of its passive Shrapnel fire |
+| Human Repair Ship | 0 (non-combatant) | 15 | — | — | 2 | Value is entirely its healing, not fighting |
+| Rebel Medium / Jumper | 10 | 20 | 90% | 0.6/s | 4 | Fastest hull in the game |
+| Rebel Drone Ship | 8 | 50 | 85% | 1.6/s | 1 | Fast-firing gun despite being the heavy hull; plus independent drone-swarm damage once activated; gains piercing shots once Penetrating Lasers (Section 13) is researched, same as every other Rebel ship |
+| Rebel Suicide Drone | 1 (passive, negligible) / high one-time impact (R-ability) | 1 | — | — | 4 (tied with Jumper, not faster) | Extremely fragile, meant to be spent, not fought with |
+| Rebel Capitol | 25 | 100 | 92% | 0.9/s | 1 | Not built to brawl — its value is capacity and Jump, not combat stats |
 
 Rebels have fewer distinct combat hulls than Humans, so each Rebel hull
 leans harder into a specific identity — raw speed for the Medium/Jumper,
@@ -534,6 +539,37 @@ scaling. Confirmed unlock categories:
 Both factions keep their own small, separate tech list (not a shared tree),
 each research project taking about one turn to complete with adequate
 Research Lab support.
+
+### Example tech list (grounded in prototype history)
+An earlier prototype of this game had a working, playtested tech tree.
+These are good concrete examples of what a real tech list looks like —
+adapt names/costs to fit this game's economy rather than copying the exact
+old numbers verbatim:
+
+**Human examples:**
+| Tech | Effect |
+| --- | --- |
+| Advanced Extraction | Bonus Minerals/Energy per building |
+| Reinforced Plating | +25% HP, fleet-wide |
+| Battle AI | +25% accuracy |
+| Advanced Railguns | +25% attack |
+| Shield Tech | Unlocks the Shroud |
+| Artillery Systems | Unlocks Artillery (requires a Spaceport) |
+| **Shield Matrix** | Every Human ship gets a small personal shield (baseline: **1 shield HP**) that absorbs one hit before hull HP is touched, doesn't regenerate once spent, and — notably — **also blocks Rebel Penetrating Lasers**, the same as a Shroud's Shield Field does |
+
+**Rebel examples:**
+| Tech | Effect |
+| --- | --- |
+| Warp Drive | +25% thrust/speed |
+| Composite Armor | +25% HP, fleet-wide |
+| Enhanced Lasers | +25% attack |
+| Phase Jump | Unlocks Jumper (the Medium's researched upgrade) |
+| Drone Swarm | Unlocks the Drone Ship |
+| Capital Construction | Cheaper Capitol-class construction |
+| **Penetrating Lasers** | The key Rebel weapons tech: every Rebel ship's laser fire now pierces — full damage to the primary target, then reduced damage to up to **3 additional ships** behind it in a line. Stopped instantly by any shield (Shroud's Shield Field or the Human Shield Matrix tech) — the beam simply stops there instead of passing through. |
+
+**Shared:** a Research Center-type building/tech that lets a body research
+two projects at once instead of one.
 
 ### Research levels (ships and buildings)
 Most ships and buildings aren't a single unlock-or-don't — they upgrade
