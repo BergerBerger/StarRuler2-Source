@@ -378,7 +378,7 @@ Before the fight starts, there's a **one-minute deployment phase**:
 - Surviving ships return to the strategic map with whatever damage they
   took.
 - Damage is **healed/repaired starting the turn after the battle** while a
-  fleet sits in friendly territory (see also the Repair Ship, Section 11,
+  fleet sits in friendly territory (see also Aegis and Scarab, Section 11,
   which can heal ships *during* a battle rather than waiting for the next
   turn).
 - **Damage carries over** if the same (not-yet-fully-repaired) army is
@@ -391,8 +391,18 @@ Before the fight starts, there's a **one-minute deployment phase**:
 
 There is no in-game ship-design editor; ship classes are fixed per faction,
 and — importantly — **the two factions do not have a mirrored roster**.
-Humans field a conventional lineup plus several specialists; Rebels field a
-deliberately narrower, faster, more unconventional lineup.
+Both keep Small/Medium/Large-style baseline hulls (Rebels skip Small — see
+below), and both get **four research-unlocked specialists** on top, but
+those specialists cover different roles rather than mirroring each other
+one-for-one. Several specialists have an in-universe nickname alongside
+their functional name.
+
+**Two different "speed" stats — don't confuse them, throughout this whole
+section.** The "Speed" values below are a separate, real-time movement/
+agility rating used only inside a tactical battle. They have nothing to do
+with the strategic fields-per-turn movement from Section 3 (Small ships =
+5 fields/turn on the campaign map, locked) — that stat governs the
+turn-based campaign layer only.
 
 ### Human roster
 | Ship | Tier | Role |
@@ -400,59 +410,130 @@ deliberately narrower, faster, more unconventional lineup.
 | **Small** | Baseline | Cheapest, fastest-to-build hull |
 | **Medium** | Baseline | Mid-tier hull |
 | **Large** | Baseline | Heaviest baseline hull |
-| **Shroud** | Special (research-unlocked) | Defensive specialist |
-| **Artillery** | Special (research-unlocked) | Heavy long-range specialist |
-| **Repair Ship** *(upgrades into Heavy Repair Frigate)* | Special (research-unlocked) | Support/healing specialist |
+| **Shroud** ("Paladin") | Specialist (research-unlocked) | Defensive support — projects a shield onto nearby allies |
+| **Artillery** ("Longbow") | Specialist (research-unlocked) | Long-range damage and area control |
+| **Trebuchet** | Specialist (research-unlocked) | Extreme-range siege — very slow, very powerful rocket artillery |
+| **Aegis** | Specialist (research-unlocked) | Repair and durability support — the Human combat medic |
 
 ### Rebel roster
 **Rebels have no Small hull.** Their lightest and only "baseline" combat
-ship is the Medium — already the fastest hull in the game — and their
-heavy tier is filled entirely by a specialist (Drone Ship) rather than a
-plain Large.
+ship is the Medium — already the fastest hull in the game.
 
 | Ship | Tier | Role |
 | --- | --- | --- |
-| **Medium** *(becomes "Jumper" once researched)* | Baseline | Fast, cheap, only light/medium hull Rebels have |
-| **Drone Ship** | Heavy specialist — Rebels' equivalent of Human Artillery | Deploys an automated drone swarm |
-| **Suicide Drone** | Light specialist | Small, cheap, expendable kamikaze unit |
+| **Medium** *(becomes "Jumper"/"Phantom" once researched)* | Baseline | Fast, cheap, only light/medium hull Rebels have |
+| **Drone Ship** ("Hive") | Specialist (research-unlocked) | Carrier/swarm ship — durable and slow, but its value is in the drones it releases |
+| **Lancer** | Specialist (research-unlocked) | Extreme-range laser siege — the Rebel counterpart to the Human Trebuchet |
+| **Scarab** | Specialist (research-unlocked) | Fast armed repair carrier — the Rebel counterpart to the Human Aegis |
 | **Capitol** | Flagship | Mobile home base and army carrier |
 
-> **Resolving the "penetrating laser" question**: earlier drafts of this
-> document guessed that "penetrating laser" was a trait built into a
-> specific Rebel ship (Drone Ship). The project's fuller conversation
-> history resolves this more precisely: **Penetrating Lasers is a Rebel
-> research tech, not a single ship's weapon.** Once researched, it applies
-> to *every* Rebel ship's laser fire — see Section 13's Research section
-> for the mechanic. Drone Ship's own gun is a normal laser like any other
-> Rebel ship's; it doesn't need a unique passive weapon on top of Drone
-> Swarm to justify its identity.
+Two of these specialists also spawn a small, weak sub-unit that isn't
+independently built: Drone Ship releases **Microdrones**, and Scarab
+releases **Scarab Repair Drones**. Both are covered under their parent
+ship below.
 
-### Special abilities — press R, on a cooldown
-Most specialist ships get a player-activated ability, triggered with **R**,
-on its own cooldown, separate from passive stats:
+### Human specialists in detail
 
-| Ship | Ability | What it does |
-| --- | --- | --- |
-| **Shroud** (Human) | **Shield Field** | Projects a shared shield pool (baseline: **5 shield HP**, **3-field radius**) that any friendly ship inside the radius draws from before taking hull damage. The pool doesn't regenerate on its own — once it's depleted the shield is down until reactivated (**8-second cooldown**). This is the hard counter to the Rebel Penetrating Lasers tech (Section 13): a beam stops the instant it hits a shielded ship. |
-| **Artillery** (Human) | **Rocket Barrage** *(name TBD)* | Fires homing rockets that automatically track and close on enemy targets at high speed. The rockets are their own physical projectile with HP — they can be intercepted/shot down in flight — but their speed and homing make them hard to reliably stop. |
-| **Repair Ship / Heavy Repair Frigate** (Human) | **Instant Regenerate** | Immediately restores HP to allied ships in range, on top of (not instead of) its normal continuous repair beam. |
-| **Jumper** (Rebel Medium, after research) | **Phase Jump** | Short-range teleport/blink to another point on the *battlefield* — a tactical repositioning tool inside a fight, not a strategic-map ability. Until the relevant tech is researched, this ship is a plain Medium with no R-ability. |
-| **Drone Ship** (Rebel) | **Drone Swarm** | Deploys a swarm of drones (baseline: **10 drones** per activation) that appear near the Drone Ship and automatically attack any enemy that comes into range — no manual targeting needed once deployed. The drones themselves are individually very weak and fragile (fast, low HP, low per-hit damage — they win through numbers, not toughness). Further research increases both how many drones are produced per activation and how many can be active/released at once. |
-| **Suicide Drone** (Rebel) | **Kamikaze Split** *(name TBD)* | Splits into two smaller charges that automatically ram into the nearest enemy ships at high speed, dealing a large one-time impact hit and destroying the drone itself. |
-| **Capitol** (Rebel) | **Jump** *(strategic-map ability — see below)* | Not a battle ability — this operates on the turn-based campaign map. |
+**Shroud ("Paladin")** — 12 HP, 2 Attack, Speed 2, Range 3, 92% accuracy,
+0.9 shots/sec. Weak on its own; its value is entirely its ability.
+- **R-ability — Shield Field**: projects a shield around nearby allies.
+  At its base research level: **5 shield HP, 3-field radius**. Higher
+  research levels raise that to **7/9 shield HP and radius 4/5** (a direct
+  worked example for the Level 1/2/3 research system in Section 13). The
+  shield absorbs damage before hull HP, **stops Rebel Penetrating Lasers
+  outright** (Section 13), and has a **75% chance to intercept an incoming
+  rocket** (see "Rocket interception," below). It reactivates automatically
+  once its cooldown finishes.
 
-### Repair Ship → Heavy Repair Frigate (Human)
-- **Repair Ship** (base): automatically repairs one allied ship at a time
-  during battle — no manual targeting needed, it keeps healing whatever
-  ally it's currently locked onto.
-- **Heavy Repair Frigate** (research upgrade of the same ship): can repair
-  up to **5 ships simultaneously** within range, each via its own beam of
-  healing "laser" reaching out to the target. Healing is continuous and
-  applies even while the target is actively taking damage — it's a
-  real-time race between incoming damage and the frigate's regen, not a
-  post-battle-only heal.
-- Its R-ability (**Instant Regenerate**) is a burst on top of that
-  continuous beam-healing, not a replacement for it.
+**Artillery ("Longbow")** — 35 HP, 12 Attack, Speed 0.8 (slow), Range 5,
+70% accuracy, 0.45 shots/sec. A slow long-range gunship.
+- **Passive — Shrapnel**: a successful hit also damages units standing
+  around the target (area splash on a direct hit, not a separate toggle
+  ability).
+- Its accuracy was originally set to 55%, but missing roughly every other
+  shot felt too frustrating to play against/with, so it was raised to 70%
+  — worth remembering as a concrete example of "accuracy that's too low
+  isn't fun, even if it's mathematically balanced" when tuning other units.
+
+**Trebuchet** — 45 HP, 30 Attack, Speed 0.6 (very slow), Range 99
+(effectively unlimited), 65% accuracy, 0.25 shots/sec.
+- **R-ability — Rocket Barrage**: an extremely powerful rocket attack,
+  **12-second cooldown**. Because Shrouds and drones can intercept its
+  rockets in flight (see below), Trebuchet is at its best kept protected
+  and firing from the back of the formation rather than exposed forward.
+
+**Aegis** — 30 HP, 0 Attack (does not fight), Speed 2.5.
+- Automatically follows and stays near damaged allies.
+- Continuously repairs any friendly ship within **radius 2** — roughly
+  **2.4 HP/second** in a representative combat simulation — and grants
+  each nearby ally **+5 maximum HP, once** (not a repeating buff).
+- This is the ship that fills the "healer" role in this document's earlier
+  drafts (previously called "Repair Ship"); Aegis replaces that concept
+  with a more fleshed-out kit.
+
+### Rebel specialists in detail
+
+**Jumper / "Phantom"** (the Medium, once researched) — 18 HP, 12 Attack,
+Speed 2.5, Range 2, 95% accuracy, 0.8 shots/sec.
+- **R-ability — Phase Jump**: teleports to a selected point after a short
+  charge (base: **~1 second**; higher research levels reduce this to
+  **0.75s then 0.5s** — another concrete Level 1/2/3 worked example).
+  **8-second cooldown.** Meant for flanking, escaping, or jumping onto
+  vulnerable rear-line ships (Trebuchet, Lancer, Aegis, Scarab) rather than
+  brawling head-on.
+- Until Phase Jump is researched, this ship is a plain Medium with no
+  R-ability.
+
+**Drone Ship / "Hive"** — 50 HP, 8 Attack, Speed 1.5, Range 2, 90%
+accuracy, 0.55 shots/sec. Durable but slow; most of its value comes from
+its drones, not its own gun.
+- **R-ability — Drone Swarm**: releases **10 Microdrones** once per
+  activation.
+- **Microdrone** (spawned, not directly built): 1 HP, 0.2 Attack, Speed 5,
+  Range 1, 85% accuracy, 1.6 shots/sec. Extremely fast and fragile —
+  individually negligible, dangerous in numbers. Inherits the same
+  research/commander bonuses as normal ships, can gain the Penetrating
+  Lasers effect once researched, and each has a **50% chance to intercept
+  a nearby rocket**, taking damage in the process (see "Rocket
+  interception," below).
+
+**Lancer** — 40 HP, 25 Attack, Speed 0.8 (slow), Range 99 (effectively
+unlimited), 90% accuracy, 0.3 shots/sec. The Rebel counterpart to the
+Human Trebuchet: same extreme-range siege role, laser instead of rockets.
+- Fires a beam rather than a projectile — nothing to intercept the way
+  Trebuchet's rockets can be, but the beam has its own falloff instead:
+  full damage at range 1–2, then roughly **-10% per additional range
+  step**, down to a **15% minimum**. A Shroud's Shield Field still stops
+  the beam from penetrating through to additional ships behind the first
+  target it hits.
+
+**Scarab** — 35 HP, 8 Attack, Speed 3.5, Range 2, 88% accuracy, 0.9
+shots/sec. A fast healer that can still fight a little — the Rebel
+counterpart to the Human Aegis, but expressed as a mobile drone swarm
+instead of a single dedicated medic ship.
+- **Automatically deploys 10 Scarab Repair Drones** when a nearby ally
+  takes damage, or after 3 seconds of continuous combat — not a
+  manually-triggered R-ability, it reacts on its own.
+- **Scarab Repair Drone** (spawned, not directly built): 3 HP, 0 Attack
+  (does not fight), Speed 4.5. Automatically finds the friendliest
+  non-drone ship with the lowest HP percentage, flies to it, and repairs
+  it. All ten together are what actually deliver Scarab's healing output.
+  Like Microdrones, they can also intercept a nearby rocket, taking damage
+  in the process.
+- This ship replaces this document's earlier "Suicide Drone" concept —
+  Scarab fills the healer-counterpart role instead of a kamikaze one.
+
+### Rocket interception (a mechanic that ties several units together)
+Rocket-firing units (Trebuchet's Rocket Barrage; Artillery's Shrapnel hits
+don't count, only true rocket projectiles do) can have their rockets shot
+down before impact:
+- A **Shroud's active Shield Field** has a **75% chance** to intercept an
+  incoming rocket.
+- A **Microdrone** or **Scarab Repair Drone** each individually has a
+  **50% chance** to intercept a nearby rocket — and takes damage doing so.
+This is why Trebuchet (and its Rebel counterpart Lancer, though Lancer's
+beam has no projectile to intercept) plays best from behind a protected
+formation rather than exposed at the front.
 
 ### Capitol: the moving carrier
 The Capitol is best understood as a **mobile aircraft carrier that is also
@@ -469,37 +550,35 @@ the Rebel faction's home**:
   jumping 1 field costs 50 Energy; jumping 3 fields with the same army costs
   150 Energy. Jump has a **2-turn cooldown**.
 
-### Proposed baseline combat stats (starting point for balance, not final)
-The design intent is that no unit should feel strictly better or worse than
-its counterpart — Humans trade roster breadth and raw toughness for Rebel
-speed, mobility, and automation. These numbers draw on stats that were
-actually tuned and played in an earlier prototype of this game, adapted to
-the current roster (not invented from scratch):
-
-**Two different "speed" stats — don't confuse them.** "Battle Speed" below
-is a separate, real-time movement/agility rating used only inside a
-tactical battle. It has nothing to do with the strategic fields-per-turn
-movement from Section 3 (Small ships = 5 fields/turn on the campaign map,
-locked) — that stat governs the turn-based campaign layer only.
+### Combat stats at a glance
+Consolidating the specialist stats above alongside the baseline hulls
+(baseline numbers are still this document's own earlier estimate, not yet
+replaced with playtested figures the way the specialists above have been):
 
 | Ship | Attack | HP | Accuracy | Rate of Fire | Battle Speed | Notes |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | Human Small | 4 | 15 | 88% | 1.0/s | 3 | Cheap skirmisher |
 | Human Medium | 8 | 30 | 85% | 0.7/s | 2 | All-rounder |
 | Human Large | 15 | 60 | 90% | 0.5/s | 1 | Slow tank |
-| Human Shroud | 2 | 12 | 70% | 0.45/s | 2 | Weak guns — its value is Shield Field, not its attack |
-| Human Artillery | 12 (Shrapnel hits up to 3 targets, reduced falloff) | 35 | 70% | 0.5–0.8/s | 1 | Long range; R-ability adds homing rockets on top of its passive Shrapnel fire |
-| Human Repair Ship | 0 (non-combatant) | 15 | — | — | 2 | Value is entirely its healing, not fighting |
-| Rebel Medium / Jumper | 10 | 20 | 90% | 0.6/s | 4 | Fastest hull in the game |
-| Rebel Drone Ship | 8 | 50 | 85% | 1.6/s | 1 | Fast-firing gun despite being the heavy hull; plus independent drone-swarm damage once activated; gains piercing shots once Penetrating Lasers (Section 13) is researched, same as every other Rebel ship |
-| Rebel Suicide Drone | 1 (passive, negligible) / high one-time impact (R-ability) | 1 | — | — | 4 (tied with Jumper, not faster) | Extremely fragile, meant to be spent, not fought with |
-| Rebel Capitol | 25 | 100 | 92% | 0.9/s | 1 | Not built to brawl — its value is capacity and Jump, not combat stats |
+| Human Shroud | 2 | 12 | 92% | 0.9/s | 2 | Value is Shield Field, not its attack |
+| Human Artillery | 12 (+ Shrapnel splash) | 35 | 70% | 0.45/s | 0.8 | Slow, long range; R-ability adds Rocket Barrage |
+| Human Trebuchet | 30 | 45 | 65% | 0.25/s | 0.6 | Extreme range; needs protection from interception |
+| Human Aegis | 0 (non-combatant) | 30 | — | — | 2.5 | Value is entirely its healing |
+| Rebel Medium / Jumper | 12 | 18 | 95% | 0.8/s | 2.5 | Fastest hull in the game; gains Phase Jump once researched |
+| Rebel Drone Ship | 8 | 50 | 90% | 0.55/s | 1.5 | Value is its Microdrone swarm, not its own gun |
+| Rebel Microdrone (spawned) | 0.2 | 1 | 85% | 1.6/s | 5 | Fast, fragile, dangerous only in numbers |
+| Rebel Lancer | 25 | 40 | 90% | 0.3/s | 0.8 | Extreme-range beam with range falloff, not interceptable |
+| Rebel Scarab | 8 | 35 | 88% | 0.9/s | 3.5 | Fast healer that can still fight a little |
+| Rebel Scarab Repair Drone (spawned) | 0 (non-combatant) | 3 | — | — | 4.5 | Auto-heals the lowest-HP% ally |
+| Rebel Capitol | 25 | 100 | 92% | 0.9/s | 1 | Not built to brawl — its value is capacity and Jump |
 
-Rebels have fewer distinct combat hulls than Humans, so each Rebel hull
-leans harder into a specific identity — raw speed for the Medium/Jumper,
-independent pet/swarm damage for the Drone Ship, pure alpha-strike for the
-Suicide Drone — rather than competing stat-for-stat with the wider Human
-lineup. This needs real playtesting before being treated as final.
+In short: **Humans get shields, artillery, rockets, and steady area
+repair; Rebels get teleportation, attack swarms, long-range lasers, and
+mobile repair drones.** These specialists were designed to deepen faction
+asymmetry beyond the baseline Small/Medium/Large hulls, and — being a
+later addition than the original core design — still need a real balance
+pass and finished visual assets, same as everything else marked "not
+final" in this document.
 
 ---
 
@@ -525,9 +604,11 @@ scaling. Confirmed unlock categories:
 
 - **Specialist harvesters** (Section 7): unlock bonus-rate Mineral
   extraction on asteroid belts and large-yield Energy harvesting on stars.
-- **Special units and upgrades** (Section 11): Shroud, Artillery's homing
-  rocket ability, the Repair Ship → Heavy Repair Frigate upgrade, the
-  Medium → Jumper conversion, and increased Drone Swarm size/output.
+- **Special units and upgrades** (Section 11): Shroud, Artillery, Trebuchet
+  and Aegis for Humans; the Medium → Jumper conversion, Drone Ship, Lancer,
+  and Scarab for Rebels — plus follow-on upgrades like Shroud's shield
+  scaling, Jumper's faster Phase Jump charge, and increased Drone Swarm
+  size/output.
 - **Stargates**: build a stargate connecting two chosen points on the
   strategic map; once built, fleets can travel between the two connected
   points directly instead of moving tile-by-tile. A stargate connection
@@ -582,23 +663,31 @@ than the last:
 - **Level 2** — a meaningful upgrade over Level 1: either a stat boost (a
   proposed baseline: **+25%** to the unit/building's primary stat or
   output) or, for the ships that have one, the point where their
-  specialist upgrade actually unlocks (Medium → Jumper, Repair Ship →
-  Heavy Repair Frigate both work as "Level 2" outcomes rather than
-  separate one-off unlocks). Proposed cost: **2 turns**.
+  specialist upgrade actually unlocks (Medium → Jumper works as a "Level 2"
+  outcome rather than a separate one-off unlock). Proposed cost: **2 turns**.
 - **Level 3** — a further upgrade on top of Level 2 (another **+25%**, or
-  more output from an ability already unlocked — e.g. more drones per
-  Drone Swarm activation, more simultaneous heal targets for the Heavy
-  Repair Frigate). Proposed cost: **3–4 turns** (deliberately pricier than
-  Level 2, since it's the deeper investment).
+  more output from an ability already unlocked). Proposed cost: **3–4
+  turns** (deliberately pricier than Level 2, since it's the deeper
+  investment).
 
-This reuses upgrades already established elsewhere in this document
-(Jumper, Heavy Repair Frigate, Drone Swarm scaling) as the natural Level-2/
-Level-3 outcomes of this system, rather than introducing a second, separate
-progression track on top. Buildings follow the same pattern — a Level 2
-Mineral Mine extracts faster, a Level 2 Spaceport builds ships faster, and
-so on. Exact per-level numbers and per-ship/building applicability need a
-full balance pass; the three-tier structure and its turn costs are the
-starting proposal.
+Two specialists already have their level-scaling fully worked out
+(Section 11), and make good concrete templates for tuning everything else:
+- **Shroud's Shield Field** — Level 1: 5 shield HP / 3-field radius.
+  Level 2: 7 shield HP / 4-field radius. Level 3: 9 shield HP / 5-field
+  radius.
+- **Jumper's Phase Jump charge time** — Level 1: ~1 second. Level 2: 0.75
+  seconds. Level 3: 0.5 seconds (each level makes the ability *faster to
+  use*, rather than bigger/stronger — a reminder that "+25%" isn't the only
+  valid shape for a level-up).
+
+Other specialists (Trebuchet's Rocket Barrage cooldown, Lancer's beam
+falloff, Drone Ship's drones-per-swarm, Aegis/Scarab's heal radius or
+output) are good candidates for the same treatment, but don't have
+confirmed per-level numbers yet. Buildings follow the same pattern — a
+Level 2 Mineral Mine extracts faster, a Level 2 Spaceport builds ships
+faster, and so on. Exact per-level numbers and per-ship/building
+applicability need a full balance pass; the three-tier structure and its
+turn costs are the starting proposal.
 
 ---
 
@@ -771,12 +860,16 @@ alongside this text) and describe the following silhouettes and behavior:
   a raised box/turret element on top. Its R-ability (homing rockets) is
   sketched as a separate small rocket shape with its own short exhaust
   trail, distinct from the ship's own engine trail.
-- **Repair Ship** — a small hull with a raised antenna/dish protruding from
-  the top (the source of its healing beam). Sketched with a dotted-line
-  connection reaching toward another small ship shape, and a separate
-  "repair ship heals" sketch shows several small connected boxes linked by
-  dashes — the visual for the Heavy Repair Frigate's multiple simultaneous
-  healing beams reaching out to up to 5 allies at once.
+- **Aegis** — a small hull with a raised antenna/dish protruding from the
+  top (the source of its healing radius), reusing the existing "Repair
+  Ship" concept sketch as its base silhouette. Sketched with a dotted-line
+  connection reaching toward another small ship shape — the visual for its
+  continuous radius-2 repair effect.
+- **Trebuchet** — no concept sketch yet (added after the original roster
+  sketch). Needs a heavy, slow-looking siege silhouette distinct from
+  Artillery's turreted platform — think an oversized, top-heavy launcher
+  arm rather than a boxy turret, to read as "even slower and heavier than
+  Artillery" at a glance.
 - Fire/smoke reference sketches: a sharp radiating explosion burst, and a
   separate scribbly "smoke" cloud — the two damage/destruction effects to
   build out for Human ships.
@@ -798,10 +891,18 @@ alongside this text) and describe the following silhouettes and behavior:
 - **Drones** (the ones Drone Swarm deploys) — sketched as a plain, minimal
   small square: deliberately generic and simple, since there are meant to
   be several on screen at once.
-- **Suicide Drone** — sketched as a distinct "H"-shaped small hull (two
-  prongs joined by a bar) — intentionally different from the plain-square
-  swarm Drones above so players don't visually confuse the two "drone"
-  concepts.
+- **Scarab** — reuses the existing "H"-shaped small-hull concept sketch
+  (two prongs joined by a bar), previously assigned to the retired Suicide
+  Drone concept — visually distinct from the plain-square swarm drones, and
+  fast/agile-reading to match its high Speed 3.5 stat.
+- **Scarab Repair Drone** — a tiny, minimal drone shape, visually similar
+  to a Microdrone but with a distinct healing-beam/cross-mark detail so
+  players don't confuse "healing swarm" with "attacking swarm" at a glance.
+- **Lancer** — no concept sketch yet (added after the original roster
+  sketch, alongside Trebuchet). Needs an extreme-range beam-siege
+  silhouette that reads as the Rebel counterpart to Trebuchet — sleeker and
+  more angular than Trebuchet's heavy launcher-arm look, consistent with
+  the faction's ion/laser identity, but similarly slow-moving.
 - Laser/impact reference sketches: a laser bolt (parallel twin-line beam
   with a directional arrow) for weapons fire, and a separate impact sketch
   showing a small ship struck with sparks/debris radiating outward — the
@@ -845,8 +946,14 @@ alongside this text) and describe the following silhouettes and behavior:
 - Prep-phase deployment screen chrome (ready button, per-side deployment
   zone coloring).
 - In-battle unit portraits (shown per ship, disappear as ships die).
-- R-ability icon per specialist ship (Shroud, Artillery, Repair Ship,
-  Jumper, Drone Ship, Suicide Drone) plus cooldown-timer treatment.
+- R-ability icon per specialist ship (Shroud, Artillery, Trebuchet, Jumper,
+  Drone Ship, Lancer) plus cooldown-timer treatment. Aegis and Scarab have
+  no manual R-ability (Aegis is fully automatic; Scarab's drone deploy is
+  reactive, not player-triggered), so they need a passive "active/healing"
+  status indicator instead of a cooldown icon.
+- Rocket-interception visual: a distinct small "shot down" spark/burst
+  effect for when a Shroud shield, Microdrone, or Scarab Repair Drone
+  intercepts an incoming rocket from Trebuchet's Rocket Barrage.
 
 *(Add all image references here once provided.)*
 
