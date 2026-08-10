@@ -86,26 +86,47 @@ just a theme for the map.
 
 ## 3. The galaxy map
 
-- The map is a **square grid**, drawn like graph/math-notebook paper —
-  simpler to draw and animate than a hex grid, and it directly reinforces
-  the notebook art direction (Section 2).
-- **Scale reference**: one grid square is one "field" (the base map-tile
-  unit). A standard **planet occupies a 2×2 block of squares (four
-  squares)**. **Ships are tiny by comparison — a single ship fits inside
-  one square**, and many ships can occupy the same square without visual
-  crowding, which is part of why armies can run up to 50 ships (Section 9).
+The galaxy is organized in two tiers: a wide map of **areas** (like
+systems), and each area is itself a local **square grid** you enter and
+maneuver within.
+
+### Areas
+- The galaxy is made of discrete **areas**, connected to their neighbors —
+  moving a fleet from one area into an adjacent one is how a player
+  actually travels the galaxy.
+- **Undiscovered areas show as grey/blank.** An area is only revealed the
+  moment a fleet actually enters it — at that point everything inside
+  becomes visible all at once (its body/bodies, any fleets present), not
+  gradually.
+- Each area usually holds one body, occasionally more: a planet, a moon, or
+  an asteroid belt (Section 6).
 - Map size is configurable (small/medium/large); a larger setting adds more
-  rings of grid squares around the map.
+  areas around the map.
 - The two players start on opposite outer edges of the map.
-- **Fog of war** covers undiscovered territory. A tile is either
-  undiscovered, discovered (known but not currently visible), or currently
-  visible — nothing about a hidden tile (contents, fleets, ownership) should
-  ever be shown to a player who hasn't earned that visibility.
-- **A single square can contain multiple objects**: one planet, or two
-  planets, or an asteroid belt, or a black hole, etc. — squares are not
-  restricted to exactly one discoverable thing.
-- Selecting a discovered object shows its output, owner, build slots, and
+
+### Inside an area
+- Once entered, an area is its own **10×10 grid of square fields**, drawn
+  like graph/math-notebook paper (Section 2) — simpler to draw and animate
+  than a hex grid, and it directly reinforces the notebook art direction.
+- Bodies sit at the **center** of their area, with a fixed footprint:
+  - Planet: **3×3 fields**.
+  - Moon: **2×2 fields**.
+  - Asteroid belt: **3×3 fields** (same footprint as a planet).
+- **Ships are tiny by comparison — a single ship fits inside one field**,
+  and many ships can occupy the same field without visual crowding, which
+  is part of why armies can run up to 50 ships (Section 9).
+- Selecting a discovered body shows its output, owner, build slots, and
   structures.
+
+### Movement, engagement, and claiming distance (inside an area)
+- Movement speed is spent in **fields per turn**. A tuned baseline: Small
+  ships move **5 fields per turn** (an initial pass used 3, but that felt
+  too slow to cross a typical 10×10 area in a reasonable number of turns).
+- **Triggering a battle**: two hostile armies trigger a battle once they
+  close to within **2 empty fields** of each other.
+- **Claiming a body**: a fleet must be within **1 field** of the body's
+  edge to use the Claim action — see Section 10 for exactly what claiming
+  does depending on who (if anyone) already owns the body.
 
 ---
 
@@ -162,6 +183,26 @@ Gems/etc.), no population or labor as a player-facing stat.
   is simultaneously your currency, your research fuel, and the hard cap on
   how large a fleet you can actually sustain.
 
+### Starting conditions
+- After picking a faction and a map, both players begin with **50 Minerals
+  and 50 Energy**.
+- Humans start with **one Small ship** and a home planet named **Eden**.
+- Rebels start with their Capitol ship and escorts (Section 11) and no home
+  planet at all (Eden's equivalent is the Capitol itself).
+
+### Spending: buildings, ships, and research cost both resources
+Queuing a building or ship, or starting a research project, spends **both**
+Minerals and Energy together — not Minerals alone. **Energy is typically
+the larger of the two costs.** The example costs given elsewhere in this
+document (Section 7's building table, etc.) show the Minerals side only;
+treat those as illustrative, with an Energy cost on top still to be tuned.
+
+### UI: resource display
+The top-left of the HUD always shows both current totals, plus a small
+"+" indicator next to each showing the **projected gain for next round** —
+so a player can see their income trend before it actually lands, not just
+their current balance.
+
 Both resources are always visible in the HUD.
 
 ---
@@ -173,9 +214,9 @@ build-slot count and resource profile:
 
 | Body | Build slots | Minerals | Energy | Notes |
 | --- | --- | --- | --- | --- |
-| **Planet** | 5 (up to 8 on rare "special" planets) | Finite pool, moderate | Harvestable, moderate | The standard ownable body; occupies a 2×2 block of map squares (Section 3) |
-| **Moon** | 3–4 | Weak | Weak | Found orbiting some planets; not worth as much as a planet or asteroid belt |
-| **Asteroid belt** | 2–3 | Finite pool, **faster/bonus extraction rate** than a planet | None (Minerals only) | Mineral-specialized; per-round mining bonus makes it the best pure-Minerals body |
+| **Planet** | 5 (up to 8 on rare "special" planets) | Finite pool, moderate | Harvestable, moderate | The standard ownable body; occupies a 3×3 block of fields at the center of its area (Section 3). The Human starting planet, Eden, is one of these. |
+| **Moon** | 3–4 | Weak | Weak | Found orbiting some planets; occupies a 2×2 block; not worth as much as a planet or asteroid belt |
+| **Asteroid belt** | 2–3 | Finite pool, **faster/bonus extraction rate** than a planet | None (Minerals only) | Mineral-specialized; occupies the same 3×3 footprint as a planet; per-round mining bonus makes it the best pure-Minerals body |
 | **Star/sun** | Energy-harvester slots only | None | Massive amounts, harvestable | Building a basic harvester works immediately; a **specialist stellar harvester** (bigger yield) requires research to unlock |
 | **Space station/satellite** | 2 | Depends on what's found | Depends on what's found | Not built from scratch by a player directly — found as a derelict and repaired (Section 14), or otherwise claimed. Each one carries **one random bonus**: extra Energy, extra Research, extra Minerals, a free Spaceport, or a batch of ships |
 
@@ -213,7 +254,9 @@ that is modeled, so nothing should visually imply it exists.
 The "specialist" harvesters are deliberately gated behind research rather
 than available from turn one — they represent an economic tech investment,
 not a starting option. Buildings finish a turn after being queued; their
-cost is deducted immediately on queuing.
+cost is deducted immediately on queuing. Costs above are the Minerals
+portion only — every building also costs Energy, usually more than the
+Minerals shown (Section 5).
 
 ---
 
@@ -255,6 +298,14 @@ deployment step described in Section 10.
   field, separate from the one-time Mineral cost to build the ships in the
   first place.
 
+### Fleet UI
+- The player's own fleet is shown in the **bottom-right** of the HUD as a
+  row of ship slots, one per ship — these can be manually **reordered by
+  strength or defense**, which matters for how the fleet lines up during
+  the battle prep phase (Section 10).
+- A separate, dedicated slot in the same panel holds the fleet's assigned
+  **Commander** (Section 14).
+
 ---
 
 ## 10. Conquest and tactical battles
@@ -269,10 +320,33 @@ there is no "turn" inside a battle, units move and act continuously, the
 same as any real-time tactics game.
 
 ### Triggering a battle
-When two hostile armies come within proximity of each other — governed by
-the slower army's per-turn movement range — a battle is triggered. If the
-target tile holds a body with defenses (Section 8), those defenses join the
-defending side automatically. Both players ready up to begin.
+Two hostile armies trigger a battle once they close to within **2 empty
+fields** of each other (Section 3). If the target holds a body with
+defenses (Section 8), those defenses join the defending side automatically.
+Both players ready up to begin.
+
+### Claiming a body
+Once your fleet is within **1 field** of a body's edge (Section 3), you can
+use the Claim action — what happens depends entirely on who (if anyone)
+already owns it:
+
+- **Empty/neutral body**: ownership transfers **immediately** — no fighting
+  required at all.
+- **Enemy-owned body with an active defense platform**: the defense
+  platform must be destroyed first, in a full tactical battle (this
+  section) — only once it's gone can a claim be made.
+- **Enemy-owned body with buildings but no defense platform**: pressing
+  Claim doesn't resolve instantly. Each building on the body has its own
+  defense value by type — **Mineral Mine / Energy Harvester: 5**,
+  **everything else (Spaceport, Research Lab, etc.): 10**. Your fleet's
+  strength grinds this down over time (proportional to how strong your
+  fleet is), destroying buildings one at a time. Once every building is
+  gone, the body can be claimed exactly as if it had always been empty.
+
+An enemy body can therefore be taken two different ways depending on what's
+defending it: a straight tactical battle if there's a defense platform, or
+a strength-vs-buildings grind (no separate battle screen needed) if there
+isn't.
 
 ### Prep phase
 Before the fight starts, there's a **one-minute deployment phase**:
@@ -461,6 +535,35 @@ Both factions keep their own small, separate tech list (not a shared tree),
 each research project taking about one turn to complete with adequate
 Research Lab support.
 
+### Research levels (ships and buildings)
+Most ships and buildings aren't a single unlock-or-don't — they upgrade
+through numbered **levels** via research, each level taking more turns
+than the last:
+
+- **Level 1** — the base stats/effects already described elsewhere in this
+  document. No research needed; this is what you have by default once the
+  ship/building exists.
+- **Level 2** — a meaningful upgrade over Level 1: either a stat boost (a
+  proposed baseline: **+25%** to the unit/building's primary stat or
+  output) or, for the ships that have one, the point where their
+  specialist upgrade actually unlocks (Medium → Jumper, Repair Ship →
+  Heavy Repair Frigate both work as "Level 2" outcomes rather than
+  separate one-off unlocks). Proposed cost: **2 turns**.
+- **Level 3** — a further upgrade on top of Level 2 (another **+25%**, or
+  more output from an ability already unlocked — e.g. more drones per
+  Drone Swarm activation, more simultaneous heal targets for the Heavy
+  Repair Frigate). Proposed cost: **3–4 turns** (deliberately pricier than
+  Level 2, since it's the deeper investment).
+
+This reuses upgrades already established elsewhere in this document
+(Jumper, Heavy Repair Frigate, Drone Swarm scaling) as the natural Level-2/
+Level-3 outcomes of this system, rather than introducing a second, separate
+progression track on top. Buildings follow the same pattern — a Level 2
+Mineral Mine extracts faster, a Level 2 Spaceport builds ships faster, and
+so on. Exact per-level numbers and per-ship/building applicability need a
+full balance pass; the three-tier structure and its turn costs are the
+starting proposal.
+
 ---
 
 ## 14. Commanders (Admirals)
@@ -482,6 +585,23 @@ army/fleet, for either faction, can have one assigned.
 - In battle, the assigned commander's portrait and name are shown, and
   commanders have their own authored voice lines/taunts they use toward
   each other during a fight.
+
+### Progression
+- Commanders gain **XP** (the natural source is participating in battles)
+  which accumulates toward their star rank.
+- A commander's bonus isn't a single flat stat — it can cover **Speed,
+  Cooldown reduction, Defense, Strength (attack), or a combination** of
+  these. Each commander has their own specific mix, which is what makes
+  picking one for a given fleet an actual decision rather than a flat
+  upgrade every commander provides equally.
+
+### Planned, not yet decided: commander special abilities
+Beyond passive fleet bonuses, commanders may eventually get their own
+battle-activatable special ability — ideas raised include a nuke, a heal,
+or something unique per commander — costing **Energy** to trigger mid-
+battle. This is a future direction, not a locked decision; which
+commanders get which ability, exact costs, and cooldowns are all still
+open.
 
 This system needs 20 total commander portraits/identities (10 per faction)
 at final asset scope.
@@ -558,14 +678,13 @@ should be built to match that, not as a separate style.
 *(Add faction emblem/logo doodle images here once provided.)*
 
 ### The galaxy map
-- Square-grid "notebook paper" background art, at least a few doodled
-  variants (empty space, nebula/asteroid field, near a star).
-- Fog-of-war visual treatment for undiscovered vs. discovered-but-not-visible
-  tiles, consistent with the hand-drawn look (e.g. undiscovered squares
-  could look like blank/unshaded notebook squares).
-- Per-body doodle icons: planet, moon, asteroid belt, star, station, black
-  hole — each drawn, not rendered, sized to the "4 squares = 1 planet"
-  scale reference in Section 3.
+- A grey/blank doodle treatment for undiscovered **areas**, and a fully
+  revealed square-grid "notebook paper" look once an area is entered — at
+  least a few doodled variants (empty space, nebula/asteroid field, near a
+  star) for the 10×10 grid inside an area.
+- Per-body doodle icons: planet (3×3), moon (2×2), asteroid belt (3×3),
+  star, station, black hole — each drawn, not rendered, sized to the field
+  footprints in Section 3.
 - Stargate structure icon/model (strategic map).
 
 ### Battle environments
@@ -680,6 +799,13 @@ alongside this text) and describe the following silhouettes and behavior:
 - Empty/filled build-slot icons, and a visually distinct empty/filled
   defense-slot icon set (so players don't confuse the two slot types).
 - Ship-build button icon.
+- Top-left resource readout: current Minerals/Energy plus a small "+"
+  next-round-projection indicator for each.
+- Bottom-right fleet panel: a row of per-ship slots (reorderable by
+  strength/defense) plus one dedicated Commander slot.
+- A "Claim" action button/icon, plus a way to visually show a body's
+  buildings being ground down (defense value depleting) when claiming an
+  enemy body that has no defense platform.
 - Prep-phase deployment screen chrome (ready button, per-side deployment
   zone coloring).
 - In-battle unit portraits (shown per ship, disappear as ships die).
