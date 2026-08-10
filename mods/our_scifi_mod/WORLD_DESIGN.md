@@ -163,7 +163,7 @@ cost is deducted immediately on queuing.
 ## 7. Fleets and armies
 
 - Ships on the same tile can be grouped into an **army** (fleet).
-- An army's cap is **21 ships**.
+- An army's cap is **50 ships**.
 - Armies can be **merged** (combine two friendly armies into one) and move
   together as a single unit once merged.
 - An army's movement speed per turn equals its **slowest ship's** speed
@@ -179,6 +179,12 @@ cost is deducted immediately on queuing.
 
 There is one way to take territory: defeat whoever's defending it, then
 claim it. There is no diplomacy-based annexation.
+
+**The campaign is turn-based; battles are not.** Only the strategic layer
+(Section 3) runs in discrete turns. The moment a battle starts, control
+switches to continuous real-time RTS play for the duration of that fight —
+there is no "turn" inside a battle, units move and act continuously, the
+same as any real-time tactics game.
 
 ### Triggering a battle
 When two hostile armies come within proximity of each other — governed by
@@ -221,60 +227,85 @@ Before the fight starts, there's a **one-minute deployment phase**:
 
 ## 9. Ships
 
-There is no in-game ship-design editor; ship classes are fixed per faction.
-The baseline roster, from the original design reference (exact numbers are
-example balance data, not locked):
+There is no in-game ship-design editor; ship classes are fixed per faction,
+and — importantly — **the two factions do not have a mirrored roster**.
+Humans field a conventional three-tier lineup plus two specialists; Rebels
+field a deliberately narrower, faster, more unconventional lineup built
+around two specialist hulls instead of a plain heavy tier.
 
-### Baseline classes (every faction has its own version)
-| Class | Role |
-| --- | --- |
-| **Small** | Cheapest, fastest-to-build hull |
-| **Medium** | Mid-tier hull |
-| **Large** | Heaviest baseline hull |
+### Human roster
+| Ship | Tier | Role |
+| --- | --- | --- |
+| **Small** | Baseline | Cheapest, fastest-to-build hull |
+| **Medium** | Baseline | Mid-tier hull |
+| **Large** | Baseline | Heaviest baseline hull |
+| **Shroud** | Special (research-unlocked) | Defensive specialist |
+| **Artillery** | Special (research-unlocked) | Heavy long-range specialist |
 
-**Human** baseline stats (example): Small (Attack 1 / HP 2 / Speed 1 /
-Range 1), Medium (2 / 3 / 2 / 2), Large (5 / 7 / 1 / 3). Human identity:
-tougher ships, shields, measured firepower.
+### Rebel roster
+**Rebels have no Small hull.** Their lightest and only "baseline" combat
+ship is the Medium — already the fastest hull in the game — and their
+heavy tier is filled entirely by a specialist (Drone Ship) rather than a
+plain Large.
 
-**Rebel** baseline stats (example): Small (1 / 1 / 3 / 1), Medium (2 / 2 /
-2 / 2), Large (3 / 3 / 2 / 3). Rebel identity: weaker individual hulls but
-faster, more accurate/higher fire-rate potential, and penetrating laser
-weapons.
+| Ship | Tier | Role |
+| --- | --- | --- |
+| **Medium** *(becomes "Jumper" once researched)* | Baseline (only combat tier below the heavy slot) | Fast, cheap, only light/medium hull Rebels have |
+| **Drone Ship** | Heavy specialist — Rebels' equivalent of Human Artillery | Deploys an automated drone swarm |
+| **Capitol** | Flagship | Mobile home base and army carrier |
 
-### Capitol (Rebel-exclusive flagship)
-The Rebels' mobile home base, not just a ship:
-- Doubles as the Rebel faction's economic "homeworld" — Rebels have no
-  fixed home planet, this ship *is* their home.
-- Has its own build slots (baseline 3), produces its own Minerals and
-  Energy per turn, and moves across the map at its own turn-speed like any
-  other unit.
-- Carries an internal **bay** that stores extra ships (baseline capacity:
-  10 Small, 5 Medium, 3 Large) — stored ships auto-deploy alongside the
-  Capitol into a battle, or can be released onto the strategic map as their
-  own independent army.
+### Special abilities — press R, on a cooldown
+Several ships get a player-activated ability, triggered with **R**, on its
+own cooldown, separate from passive stats. These are the confirmed ones:
 
-### Special researched units
-Two additional unit types are unlocked through research rather than
-available from the start:
+| Ship | Ability | What it does |
+| --- | --- | --- |
+| **Shroud** (Human) | *(name TBD)* | An activated shield effect that specifically blocks/negates incoming penetrating attacks for its duration — the hard counter to the Rebel penetrating-laser threat. |
+| **Jumper** (Rebel Medium, after research) | **Phase Jump** | Short-range teleport/blink to another point on the *battlefield* — a tactical repositioning tool inside a fight, not a strategic-map ability. Until the relevant tech is researched, this ship is a plain Medium with no R-ability. |
+| **Drone Ship** (Rebel) | **Drone Swarm** | Deploys a swarm of drones that appear near the Drone Ship and automatically attack any enemy that comes into range — no manual targeting needed once deployed. Further research increases both how many drones are produced per activation and how many can be active/released at once. |
+| **Capitol** (Rebel) | **Jump** *(strategic-map ability — see below)* | Not a battle ability — this operates on the turn-based campaign map. |
 
-- **Shroud** — a defensive specialist unit. Its shields specifically
-  counter the Rebel penetrating-laser attack (a Shroud's shield stops the
-  penetration effect that would otherwise hit multiple ships in a line).
-- **Artillery** — a heavy long-range unit that **both factions get their
-  own version of**, with different attack behavior per faction: the Human
-  Artillery fires shrapnel rounds (a multi-hit attack with its own accuracy
-  handling); the Rebel Artillery fires a penetrating laser (hits through
-  its target into up to three ships standing behind it).
+**Artillery** (Human) is a specialist defined by its *passive* attack
+pattern (multi-target shrapnel rounds), not an activated ability — it has
+no R-ability of its own.
 
-> **Note on "Jumper" and "Drone" naming**: internal work on this project has
-> used the working names *Jumper* (tied to a Rebel "Phase Jump" mobility
-> ability) and *Drone*/"Drone Swarm" (tied to a Rebel support-capacity
-> bonus) as thematically Rebel-flavored unlocks. These aren't separately
-> named ship types in the original canonical design reference — that
-> document only explicitly names **Shroud** and **Artillery** as special
-> researched units. Treat Jumper/Drone as working names for Rebel
-> mobility/swarm-flavored tech, not confirmed distinct hull types, until a
-> firm decision is made.
+### Capitol: the moving carrier
+The Capitol is best understood as a **mobile aircraft carrier that is also
+the Rebel faction's home**:
+- It doubles as the Rebels' economic "homeworld" — Rebels have no fixed
+  home planet, this ship *is* their home, with its own build slots and its
+  own per-turn Minerals/Energy income.
+- It can carry and move together with its entire attached army — up to the
+  full 50-ship army cap (Section 7) — as a single unit on the strategic map.
+- **Jump** (its unique strategic ability, not a battle R-ability): teleports
+  the Capitol and its entire attached army a chosen number of hex fields
+  across the *strategic* map. Cost scales with both army size and jump
+  distance: **1 Energy per ship, per field jumped.** A full 50-ship army
+  jumping 1 field costs 50 Energy; jumping 3 fields with the same army costs
+  150 Energy. Jump has a **2-turn cooldown**.
+
+### Proposed baseline combat stats (starting point for balance, not final)
+The design intent is that no unit should feel strictly better or worse than
+its counterpart — Humans trade roster breadth and raw toughness for Rebel
+speed, mobility, and automation. A first-pass, internally consistent stat
+proposal:
+
+| Ship | Attack | HP | Accuracy | Speed | Notes |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Human Small | 1 | 2 | 70% | 3 | Cheap skirmisher |
+| Human Medium | 2 | 4 | 75% | 2 | All-rounder |
+| Human Large | 4 | 8 | 80% | 1 | Slow tank |
+| Human Shroud | 1 | 5 | 70% | 2 | Tanky, low offense — its value is the R-ability, not its guns |
+| Human Artillery | 5 (hits up to 3 targets) | 6 | 65% | 1 | Long range; lower per-shot accuracy offset by multi-target shrapnel |
+| Rebel Medium / Jumper | 2 | 3 | 65% | 4 | Fastest hull in the game; only non-heavy Rebel combat ship |
+| Rebel Drone Ship | 3 (hull) + swarm damage | 7 | 60% | 1 | Weak hull accuracy, but drone swarm auto-engages independently of the ship's own aim |
+| Rebel Capitol | Low–moderate (defensive) | Very high (flagship-tier) | — | 1 | Not built to brawl — its value is capacity and Jump, not combat stats |
+
+Rebels have fewer distinct hulls (2 combat tiers instead of Humans' 5), so
+each Rebel hull leans harder into a specific identity — raw speed for the
+Medium/Jumper, automated pet damage for the Drone Ship — rather than
+competing stat-for-stat with the wider Human lineup. This needs real
+playtesting before being treated as final.
 
 ---
 
@@ -308,7 +339,7 @@ investigate. Choosing to act on one costs a modest amount of Minerals
 | Choice | Example cost (Minerals) | Result |
 | --- | ---: | --- |
 | **Salvage** | 5 | A burst of research points |
-| **Crew** | 8 | A couple of free Small ships |
+| **Crew** | 8 | A couple of free light ships (the faction's cheapest combat hull) |
 | **Repair** | 15 | Claim the hulk as an owned space station (Section 5) |
 
 ---
@@ -332,8 +363,12 @@ Minerals described above. In that current build:
   instead of a turn-based combat-then-claim sequence, and enemy-owned
   bodies must have their buildings destroyed first via a separate "Bombard"
   action.
-- Fleet cap, admirals, the Shroud/Artillery special units, and per-body
-  finite Minerals are not implemented.
+- The 50-ship army cap, admirals, the Shroud/Jumper/Drone Ship special
+  units and their R-abilities, the Capitol's strategic Jump ability, and
+  per-body finite Minerals are not implemented. The current build's ship
+  roster is also different and faction-symmetric (both factions share a
+  Small/Medium/Large lineup plus one faction-exclusive support hull),
+  unlike the asymmetric Human vs. Rebel roster described in Section 9.
 
 None of that invalidates this document — it's the direction the full game
 is meant to go — but **assets should be built for the design described in
@@ -369,13 +404,21 @@ on, at minimum: open space, near-a-star, near-an-asteroid-field, and
 near-a-planet/station battlefield backdrops.
 
 ### Ships
-Each needs a portrait/icon and an exterior model/silhouette concept:
-- Human Small / Medium / Large
-- Rebel Small / Medium / Large
-- Capitol (Rebel flagship + mobile home)
-- Shroud (special defensive unit)
-- Artillery — Human and Rebel versions look different given their
-  different firing behavior (shrapnel vs. penetrating laser)
+Each needs a portrait/icon and an exterior model/silhouette concept. Note
+the rosters are **not mirrored** — see Section 9.
+- Human Small / Medium / Large (conventional three-tier lineup)
+- Human Shroud (defensive specialist — visually should read as
+  shield/utility-focused, not a gun platform)
+- Human Artillery (heavy, long-range — visually should read as
+  slow/heavy/turreted)
+- Rebel Medium (their only non-heavy combat hull — fast, light silhouette)
+- Rebel Jumper — the *same hull* as Rebel Medium, post-research; needs a
+  visual "upgraded" tell (glowing drive/phase emitters work thematically)
+  distinguishing it from the un-upgraded Medium
+- Rebel Drone Ship (heavy specialist — should visually read as a
+  carrier/launcher for its drones, plus small separate drone unit designs)
+- Capitol (Rebel flagship — visually should read as "a moving aircraft
+  carrier / home," the largest, most distinctive hull in the game)
 
 *(Add ship portrait/model images here once provided.)*
 
