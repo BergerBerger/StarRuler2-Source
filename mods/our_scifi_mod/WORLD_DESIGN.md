@@ -504,27 +504,83 @@ Since each tactical battle's map reflects the strategic tile it happened
 on, at minimum: open space, near-a-star, near-an-asteroid-field, and
 near-a-planet/station battlefield backdrops.
 
+### Propulsion, weapons & VFX identity
+The two factions should read as different at a glance from engine trails
+and weapons fire alone, before a player even sees the hull shape:
+
+- **Humans — combustion/fire-based.** Engines are rough, wild-fire-style
+  burning exhaust, not clean energy trails. Damage/destruction effects lean
+  into fire: sharp radiating explosion bursts plus billowing, scribbly
+  smoke trails on a dying ship.
+- **Rebels — ion-thruster/laser-based.** Propulsion reads as a cleaner,
+  more energetic ion-drive trail (rather than combustion), and their
+  weapons are laser bolts (parallel twin-line beam shots) rather than
+  projectile fire. Impact/destruction effects lean into sparks and
+  debris at the hit point rather than fire and smoke.
+
+This split should carry through every Human vs. Rebel ship, not just the
+big flagships — it's as much a propulsion/engine-FX identity as it is a
+hull-design one.
+
 ### Ships
 Each needs a portrait/icon and an exterior model/silhouette concept. Note
-the rosters are **not mirrored** — see Section 10.
-- Human Small / Medium / Large (conventional baseline lineup)
-- Human Shroud (defensive specialist — visually should read as
-  shield/utility-focused, not a gun platform)
-- Human Artillery (heavy, long-range — visually should read as
-  slow/heavy/turreted; needs a visible rocket-pod detail for its R-ability)
-- Human Repair Ship / Heavy Repair Frigate (needs a visible "beam/laser
-  reaching toward an ally" effect concept, and a visual upgrade tell
-  between the base and Heavy variant)
-- Rebel Medium (their only non-heavy baseline combat hull — fast, light
-  silhouette)
-- Rebel Jumper — the *same hull* as Rebel Medium, post-research; needs a
-  visual "upgraded" tell (glowing drive/phase emitters work thematically)
-  distinguishing it from the un-upgraded Medium
-- Rebel Drone Ship (heavy specialist — should visually read as a
-  carrier/launcher for its drones, plus small separate drone unit designs)
-- Rebel Suicide Drone (small, cheap-looking, expendable — should look
-  visually distinct from Drone Ship's swarm drones despite the name
-  similarity, to avoid player confusion between the two "drone" concepts)
+the rosters are **not mirrored** — see Section 10. Concept sketches exist
+for the full roster (see `concept_art/` in this folder — add the source
+image there under a descriptive filename, e.g.
+`concept_art/ship_roster_sketch_01.jpg`, so it can be referenced directly
+alongside this text) and describe the following silhouettes and behavior:
+
+**Human roster (from concept sketch):**
+- **Small** — a simple small oval/rounded hull; plain straight engine-trail
+  dash beneath it, no flourish (baseline ships keep their trail simple).
+- **Medium** — a small hook/"C"-shaped hull, open bracket profile.
+- **Large** — a blockier "E"-shaped hull: flatter top, a notch cut into the
+  profile, visibly bigger than Small/Medium.
+- **Shroud** — a diamond/kite-shaped hull with two triangular points, like
+  a stylized gem or emblem — reads as a shield/utility unit rather than a
+  gun platform. Its sketched effect is a jagged, spiky radiant burst
+  beneath it (distinct from the plain baseline trail), tying its visual
+  identity to its shield ability rather than to thrust.
+- **Artillery** (heavy unit) — a turreted platform: a rectangular base with
+  a raised box/turret element on top. Its R-ability (homing rockets) is
+  sketched as a separate small rocket shape with its own short exhaust
+  trail, distinct from the ship's own engine trail.
+- **Repair Ship** — a small hull with a raised antenna/dish protruding from
+  the top (the source of its healing beam). Sketched with a dotted-line
+  connection reaching toward another small ship shape, and a separate
+  "repair ship heals" sketch shows several small connected boxes linked by
+  dashes — the visual for the Heavy Repair Frigate's multiple simultaneous
+  healing beams reaching out to up to 5 allies at once.
+- Fire/smoke reference sketches: a sharp radiating explosion burst, and a
+  separate scribbly "smoke" cloud — the two damage/destruction effects to
+  build out for Human ships (see Propulsion/VFX note above).
+
+**Rebel roster (from concept sketch):**
+- **Medium** — a flat, low rectangular hull with small fin-like
+  protrusions; sleeker and flatter than the Human Medium.
+- **Capitol Ship** — a large hull made of three joined rectangular
+  segments forming one elongated shape, dramatically bigger than any other
+  Rebel ship — reads immediately as "carrier-scale," consistent with its
+  role as the Rebels' mobile home base.
+- **Jumper** — a small hull with a wing/tail fin, sketched with a
+  directional arrow beside it emphasizing speed/movement — needs a visual
+  "upgraded" tell versus the plain Medium once Phase Jump is researched
+  (glowing drive/phase emitters work thematically).
+- **Drone Ship** — an elongated hull with a jagged ridge/spine of small
+  fins along the top, like a launcher array — reads as a carrier/launcher
+  for its drones.
+- **Drones** (the ones Drone Swarm deploys) — sketched as a plain, minimal
+  small square: deliberately generic and simple, since there are meant to
+  be several on screen at once.
+- **Suicide Drone** — sketched as a distinct "H"-shaped small hull (two
+  prongs joined by a bar) — intentionally different from the plain-square
+  swarm Drones above so players don't visually confuse the two "drone"
+  concepts.
+- Laser/impact reference sketches: a laser bolt (parallel twin-line beam
+  with a directional arrow) for weapons fire, and a separate impact sketch
+  showing a small ship struck with sparks/debris radiating outward — the
+  damage/destruction effect to build out for Rebel ships (sparks/debris,
+  not fire/smoke — see Propulsion/VFX note above).
 - Capitol (Rebel flagship — visually should read as "a moving aircraft
   carrier / home," the largest, most distinctive hull in the game)
 
