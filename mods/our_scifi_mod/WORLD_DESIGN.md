@@ -1,11 +1,12 @@
 # World Design & Asset Reference — Humans vs Rebels
 
 This document describes how the game works — campaign layer, tactical
-battles, resources, bodies, buildings, fleets, ships, and research — as a
-reference for anyone (human or AI) creating art, audio, or UI assets for it.
-This is the full target design, not a description of any one codebase's
-current feature-completeness. See Section 12 for an honest status check on
-what's actually built and playable today versus what's described here.
+battles, resources, bodies, buildings, defenses, fleets, ships, and
+research — as a reference for anyone (human or AI) creating art, audio, or
+UI assets for it. This is the full target design, not a description of any
+one codebase's current feature-completeness. See Section 15 for an honest
+status check on what's actually built and playable today versus what's
+described here.
 
 Where a number, cost, or stat below is stated as an example rather than a
 locked balance value, it's marked as such — this document is a **rules and
@@ -59,7 +60,7 @@ order:
 
 1. Resolve queued construction and ship production.
 2. Apply Minerals and Energy income (and subtract Energy upkeep — see
-   Section 6).
+   Section 4).
 3. Advance research.
 4. Heal/repair fleets sitting in friendly territory.
 5. Reset each unit's movement allowance for the new turn.
@@ -92,7 +93,7 @@ Gems/etc.), no population or labor as a player-facing stat.
 ### Energy
 - Pays for research **and** is the upkeep resource for your military and
   economy: every ship costs Energy per turn to maintain, and abilities/
-  research/hyperdrive jumps can also cost Energy to use.
+  research/hyperdrive jumps/stargates can also cost Energy to use.
 - **Not finite** — a body that can produce Energy can always be harvested
   for more of it (subject to which buildings/research you've unlocked
   there). The limiting factor for Energy isn't "running out," it's whether
@@ -120,13 +121,13 @@ build-slot count and resource profile:
 | **Moon** | 3–4 | Weak | Weak | Found orbiting some planets; not worth as much as a planet or asteroid belt |
 | **Asteroid belt** | 2–3 | Finite pool, **faster/bonus extraction rate** than a planet | None (Minerals only) | Mineral-specialized; per-round mining bonus makes it the best pure-Minerals body |
 | **Star/sun** | Energy-harvester slots only | None | Massive amounts, harvestable | Building a basic harvester works immediately; a **specialist stellar harvester** (bigger yield) requires research to unlock |
-| **Space station/satellite** | 2 | Depends on what's found | Depends on what's found | Not built from scratch by a player directly — found as a derelict and repaired (Section 10), or otherwise claimed. Each one carries **one random bonus**: extra Energy, extra Research, extra Minerals, a free Spaceport, or a batch of ships |
+| **Space station/satellite** | 2 | Depends on what's found | Depends on what's found | Not built from scratch by a player directly — found as a derelict and repaired (Section 13), or otherwise claimed. Each one carries **one random bonus**: extra Energy, extra Research, extra Minerals, a free Spaceport, or a batch of ships |
 
 Some systems generate a **planet-and-moon pair** — the moon is a secondary,
 weaker body in the same system as its planet, not a separate discovery.
 
 A body produces nothing until owned. The only way to gain ownership,
-neutral or enemy, is conquest through combat (Section 8) — there is no
+neutral or enemy, is conquest through combat (Section 9) — there is no
 free/instant "settle an empty planet" action.
 
 ### Selecting a body
@@ -142,7 +143,7 @@ that is modeled, so nothing should visually imply it exists.
 
 ---
 
-## 6. Buildings
+## 6. Buildings (economic slots)
 
 | Building | Cost (Minerals, example) | Effect | Buildable on |
 | --- | ---: | --- | --- |
@@ -160,7 +161,32 @@ cost is deducted immediately on queuing.
 
 ---
 
-## 7. Fleets and armies
+## 7. Body defenses (separate defense-platform slots)
+
+Every ownable body has a **second, separate set of slots** just for
+defenses — distinct from the economic building slots in Section 6. These
+don't produce Minerals or Energy; they exist purely to help defend that
+body if it's attacked.
+
+| Defense structure | Effect |
+| --- | --- |
+| **Rocket Battery** | Fires on enemy ships during a battle at this body |
+| **Laser** | Direct-fire defensive weapon |
+| **Forcefield** | Shields friendly units stationed near it during battle |
+| **Disruptor** | Periodically (roughly every 10 seconds) jams enemy units in range, preventing them from moving for a few seconds |
+
+### How defenses factor into a battle
+If an enemy attacks a tile where you have a body with defenses (and
+possibly a fleet also stationed there), the battle is fought as **your
+fleet plus that body's defenses, together, against the attacker** — the
+defense platforms aren't a separate fight, they're extra combatants on your
+side of the same battlefield. Where you place your fleet on the tile/
+battlefield relative to those fixed defenses matters, tying into the
+deployment step described in Section 9.
+
+---
+
+## 8. Fleets and armies
 
 - Ships on the same tile can be grouped into an **army** (fleet).
 - An army's cap is **50 ships**.
@@ -175,7 +201,7 @@ cost is deducted immediately on queuing.
 
 ---
 
-## 8. Conquest and tactical battles
+## 9. Conquest and tactical battles
 
 There is one way to take territory: defeat whoever's defending it, then
 claim it. There is no diplomacy-based annexation.
@@ -188,8 +214,9 @@ same as any real-time tactics game.
 
 ### Triggering a battle
 When two hostile armies come within proximity of each other — governed by
-the slower army's per-turn movement range — a battle is triggered. Both
-players ready up to begin.
+the slower army's per-turn movement range — a battle is triggered. If the
+target tile holds a body with defenses (Section 7), those defenses join the
+defending side automatically. Both players ready up to begin.
 
 ### Prep phase
 Before the fight starts, there's a **one-minute deployment phase**:
@@ -218,20 +245,21 @@ Before the fight starts, there's a **one-minute deployment phase**:
 - Surviving ships return to the strategic map with whatever damage they
   took.
 - Damage is **healed/repaired starting the turn after the battle** while a
-  fleet sits in friendly territory.
+  fleet sits in friendly territory (see also the Repair Ship, Section 10,
+  which can heal ships *during* a battle rather than waiting for the next
+  turn).
 - **Damage carries over** if the same (not-yet-fully-repaired) army is
   attacked again by another enemy army before it finishes healing — repairs
   don't reset or protect a fleet from a second engagement.
 
 ---
 
-## 9. Ships
+## 10. Ships
 
 There is no in-game ship-design editor; ship classes are fixed per faction,
 and — importantly — **the two factions do not have a mirrored roster**.
-Humans field a conventional three-tier lineup plus two specialists; Rebels
-field a deliberately narrower, faster, more unconventional lineup built
-around two specialist hulls instead of a plain heavy tier.
+Humans field a conventional lineup plus several specialists; Rebels field a
+deliberately narrower, faster, more unconventional lineup.
 
 ### Human roster
 | Ship | Tier | Role |
@@ -241,6 +269,7 @@ around two specialist hulls instead of a plain heavy tier.
 | **Large** | Baseline | Heaviest baseline hull |
 | **Shroud** | Special (research-unlocked) | Defensive specialist |
 | **Artillery** | Special (research-unlocked) | Heavy long-range specialist |
+| **Repair Ship** *(upgrades into Heavy Repair Frigate)* | Special (research-unlocked) | Support/healing specialist |
 
 ### Rebel roster
 **Rebels have no Small hull.** Their lightest and only "baseline" combat
@@ -250,24 +279,49 @@ plain Large.
 
 | Ship | Tier | Role |
 | --- | --- | --- |
-| **Medium** *(becomes "Jumper" once researched)* | Baseline (only combat tier below the heavy slot) | Fast, cheap, only light/medium hull Rebels have |
-| **Drone Ship** | Heavy specialist — Rebels' equivalent of Human Artillery | Deploys an automated drone swarm |
+| **Medium** *(becomes "Jumper" once researched)* | Baseline | Fast, cheap, only light/medium hull Rebels have |
+| **Drone Ship** | Heavy specialist — Rebels' equivalent of Human Artillery | Penetrating-laser gunship that also deploys an automated drone swarm |
+| **Suicide Drone** | Light specialist | Small, cheap, expendable kamikaze unit |
 | **Capitol** | Flagship | Mobile home base and army carrier |
 
+> **Resolving the "penetrating laser" question**: the original design
+> reference explicitly calls out a "Rebel heavy artillery" that "uses a
+> penetrating laser" (an attack that passes through its target and keeps
+> hitting up to three ships behind it) as a mirror to Human Artillery's
+> shrapnel rounds. Later design conversation separately introduced a
+> "Drone Ship" with a Drone Swarm ability as the Rebel heavy specialist.
+> Resolution used in this document: **they're the same ship.** Drone Ship's
+> passive main gun *is* the penetrating laser from the original reference;
+> Drone Swarm is its additional activated ability on top of that. This
+> keeps the roster from needing a fourth, redundant Rebel hull — flag this
+> for confirmation if that's not the intended reading.
+
 ### Special abilities — press R, on a cooldown
-Several ships get a player-activated ability, triggered with **R**, on its
-own cooldown, separate from passive stats. These are the confirmed ones:
+Most specialist ships get a player-activated ability, triggered with **R**,
+on its own cooldown, separate from passive stats:
 
 | Ship | Ability | What it does |
 | --- | --- | --- |
 | **Shroud** (Human) | *(name TBD)* | An activated shield effect that specifically blocks/negates incoming penetrating attacks for its duration — the hard counter to the Rebel penetrating-laser threat. |
+| **Artillery** (Human) | **Rocket Barrage** *(name TBD)* | Fires homing rockets that automatically track and close on enemy targets at high speed. The rockets are their own physical projectile with HP — they can be intercepted/shot down in flight — but their speed and homing make them hard to reliably stop. |
+| **Repair Ship / Heavy Repair Frigate** (Human) | **Instant Regenerate** | Immediately restores HP to allied ships in range, on top of (not instead of) its normal continuous repair beam. |
 | **Jumper** (Rebel Medium, after research) | **Phase Jump** | Short-range teleport/blink to another point on the *battlefield* — a tactical repositioning tool inside a fight, not a strategic-map ability. Until the relevant tech is researched, this ship is a plain Medium with no R-ability. |
 | **Drone Ship** (Rebel) | **Drone Swarm** | Deploys a swarm of drones that appear near the Drone Ship and automatically attack any enemy that comes into range — no manual targeting needed once deployed. Further research increases both how many drones are produced per activation and how many can be active/released at once. |
-| **Capitol** (Rebel) | **Jump** *(strategic-map ability — see below)* | Not a battle ability — this operates on the turn-based campaign map. |
+| **Suicide Drone** (Rebel) | **Kamikaze Split** *(name TBD)* | Splits into two smaller charges that automatically ram into the nearest enemy ships at high speed, dealing a large one-time impact hit and destroying the drone itself. |
+| **Capitol** (Rebel) | **Jump** *(strategic-map ability — see Section 10's Capitol entry)* | Not a battle ability — this operates on the turn-based campaign map. |
 
-**Artillery** (Human) is a specialist defined by its *passive* attack
-pattern (multi-target shrapnel rounds), not an activated ability — it has
-no R-ability of its own.
+### Repair Ship → Heavy Repair Frigate (Human)
+- **Repair Ship** (base): automatically repairs one allied ship at a time
+  during battle — no manual targeting needed, it keeps healing whatever
+  ally it's currently locked onto.
+- **Heavy Repair Frigate** (research upgrade of the same ship): can repair
+  up to **5 ships simultaneously** within range, each via its own beam of
+  healing "laser" reaching out to the target. Healing is continuous and
+  applies even while the target is actively taking damage — it's a
+  real-time race between incoming damage and the frigate's regen, not a
+  post-battle-only heal.
+- Its R-ability (**Instant Regenerate**) is a burst on top of that
+  continuous beam-healing, not a replacement for it.
 
 ### Capitol: the moving carrier
 The Capitol is best understood as a **mobile aircraft carrier that is also
@@ -276,7 +330,7 @@ the Rebel faction's home**:
   home planet, this ship *is* their home, with its own build slots and its
   own per-turn Minerals/Energy income.
 - It can carry and move together with its entire attached army — up to the
-  full 50-ship army cap (Section 7) — as a single unit on the strategic map.
+  full 50-ship army cap (Section 8) — as a single unit on the strategic map.
 - **Jump** (its unique strategic ability, not a battle R-ability): teleports
   the Capitol and its entire attached army a chosen number of hex fields
   across the *strategic* map. Cost scales with both army size and jump
@@ -296,41 +350,86 @@ proposal:
 | Human Medium | 2 | 4 | 75% | 2 | All-rounder |
 | Human Large | 4 | 8 | 80% | 1 | Slow tank |
 | Human Shroud | 1 | 5 | 70% | 2 | Tanky, low offense — its value is the R-ability, not its guns |
-| Human Artillery | 5 (hits up to 3 targets) | 6 | 65% | 1 | Long range; lower per-shot accuracy offset by multi-target shrapnel |
-| Rebel Medium / Jumper | 2 | 3 | 65% | 4 | Fastest hull in the game; only non-heavy Rebel combat ship |
-| Rebel Drone Ship | 3 (hull) + swarm damage | 7 | 60% | 1 | Weak hull accuracy, but drone swarm auto-engages independently of the ship's own aim |
+| Human Artillery | 5 (hits up to 3 targets) | 6 | 65% | 1 | Long range; R-ability adds homing rockets on top |
+| Human Repair Ship | 0–1 (negligible) | 4 | — | 2 | Non-combatant; value is entirely its healing |
+| Rebel Medium / Jumper | 2 | 3 | 65% | 4 | Fastest hull in the game |
+| Rebel Drone Ship | 3 (penetrating laser, hits up to 3 in a line) | 7 | 60% | 1 | Plus independent drone-swarm damage once activated |
+| Rebel Suicide Drone | 1 (passive) / high one-time impact (R-ability) | 1 | — | 5 | Extremely fragile, very fast, meant to be spent, not fought with |
 | Rebel Capitol | Low–moderate (defensive) | Very high (flagship-tier) | — | 1 | Not built to brawl — its value is capacity and Jump, not combat stats |
 
-Rebels have fewer distinct hulls (2 combat tiers instead of Humans' 5), so
-each Rebel hull leans harder into a specific identity — raw speed for the
-Medium/Jumper, automated pet damage for the Drone Ship — rather than
-competing stat-for-stat with the wider Human lineup. This needs real
-playtesting before being treated as final.
+Rebels have fewer distinct combat hulls than Humans, so each Rebel hull
+leans harder into a specific identity — raw speed for the Medium/Jumper,
+independent pet/swarm damage for the Drone Ship, pure alpha-strike for the
+Suicide Drone — rather than competing stat-for-stat with the wider Human
+lineup. This needs real playtesting before being treated as final.
 
 ---
 
-## 10. Admirals
+## 11. Battle-wide abilities (not tied to a specific ship)
 
-- Each faction has its own pool of **10 admirals** (Human admirals only
+Beyond individual ship R-abilities, the design calls for **empire-level
+superweapon abilities** usable during a battle, independent of any one
+ship — unlocked through research (Section 12), not built as a unit:
+
+- **Antimatter Bomb** / **Thermonuclear Device** — a large-area, high-impact
+  strike usable mid-battle. Given the power level implied, these should be
+  scarce: a sensible starting design is a small number of uses per game (or
+  a very long cooldown) and a steep Minerals/Energy cost, rather than a
+  spammable ability. Exact costs, radius, and damage are unspecified and
+  need a dedicated balance pass before implementation.
+
+---
+
+## 12. Research
+
+Research is spent on faction identity and unlocks — not generic economy
+scaling. Confirmed unlock categories:
+
+- **Specialist harvesters** (Section 6): unlock bonus-rate Mineral
+  extraction on asteroid belts and large-yield Energy harvesting on stars.
+- **Special units and upgrades** (Section 10): Shroud, Artillery's homing
+  rocket ability, the Repair Ship → Heavy Repair Frigate upgrade, the
+  Medium → Jumper conversion, and increased Drone Swarm size/output.
+- **Stargates**: build a stargate connecting two chosen points on the
+  strategic map; once built, fleets can travel between the two connected
+  points directly instead of moving tile-by-tile. A stargate connection
+  costs Energy continuously, per round, to stay open/maintained — it's an
+  ongoing strategic investment, not a one-time cost.
+- **Battle-wide superweapons** (Section 11): Antimatter Bomb / Thermonuclear
+  Device.
+
+Both factions keep their own small, separate tech list (not a shared tree),
+each research project taking about one turn to complete with adequate
+Research Lab support.
+
+---
+
+## 13. Commanders (Admirals)
+
+"Commander" and "Admiral" refer to the same system in this design — every
+army/fleet, for either faction, can have one assigned.
+
+- Each faction has its own pool of **10 commanders** (Human commanders only
   lead Human fleets, and vice versa).
-- An army/fleet can have **one admiral assigned** at a time, chosen from a
-  fleet command panel that shows the admiral's portrait and exact bonuses
+- An army/fleet can have **one commander assigned** at a time, chosen from a
+  fleet command panel that shows the commander's portrait and exact bonuses
   before assignment.
-- Admirals grant bonuses to some combination of Attack, HP, Speed, Accuracy,
-  and Rate of Fire.
-- Admirals progress through **1 to 5 stars**, scaling their bonuses — this
+- Commanders grant bonuses to some combination of Attack, HP, Speed,
+  Accuracy, and Rate of Fire — each commander has their own distinct
+  strengths, not a generic bonus package.
+- Commanders progress through **1 to 5 stars**, scaling their bonuses — this
   should only ever change as the result of an actual in-game progression
   event, never silently.
-- In battle, the assigned admiral's portrait and name are shown, and
-  admirals have their own authored voice lines/taunts they use toward each
-  other during a fight.
+- In battle, the assigned commander's portrait and name are shown, and
+  commanders have their own authored voice lines/taunts they use toward
+  each other during a fight.
 
-This system needs 20 total admiral portraits/identities (10 per faction) at
-final asset scope.
+This system needs 20 total commander portraits/identities (10 per faction)
+at final asset scope.
 
 ---
 
-## 11. Discoverable content: derelict stations
+## 14. Discoverable content: derelict stations
 
 Scattered through the galaxy are derelict station wrecks the player can
 investigate. Choosing to act on one costs a modest amount of Minerals
@@ -344,14 +443,14 @@ investigate. Choosing to act on one costs a modest amount of Minerals
 
 ---
 
-## 12. Current implementation status (read before assuming a system exists)
+## 15. Current implementation status (read before assuming a system exists)
 
 This document describes the **full target design**. As of this writing, the
 only version of this game that's actually playable is a **real-time**
 prototype built as a total-conversion mod of Star Ruler 2 — it does **not**
 yet implement the turn structure, the separate tactical battle map, prep
-phase, army-vs-army proximity triggers, admirals, or finite per-body
-Minerals described above. In that current build:
+phase, army-vs-army proximity triggers, body defenses, commanders, or
+finite per-body Minerals described above. In that current build:
 
 - Everything happens continuously in real time, not in discrete turns.
 - Combat is Star Ruler 2's native continuous space combat — there is no
@@ -363,16 +462,17 @@ Minerals described above. In that current build:
   instead of a turn-based combat-then-claim sequence, and enemy-owned
   bodies must have their buildings destroyed first via a separate "Bombard"
   action.
-- The 50-ship army cap, admirals, the Shroud/Jumper/Drone Ship special
-  units and their R-abilities, the Capitol's strategic Jump ability, and
-  per-body finite Minerals are not implemented. The current build's ship
-  roster is also different and faction-symmetric (both factions share a
-  Small/Medium/Large lineup plus one faction-exclusive support hull),
-  unlike the asymmetric Human vs. Rebel roster described in Section 9.
+- Body defenses (Rocket Battery/Laser/Forcefield/Disruptor), the 50-ship
+  army cap, commanders, all ship R-abilities, the Capitol's strategic Jump,
+  stargates, battle-wide superweapons, and per-body finite Minerals are not
+  implemented. The current build's ship roster is also different and
+  faction-symmetric (both factions share a Small/Medium/Large lineup plus
+  one faction-exclusive support hull), unlike the asymmetric Human vs.
+  Rebel roster described in Section 10.
 
 None of that invalidates this document — it's the direction the full game
 is meant to go — but **assets should be built for the design described in
-Sections 1–11**, and anyone extending the current codebase should treat the
+Sections 1–14**, and anyone extending the current codebase should treat the
 gaps above as the backlog, not as evidence the design changed.
 
 See `PROJECT_NOTES.md` (same folder) for the engineering-side detail on
@@ -380,7 +480,7 @@ that current build.
 
 ---
 
-## 13. Visual & asset reference
+## 16. Visual & asset reference
 
 Reference images should be attached here by category, once provided.
 
@@ -397,6 +497,7 @@ Reference images should be attached here by category, once provided.
   tiles.
 - Per-body map icons: planet, moon, asteroid belt, star, station, black
   hole.
+- Stargate structure icon/model (strategic map).
 
 ### Battle environments
 Since each tactical battle's map reflects the strategic tile it happened
@@ -405,43 +506,60 @@ near-a-planet/station battlefield backdrops.
 
 ### Ships
 Each needs a portrait/icon and an exterior model/silhouette concept. Note
-the rosters are **not mirrored** — see Section 9.
-- Human Small / Medium / Large (conventional three-tier lineup)
+the rosters are **not mirrored** — see Section 10.
+- Human Small / Medium / Large (conventional baseline lineup)
 - Human Shroud (defensive specialist — visually should read as
   shield/utility-focused, not a gun platform)
 - Human Artillery (heavy, long-range — visually should read as
-  slow/heavy/turreted)
-- Rebel Medium (their only non-heavy combat hull — fast, light silhouette)
+  slow/heavy/turreted; needs a visible rocket-pod detail for its R-ability)
+- Human Repair Ship / Heavy Repair Frigate (needs a visible "beam/laser
+  reaching toward an ally" effect concept, and a visual upgrade tell
+  between the base and Heavy variant)
+- Rebel Medium (their only non-heavy baseline combat hull — fast, light
+  silhouette)
 - Rebel Jumper — the *same hull* as Rebel Medium, post-research; needs a
   visual "upgraded" tell (glowing drive/phase emitters work thematically)
   distinguishing it from the un-upgraded Medium
 - Rebel Drone Ship (heavy specialist — should visually read as a
   carrier/launcher for its drones, plus small separate drone unit designs)
+- Rebel Suicide Drone (small, cheap-looking, expendable — should look
+  visually distinct from Drone Ship's swarm drones despite the name
+  similarity, to avoid player confusion between the two "drone" concepts)
 - Capitol (Rebel flagship — visually should read as "a moving aircraft
   carrier / home," the largest, most distinctive hull in the game)
 
 *(Add ship portrait/model images here once provided.)*
 
-### Buildings
-- Mineral Mine, Energy Harvester (basic), Specialist Asteroid Harvester,
-  Specialist Stellar Harvester, Spaceport, Research Lab.
+### Buildings and defenses
+- Economic: Mineral Mine, Energy Harvester (basic), Specialist Asteroid
+  Harvester, Specialist Stellar Harvester, Spaceport, Research Lab.
+- Defense platforms (visually distinct category from economic buildings):
+  Rocket Battery, Laser, Forcefield (needs a shield-bubble visual effect),
+  Disruptor (needs a periodic pulse/jam visual effect).
 
-*(Add building icon images here once provided.)*
+*(Add building/defense icon images here once provided.)*
 
 ### Resource icons
 - **Minerals** — a gem/ore icon (not a coin, not a hammer/tool icon).
 - **Energy** — an energy/bolt-style icon.
 
-### Admirals
-- 10 Human admiral portraits, 10 Rebel admiral portraits, plus a visual
+### Commanders
+- 10 Human commander portraits, 10 Rebel commander portraits, plus a visual
   language for the 1–5 star progression.
 
+### Battle-wide ability icons
+- Antimatter Bomb / Thermonuclear Device activation icon and its
+  large-area detonation visual effect.
+
 ### UI elements
-- Empty/filled build slot icons.
+- Empty/filled build-slot icons, and a visually distinct empty/filled
+  defense-slot icon set (so players don't confuse the two slot types).
 - Ship-build button icon.
 - Prep-phase deployment screen chrome (ready button, per-side deployment
   zone coloring).
 - In-battle unit portraits (shown per ship, disappear as ships die).
+- R-ability icon per specialist ship (Shroud, Artillery, Repair Ship,
+  Jumper, Drone Ship, Suicide Drone) plus cooldown-timer treatment.
 
 *(Add all image references here once provided.)*
 
