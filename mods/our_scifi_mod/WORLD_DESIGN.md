@@ -1,12 +1,12 @@
 # World Design & Asset Reference — Humans vs Rebels
 
-This document describes how the game works — campaign layer, tactical
-battles, resources, bodies, buildings, defenses, fleets, ships, and
-research — as a reference for anyone (human or AI) creating art, audio, or
-UI assets for it. This is the full target design, not a description of any
-one codebase's current feature-completeness. See Section 15 for an honest
-status check on what's actually built and playable today versus what's
-described here.
+This document describes how the game works — art style, campaign layer,
+tactical battles, resources, bodies, buildings, defenses, fleets, ships,
+and research — as a reference for anyone (human or AI) creating art, audio,
+or UI assets for it. This is the full target design, not a description of
+any one codebase's current feature-completeness. See Section 16 for an
+honest status check on what's actually built and playable today versus
+what's described here.
 
 Where a number, cost, or stat below is stated as an example rather than a
 locked balance value, it's marked as such — this document is a **rules and
@@ -19,7 +19,7 @@ structure reference**, not a final balance spreadsheet.
 Two factions — **Humans** and **Rebels** — fight over a galaxy on two
 connected layers:
 
-1. A **turn-based strategic campaign** on a hexagonal galaxy map: explore,
+1. A **turn-based strategic campaign** on a square-grid galaxy map: explore,
    claim territory, build, research, and move fleets.
 2. A **tactical battle layer**: when opposing armies meet, play shifts to a
    separate battle map for that engagement, in the spirit of *Total War:
@@ -32,35 +32,91 @@ per faction. Everything else — resources, territory, tech — is deliberately
 kept simple compared to a traditional 4X: two resources, one way to take
 territory (conquest through combat), and a small per-faction tech tree.
 
+The whole game is presented as if it were **drawn by hand in a notebook**
+— see Section 2 for the full art direction. That style is treated as a core
+part of the design, not a skin applied afterward.
+
 ---
 
-## 2. The galaxy map
+## 2. Art direction: notebook doodle style
 
-- The galaxy is a **hexagonal map made of hexagons** — the overall map shape
-  is a hexagon, and every individual tile on it is also a hexagon.
-- Map size is configurable (small/medium/large); a larger setting adds
-  another ring of hex tiles around the map.
+The entire game is styled as **scribbled hand-drawn doodles on notebook
+paper** — this is the visual identity that should inform every asset, not
+just a theme for the map.
+
+### The world is a notebook
+- The galaxy map **is** a page of grid/graph-paper (a math notebook), and
+  the battlefield in a tactical battle is drawn the same way — same
+  square-grid paper look, so the two layers feel like one consistent
+  sketchbook rather than two different art styles.
+- The background of both the strategic map and the battle map has
+  hand-drawn stars, and every celestial body (planets, moons, asteroids,
+  stars) is rendered as a doodle too — nothing photographic or rendered,
+  everything looks like it was drawn with a pen on the page.
+
+### Strength is in motion and impact, not polish
+- The core visual appeal is meant to come from **animation and effects**
+  that look like a **flip book** — hand-drawn, frame-by-frame motion with
+  a raw, slightly-off, charming quality, not smooth vector/3D animation.
+- **Shadows** are strong-contrast and hand-drawn (bold hatching/line work),
+  not soft gradients.
+- **Hit effects** use **comic-book-style action lines** — radiating speed
+  lines and impact bursts drawn the way a comic panel would show a hit,
+  not a realistic spark/particle effect.
+- **Ship destruction** has a specific gag: when a ship is destroyed, tiny
+  hand-drawn **stick figures** are sometimes ejected from it (its "crew"
+  flying free) before it's gone — a deliberate moment of character and
+  humor in an otherwise chaotic explosion, consistent with the notebook-
+  doodle tone throughout.
+
+### Faction color and material identity
+- **Humans** — metal and **blue** tones; sophisticated, strong, put-together
+  designs. (This already matches the in-project Human government color,
+  `#3447c7`.)
+- **Rebels** — a rusty, patched-up scrapyard look; earthy tones (Mars red,
+  rust orange, etc.) rather than clean metal. Ships should read as
+  repurposed/salvaged rather than manufactured. (This already matches the
+  in-project Rebel government color, `#c73434`, at the red end of that
+  earthy palette.)
+- Combined with the propulsion/weapons split in Section 11 (Humans =
+  fire/combustion, Rebels = ion/laser), color and material alone should be
+  enough to tell the two factions apart even in silhouette.
+
+---
+
+## 3. The galaxy map
+
+- The map is a **square grid**, drawn like graph/math-notebook paper —
+  simpler to draw and animate than a hex grid, and it directly reinforces
+  the notebook art direction (Section 2).
+- **Scale reference**: one grid square is one "field" (the base map-tile
+  unit). A standard **planet occupies a 2×2 block of squares (four
+  squares)**. **Ships are tiny by comparison — a single ship fits inside
+  one square**, and many ships can occupy the same square without visual
+  crowding, which is part of why armies can run up to 50 ships (Section 9).
+- Map size is configurable (small/medium/large); a larger setting adds more
+  rings of grid squares around the map.
 - The two players start on opposite outer edges of the map.
 - **Fog of war** covers undiscovered territory. A tile is either
   undiscovered, discovered (known but not currently visible), or currently
   visible — nothing about a hidden tile (contents, fleets, ownership) should
   ever be shown to a player who hasn't earned that visibility.
-- **A single hex can contain multiple objects**: one planet, or two planets,
-  or an asteroid belt, or a black hole, etc. — hexes are not restricted to
-  exactly one discoverable thing.
+- **A single square can contain multiple objects**: one planet, or two
+  planets, or an asteroid belt, or a black hole, etc. — squares are not
+  restricted to exactly one discoverable thing.
 - Selecting a discovered object shows its output, owner, build slots, and
   structures.
 
 ---
 
-## 3. Turn structure
+## 4. Turn structure
 
 The strategic campaign layer is **turn-based**. Each turn resolves in this
 order:
 
 1. Resolve queued construction and ship production.
 2. Apply Minerals and Energy income (and subtract Energy upkeep — see
-   Section 4).
+   Section 5).
 3. Advance research.
 4. Heal/repair fleets sitting in friendly territory.
 5. Reset each unit's movement allowance for the new turn.
@@ -76,7 +132,7 @@ its per-turn allowance.
 
 ---
 
-## 4. Resources
+## 5. Resources
 
 Exactly two resources exist — no Influence, no native resources (Ore/Water/
 Gems/etc.), no population or labor as a player-facing stat.
@@ -110,24 +166,24 @@ Both resources are always visible in the HUD.
 
 ---
 
-## 5. Heavenly bodies
+## 6. Heavenly bodies
 
 Every discoverable object type can be owned and built on. Each has its own
 build-slot count and resource profile:
 
 | Body | Build slots | Minerals | Energy | Notes |
 | --- | --- | --- | --- | --- |
-| **Planet** | 5 (up to 8 on rare "special" planets) | Finite pool, moderate | Harvestable, moderate | The standard ownable body |
+| **Planet** | 5 (up to 8 on rare "special" planets) | Finite pool, moderate | Harvestable, moderate | The standard ownable body; occupies a 2×2 block of map squares (Section 3) |
 | **Moon** | 3–4 | Weak | Weak | Found orbiting some planets; not worth as much as a planet or asteroid belt |
 | **Asteroid belt** | 2–3 | Finite pool, **faster/bonus extraction rate** than a planet | None (Minerals only) | Mineral-specialized; per-round mining bonus makes it the best pure-Minerals body |
 | **Star/sun** | Energy-harvester slots only | None | Massive amounts, harvestable | Building a basic harvester works immediately; a **specialist stellar harvester** (bigger yield) requires research to unlock |
-| **Space station/satellite** | 2 | Depends on what's found | Depends on what's found | Not built from scratch by a player directly — found as a derelict and repaired (Section 13), or otherwise claimed. Each one carries **one random bonus**: extra Energy, extra Research, extra Minerals, a free Spaceport, or a batch of ships |
+| **Space station/satellite** | 2 | Depends on what's found | Depends on what's found | Not built from scratch by a player directly — found as a derelict and repaired (Section 14), or otherwise claimed. Each one carries **one random bonus**: extra Energy, extra Research, extra Minerals, a free Spaceport, or a batch of ships |
 
 Some systems generate a **planet-and-moon pair** — the moon is a secondary,
 weaker body in the same system as its planet, not a separate discovery.
 
 A body produces nothing until owned. The only way to gain ownership,
-neutral or enemy, is conquest through combat (Section 9) — there is no
+neutral or enemy, is conquest through combat (Section 10) — there is no
 free/instant "settle an empty planet" action.
 
 ### Selecting a body
@@ -143,7 +199,7 @@ that is modeled, so nothing should visually imply it exists.
 
 ---
 
-## 6. Buildings (economic slots)
+## 7. Buildings (economic slots)
 
 | Building | Cost (Minerals, example) | Effect | Buildable on |
 | --- | ---: | --- | --- |
@@ -161,10 +217,10 @@ cost is deducted immediately on queuing.
 
 ---
 
-## 7. Body defenses (separate defense-platform slots)
+## 8. Body defenses (separate defense-platform slots)
 
 Every ownable body has a **second, separate set of slots** just for
-defenses — distinct from the economic building slots in Section 6. These
+defenses — distinct from the economic building slots in Section 7. These
 don't produce Minerals or Energy; they exist purely to help defend that
 body if it's attacked.
 
@@ -182,32 +238,32 @@ fleet plus that body's defenses, together, against the attacker** — the
 defense platforms aren't a separate fight, they're extra combatants on your
 side of the same battlefield. Where you place your fleet on the tile/
 battlefield relative to those fixed defenses matters, tying into the
-deployment step described in Section 9.
+deployment step described in Section 10.
 
 ---
 
-## 8. Fleets and armies
+## 9. Fleets and armies
 
 - Ships on the same tile can be grouped into an **army** (fleet).
 - An army's cap is **50 ships**.
 - Armies can be **merged** (combine two friendly armies into one) and move
   together as a single unit once merged.
 - An army's movement speed per turn equals its **slowest ship's** speed
-  stat (Section 3).
-- Every individual ship costs Energy per turn to maintain (Section 4) —
+  stat (Section 4).
+- Every individual ship costs Energy per turn to maintain (Section 5) —
   this is the real limiter on how large a standing military an empire can
   field, separate from the one-time Mineral cost to build the ships in the
   first place.
 
 ---
 
-## 9. Conquest and tactical battles
+## 10. Conquest and tactical battles
 
 There is one way to take territory: defeat whoever's defending it, then
 claim it. There is no diplomacy-based annexation.
 
 **The campaign is turn-based; battles are not.** Only the strategic layer
-(Section 3) runs in discrete turns. The moment a battle starts, control
+(Section 4) runs in discrete turns. The moment a battle starts, control
 switches to continuous real-time RTS play for the duration of that fight —
 there is no "turn" inside a battle, units move and act continuously, the
 same as any real-time tactics game.
@@ -215,7 +271,7 @@ same as any real-time tactics game.
 ### Triggering a battle
 When two hostile armies come within proximity of each other — governed by
 the slower army's per-turn movement range — a battle is triggered. If the
-target tile holds a body with defenses (Section 7), those defenses join the
+target tile holds a body with defenses (Section 8), those defenses join the
 defending side automatically. Both players ready up to begin.
 
 ### Prep phase
@@ -231,9 +287,12 @@ Before the fight starts, there's a **one-minute deployment phase**:
   battle near a star looks different from one in open space or near an
   asteroid field) — assets need to support multiple battlefield
   backdrops/environments for this reason.
-- The battlefield is an **open map, not a hex grid** — ships aren't
-  confined to one-hex-per-unit. Units occupy real physical space and
-  **collide/bounce off each other** rather than freely overlapping or
+- Like the strategic map, the battlefield is drawn as **square-grid
+  notebook paper** (Section 2/3) for visual consistency. Movement itself
+  stays continuous and real-time, not locked to one ship per cell — ships
+  are tiny relative to a square (Section 3), so many can occupy the same
+  area of the grid at once. Units occupy real physical space and
+  **collide/bounce off each other** rather than freely overlapping or fully
   stacking.
 - **Each unit can be commanded individually** — select one or many ships
   and give them move/attack orders independently, the way a real-time
@@ -245,7 +304,7 @@ Before the fight starts, there's a **one-minute deployment phase**:
 - Surviving ships return to the strategic map with whatever damage they
   took.
 - Damage is **healed/repaired starting the turn after the battle** while a
-  fleet sits in friendly territory (see also the Repair Ship, Section 10,
+  fleet sits in friendly territory (see also the Repair Ship, Section 11,
   which can heal ships *during* a battle rather than waiting for the next
   turn).
 - **Damage carries over** if the same (not-yet-fully-repaired) army is
@@ -254,7 +313,7 @@ Before the fight starts, there's a **one-minute deployment phase**:
 
 ---
 
-## 10. Ships
+## 11. Ships
 
 There is no in-game ship-design editor; ship classes are fixed per faction,
 and — importantly — **the two factions do not have a mirrored roster**.
@@ -308,7 +367,7 @@ on its own cooldown, separate from passive stats:
 | **Jumper** (Rebel Medium, after research) | **Phase Jump** | Short-range teleport/blink to another point on the *battlefield* — a tactical repositioning tool inside a fight, not a strategic-map ability. Until the relevant tech is researched, this ship is a plain Medium with no R-ability. |
 | **Drone Ship** (Rebel) | **Drone Swarm** | Deploys a swarm of drones that appear near the Drone Ship and automatically attack any enemy that comes into range — no manual targeting needed once deployed. Further research increases both how many drones are produced per activation and how many can be active/released at once. |
 | **Suicide Drone** (Rebel) | **Kamikaze Split** *(name TBD)* | Splits into two smaller charges that automatically ram into the nearest enemy ships at high speed, dealing a large one-time impact hit and destroying the drone itself. |
-| **Capitol** (Rebel) | **Jump** *(strategic-map ability — see Section 10's Capitol entry)* | Not a battle ability — this operates on the turn-based campaign map. |
+| **Capitol** (Rebel) | **Jump** *(strategic-map ability — see below)* | Not a battle ability — this operates on the turn-based campaign map. |
 
 ### Repair Ship → Heavy Repair Frigate (Human)
 - **Repair Ship** (base): automatically repairs one allied ship at a time
@@ -330,9 +389,9 @@ the Rebel faction's home**:
   home planet, this ship *is* their home, with its own build slots and its
   own per-turn Minerals/Energy income.
 - It can carry and move together with its entire attached army — up to the
-  full 50-ship army cap (Section 8) — as a single unit on the strategic map.
+  full 50-ship army cap (Section 9) — as a single unit on the strategic map.
 - **Jump** (its unique strategic ability, not a battle R-ability): teleports
-  the Capitol and its entire attached army a chosen number of hex fields
+  the Capitol and its entire attached army a chosen number of grid squares
   across the *strategic* map. Cost scales with both army size and jump
   distance: **1 Energy per ship, per field jumped.** A full 50-ship army
   jumping 1 field costs 50 Energy; jumping 3 fields with the same army costs
@@ -365,11 +424,11 @@ lineup. This needs real playtesting before being treated as final.
 
 ---
 
-## 11. Battle-wide abilities (not tied to a specific ship)
+## 12. Battle-wide abilities (not tied to a specific ship)
 
 Beyond individual ship R-abilities, the design calls for **empire-level
 superweapon abilities** usable during a battle, independent of any one
-ship — unlocked through research (Section 12), not built as a unit:
+ship — unlocked through research (Section 13), not built as a unit:
 
 - **Antimatter Bomb** / **Thermonuclear Device** — a large-area, high-impact
   strike usable mid-battle. Given the power level implied, these should be
@@ -380,14 +439,14 @@ ship — unlocked through research (Section 12), not built as a unit:
 
 ---
 
-## 12. Research
+## 13. Research
 
 Research is spent on faction identity and unlocks — not generic economy
 scaling. Confirmed unlock categories:
 
-- **Specialist harvesters** (Section 6): unlock bonus-rate Mineral
+- **Specialist harvesters** (Section 7): unlock bonus-rate Mineral
   extraction on asteroid belts and large-yield Energy harvesting on stars.
-- **Special units and upgrades** (Section 10): Shroud, Artillery's homing
+- **Special units and upgrades** (Section 11): Shroud, Artillery's homing
   rocket ability, the Repair Ship → Heavy Repair Frigate upgrade, the
   Medium → Jumper conversion, and increased Drone Swarm size/output.
 - **Stargates**: build a stargate connecting two chosen points on the
@@ -395,7 +454,7 @@ scaling. Confirmed unlock categories:
   points directly instead of moving tile-by-tile. A stargate connection
   costs Energy continuously, per round, to stay open/maintained — it's an
   ongoing strategic investment, not a one-time cost.
-- **Battle-wide superweapons** (Section 11): Antimatter Bomb / Thermonuclear
+- **Battle-wide superweapons** (Section 12): Antimatter Bomb / Thermonuclear
   Device.
 
 Both factions keep their own small, separate tech list (not a shared tree),
@@ -404,7 +463,7 @@ Research Lab support.
 
 ---
 
-## 13. Commanders (Admirals)
+## 14. Commanders (Admirals)
 
 "Commander" and "Admiral" refer to the same system in this design — every
 army/fleet, for either faction, can have one assigned.
@@ -429,7 +488,7 @@ at final asset scope.
 
 ---
 
-## 14. Discoverable content: derelict stations
+## 15. Discoverable content: derelict stations
 
 Scattered through the galaxy are derelict station wrecks the player can
 investigate. Choosing to act on one costs a modest amount of Minerals
@@ -439,23 +498,27 @@ investigate. Choosing to act on one costs a modest amount of Minerals
 | --- | ---: | --- |
 | **Salvage** | 5 | A burst of research points |
 | **Crew** | 8 | A couple of free light ships (the faction's cheapest combat hull) |
-| **Repair** | 15 | Claim the hulk as an owned space station (Section 5) |
+| **Repair** | 15 | Claim the hulk as an owned space station (Section 6) |
 
 ---
 
-## 15. Current implementation status (read before assuming a system exists)
+## 16. Current implementation status (read before assuming a system exists)
 
 This document describes the **full target design**. As of this writing, the
 only version of this game that's actually playable is a **real-time**
 prototype built as a total-conversion mod of Star Ruler 2 — it does **not**
-yet implement the turn structure, the separate tactical battle map, prep
-phase, army-vs-army proximity triggers, body defenses, commanders, or
-finite per-body Minerals described above. In that current build:
+yet implement the notebook-doodle art style, the turn structure, the
+separate tactical battle map, prep phase, army-vs-army proximity triggers,
+body defenses, commanders, or finite per-body Minerals described above. In
+that current build:
 
+- The visual style is Star Ruler 2's own 3D sci-fi rendering, not hand-drawn
+  doodles — none of Section 2's art direction is implemented yet.
 - Everything happens continuously in real time, not in discrete turns.
 - Combat is Star Ruler 2's native continuous space combat — there is no
   separate battle map, no prep phase, and no manual per-unit deployment
   screen.
+- The map is Star Ruler 2's native free-form starfield, not a square grid.
 - Minerals and Energy are both produced indefinitely by buildings once
   built (no finite per-body pool yet, no Energy upkeep yet).
 - Conquest is a single channeled "Conquer" action (8 real-time seconds)
@@ -468,11 +531,11 @@ finite per-body Minerals described above. In that current build:
   implemented. The current build's ship roster is also different and
   faction-symmetric (both factions share a Small/Medium/Large lineup plus
   one faction-exclusive support hull), unlike the asymmetric Human vs.
-  Rebel roster described in Section 10.
+  Rebel roster described in Section 11.
 
 None of that invalidates this document — it's the direction the full game
 is meant to go — but **assets should be built for the design described in
-Sections 1–14**, and anyone extending the current codebase should treat the
+Sections 1–15**, and anyone extending the current codebase should treat the
 gaps above as the backlog, not as evidence the design changed.
 
 See `PROJECT_NOTES.md` (same folder) for the engineering-side detail on
@@ -480,29 +543,36 @@ that current build.
 
 ---
 
-## 16. Visual & asset reference
+## 17. Visual & asset reference
 
-Reference images should be attached here by category, once provided.
+Reference images should be attached here by category, once provided. See
+Section 2 first for the overall art direction (notebook doodle style,
+flip-book animation, drawn shadows/comic lines/stick-figure ejection, and
+the Human blue-metal vs. Rebel rusty-earthy color split) — everything below
+should be built to match that, not as a separate style.
 
 ### Faction identity
-- **Humans** — established, defensive, "protecting a home" character.
-- **Rebels** — mobile, scrappy, "home is a ship" character.
+- **Humans** — metal, blue, sophisticated/strong (Section 2).
+- **Rebels** — rusty, patched-up scrapyard, earthy tones (Section 2).
 
-*(Add faction emblem/logo images here once provided.)*
+*(Add faction emblem/logo doodle images here once provided.)*
 
 ### The galaxy map
-- Hex tile art, at least a few variants (empty space, nebula/asteroid
-  field, near a star) since the map is entirely hex-based.
+- Square-grid "notebook paper" background art, at least a few doodled
+  variants (empty space, nebula/asteroid field, near a star).
 - Fog-of-war visual treatment for undiscovered vs. discovered-but-not-visible
-  tiles.
-- Per-body map icons: planet, moon, asteroid belt, star, station, black
-  hole.
+  tiles, consistent with the hand-drawn look (e.g. undiscovered squares
+  could look like blank/unshaded notebook squares).
+- Per-body doodle icons: planet, moon, asteroid belt, star, station, black
+  hole — each drawn, not rendered, sized to the "4 squares = 1 planet"
+  scale reference in Section 3.
 - Stargate structure icon/model (strategic map).
 
 ### Battle environments
 Since each tactical battle's map reflects the strategic tile it happened
 on, at minimum: open space, near-a-star, near-an-asteroid-field, and
-near-a-planet/station battlefield backdrops.
+near-a-planet/station battlefield backdrops — all on the same square-grid
+notebook-paper look as the strategic map (Section 10).
 
 ### Propulsion, weapons & VFX identity
 The two factions should read as different at a glance from engine trails
@@ -511,7 +581,8 @@ and weapons fire alone, before a player even sees the hull shape:
 - **Humans — combustion/fire-based.** Engines are rough, wild-fire-style
   burning exhaust, not clean energy trails. Damage/destruction effects lean
   into fire: sharp radiating explosion bursts plus billowing, scribbly
-  smoke trails on a dying ship.
+  smoke trails on a dying ship — plus the ejected-stick-figure gag from
+  Section 2 on destruction.
 - **Rebels — ion-thruster/laser-based.** Propulsion reads as a cleaner,
   more energetic ion-drive trail (rather than combustion), and their
   weapons are laser bolts (parallel twin-line beam shots) rather than
@@ -524,7 +595,7 @@ hull-design one.
 
 ### Ships
 Each needs a portrait/icon and an exterior model/silhouette concept. Note
-the rosters are **not mirrored** — see Section 10. Concept sketches exist
+the rosters are **not mirrored** — see Section 11. Concept sketches exist
 for the full roster (see `concept_art/` in this folder — add the source
 image there under a descriptive filename, e.g.
 `concept_art/ship_roster_sketch_01.jpg`, so it can be referenced directly
@@ -553,7 +624,7 @@ alongside this text) and describe the following silhouettes and behavior:
   healing beams reaching out to up to 5 allies at once.
 - Fire/smoke reference sketches: a sharp radiating explosion burst, and a
   separate scribbly "smoke" cloud — the two damage/destruction effects to
-  build out for Human ships (see Propulsion/VFX note above).
+  build out for Human ships.
 
 **Rebel roster (from concept sketch):**
 - **Medium** — a flat, low rectangular hull with small fin-like
@@ -580,9 +651,7 @@ alongside this text) and describe the following silhouettes and behavior:
   with a directional arrow) for weapons fire, and a separate impact sketch
   showing a small ship struck with sparks/debris radiating outward — the
   damage/destruction effect to build out for Rebel ships (sparks/debris,
-  not fire/smoke — see Propulsion/VFX note above).
-- Capitol (Rebel flagship — visually should read as "a moving aircraft
-  carrier / home," the largest, most distinctive hull in the game)
+  not fire/smoke).
 
 *(Add ship portrait/model images here once provided.)*
 
