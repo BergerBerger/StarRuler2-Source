@@ -870,6 +870,12 @@ alongside this text) and describe the following silhouettes and behavior:
   Artillery's turreted platform — think an oversized, top-heavy launcher
   arm rather than a boxy turret, to read as "even slower and heavier than
   Artillery" at a glance.
+- **"S-ship upgraded"** — the roster sketch separately labels one small-hull
+  icon this way, distinct from the plain baseline Small entry. It isn't
+  clear yet whether this means a visual-only upgraded look for the baseline
+  Small hull, or an early alternate name/idea for one of the specialists
+  above (most likely Shroud, since it's drawn nearby). **Flagged for
+  confirmation** rather than guessed at here.
 - Fire/smoke reference sketches: a sharp radiating explosion burst, and a
   separate scribbly "smoke" cloud — the two damage/destruction effects to
   build out for Human ships.
