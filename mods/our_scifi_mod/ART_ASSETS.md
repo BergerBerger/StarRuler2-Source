@@ -94,3 +94,16 @@ only by an authenticated preview render.
 `spaceship drawing 1.psd` and remains reference-only. These files are 2D ship
 art, not 3D meshes: the alpha uses them consistently in build/queue/selection
 UI while retaining its current world-space geometry.
+
+## Human and Rebel concept sheet
+
+`source_art/concept_sheets/human_rebel_ship_concept_sheet.jpg` preserves Olay's
+photographed notebook concept sheet, posted to the Planeten Spiel Telegram group
+on 2026-08-11. It is an original visual reference for the notebook-doodle art
+direction and is not currently used as a runtime asset.
+
+The sheet covers Human small, upgraded-small, medium, large, shroud, artillery,
+and repair ships; Rebel medium, capital, jumper, drone, and suicide-drone ships;
+and reference sketches for propulsion, weapons, repair, smoke, impacts,
+explosions, and destruction. It does not change the alpha gameplay scope in
+`GAME_VISION.md`.
